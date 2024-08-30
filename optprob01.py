@@ -29,9 +29,11 @@ print(res.x)
 # Generate data from the nonlinear constraint
 nsamples = 1000  # number of samples
 X = -5.0 + 10 * np.random.rand(nsamples, 2)
-y = np.array([g(X[i, :]) for i in range(nsamples)])  # We could also add some noise to y
+noise = 0.1 * np.random.randn(nsamples)
+y = np.array([g(X[i, :]) for i in range(nsamples)]) + noise
 
 # Approach 1
+
 
 # Approach 2
 niters = 100  # number of iterations
