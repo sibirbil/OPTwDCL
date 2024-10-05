@@ -1,11 +1,11 @@
 from scipy.optimize import (
     NonlinearConstraint,
-    LinearConstraint,
     Bounds,
     minimize,
     linprog,
 )
 from sklearn.linear_model import LinearRegression
+from locreg import LocalRegression
 import numpy as np
 
 
@@ -36,7 +36,7 @@ y = np.array([g(X[i, :]) for i in range(nsamples)]) + noise
 
 
 # Approach 2
-niters = 100  # number of iterations
+niters = 1000  # number of iterations
 ssize = 5  # subset size
 
 xit = np.array([0, 0])
@@ -45,8 +45,6 @@ for i in range(niters):
     indices = np.argsort(dists)[:ssize]
     Xsub, ysub = X[indices, :], y[indices]
     locmod = LinearRegression().fit(Xsub, ysub)
-    lincon = lambda x: locmod.predict(x.reshape(1, -1))
-    lc = LinearConstraint(locmod.coef_, -locmod.intercept_, np.inf)
     res = linprog(
         np.array([1, 1]),
         A_ub=-locmod.coef_.reshape(1, -1),
@@ -55,4 +53,22 @@ for i in range(niters):
     )
     xit = res.x
 
-print(xit)
+print("Linear regression (subset size = 5): ", xit)
+
+# Approach 3
+niters = 100  # number of iterations
+frac = 0.005  # fraction of samples
+xit = np.array([0, 0])
+for i in range(niters):
+
+    locmod = LocalRegression(frac=frac).fit(X, y)
+    locmod.predict(xit)
+    res = linprog(
+        np.array([1, 1]),
+        A_ub=-locmod.coef_[0].reshape(1, -1),
+        b_ub=locmod.intercept_[0],
+        bounds=[(-10, 10), (0, 10)],
+    )
+    xit = res.x
+
+print("Local regression (frac = 0.005): ", xit)
