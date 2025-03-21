@@ -52,6 +52,17 @@ def g_locmodel(x):
     x_poly_local = poly_local.fit_transform(x)
     return local_model.predict(x_poly_local)
 
+def update_weights(xit, dists):
+    lam = 1.0  # lambda
+    weights = np.exp(-lam * dists)
+    #for j in range(len(weights)):
+    #    if(dists[j]<delta): 
+    #        weights[j]=1
+    #    else: 
+    #        weights[j]=0
+    #weights = weights / max(weights)    
+    return weights
+
 '''
 Function nowdcl
 Input:
@@ -63,42 +74,62 @@ x_0     initial point
 '''
 #TODO : Create a 'DCLproblem' class
 
-def nowdcl(f, X, y, None, bounds, x_0, niters)
+def nowdcl(f, X, y, None, bounds, x_0, niters):
+    MAX_NDATA = 100000
+    RMSE_THRESH = 1e-2
+    IMPRV_FACTOR = 0.2
+
     #initialize
     xit = np.array(x_0)
-    delta=1.0
-    lam = 1.0  # lambda
+    ndata = len(y) #total number of data points
+    learning_size= len(x_0) #size of the (constraint) function to be learned locally
+    ndata_model_0 = np.minimum(MAX_NDATA, np.minimum(3*learning_size, ndata)) #number of data points to be included in model construction
+    ndata_train_0 = math.floor(0.7*ndata_model)
+    ndata_test_0 = ndata_model-ndata_train
     for i in range(niters):
-        num_processed_data = 0
+        #model construction -- initialize
+        model_degree = 2
+        ndata_model = ndata_model_0
+        ndata_train = ndata_train_0
+        ndata_test = ndata_test_0
+        weights = np.ones(ndata_model)
         dists = np.linalg.norm(xit - X, axis=1)
-        weights = np.exp(-lam * dists)
-        for j in range(len(weights)):
-            dists[j] = np.sqrt((xit[1]-X[j,1])**2+(xit[2]-X[j,2])**2)
-            if(dists[j]<max(1,5/(i+1))*delta): 
-                weights[j]=1
-                num_processed_data +=1
-            else: 
-                weights[j]=0
-        #weights[j]=np.exp(-lam * dists[j])
-        #weights = weights / max(weights)    
-        #print(dists)
-        #print(weights)
+        update_weights(xit, dists)
         ybar = weights * y
         Xbar = weights.reshape(-1, 1) * X
-        poly_local = PolynomialFeatures(degree=2)
-        X_poly_local = poly_local.fit_transform(Xbar)
-        local_model = LinearRegression().fit(X_poly_local, ybar)
+
+        #choose the closest 'ndata_model' data points
+        sorted_indices = np.argsort(dists)
+        idata_model = sorted_indices[0:ndata_model]
+        #now, determine the train and test data
+        idata_train = random.sample(range(ndata_model),ndata_train) #indices of training data
+        idata_test = [idata_model[i] for i notin idata_train]
+        Xbar_train = Xbar[idata_train, :]
+        ybar_train = ybar[idata_train]
+        isDone=False
+        while !isDone:
+ 	    #construct the model
+            poly_local = PolynomialFeatures(degree=model_degree)
+            X_poly_local = poly_local.fit_transform(Xbar_train)
+            local_model = LinearRegression().fit(X_poly_local, ybar_train)
+            #compute the test error and check termination
+            #if test_rmse>imprv_factor*test_rmse_prev or test_rmse<rmse_thresh => stop
+            #FGN : BURADA KALDIM
+        
+	#solve the local model
         nlc_locmodel = NonlinearConstraint(g_locmodel, -np.inf, 0)
         local_bounds = Bounds([xit[0]-delta,max(xit[1]-delta,-5),max(xit[2]-delta,-5)], [xit[0]+delta, min(xit[2]+delta,5), min(xit[2]+delta,5)])
-        #print(bounds)
         res_loc = minimize(f, xit, bounds=local_bounds, constraints=[nlc_locmodel], method="trust-constr",options={'disp':False})
         x_trial = res_loc.x
         print("iteration ",i,", iterate : ",xit, "f: ",f(xit), "g: ", g(xit), "delta:", delta)
-        print("max(1,5/i)=", max(1,5/(i+1)), "num_data=", num_processed_data, "g(xit)= ", g(xit), "g_locmodel(xit) =", g_locmodel(np.array(xit)),"g_locmodel[0,1,1] =", g_locmodel(np.array([0.0,1.0,1.0])))
+        print("g(xit)= ", g(xit), "g_locmodel(xit) =", g_locmodel(np.array(xit)),"g_locmodel[0,1,1] =", g_locmodel(np.array([0.0,1.0,1.0])))
         xit = x_trial
-        lam = lam * 0.3
-        delta = delta * 0.9
-    print("Solution using weighted linear regression: ", xit)
+        #lam = lam * 0.3
+    #print("Solution: ", xit)
+
+
+
+#MAIN PROGRAM
 
 bounds = Bounds([-np.inf,-5,-5], [np.inf, 5, 5])
 # Exact optimal solution should be [0, 1, 1]
