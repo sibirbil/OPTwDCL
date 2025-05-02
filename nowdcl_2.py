@@ -243,7 +243,6 @@ def nowdcl(f, X, y, bounds, x_0, niters):
         A = np.hstack((-1 * np.eye(n), X[idata_model, :].T))
         p_init = np.vstack((xit.reshape([n, 1]), np.zeros([ndata_model, 1])))
         p_init = p_init.reshape(-1)
-        print(A)
         lc = LinearConstraint(A, lb=[0] * (n), ub=[0] * (n))
         nlc_locmodel = NonlinearConstraint(g_locmodel, -np.inf, 0)
         lb = np.vstack((np.array([-np.inf, -5, -5]).reshape([3, 1]), np.zeros([ndata_model, 1])))
@@ -253,10 +252,11 @@ def nowdcl(f, X, y, bounds, x_0, niters):
         res_loc = minimize(f, p_init, bounds=Bounds(lb, ub), constraints=[nlc_locmodel, lc], method="trust-constr",
                            options={'disp': False})
         x_trial = res_loc.x
-        print("iteration ", i, ", trial_x: ", xit, "f(x): ", f(xit), "g(x): ", g(xit), "g_locmodel(x) =",
-              g_locmodel(np.array(xit)))
         if (np.linalg.norm(x_trial[:n] - xit) < DELTA_MIN):
             return 0
+        xit = x_trial[:n]
+        print("iteration ", i, ", trial_x: ", xit, "f(x): ", f(xit), "g(x): ", g(xit), "g_locmodel(x) =",
+              g_locmodel(np.array(xit)))
             # end while
     return -1
 
@@ -315,7 +315,7 @@ print('Solution using the global model with ', nsamples, ' samples: ', res_g.x)
 x_ast_model = res_g.x
 
 # Solve via local modelling
-niters = 15  # number of iterations
+niters = 5  # number of iterations
 exitcode = nowdcl(f, X, y, bounds, x_0, niters)
 
 
