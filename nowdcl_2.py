@@ -164,8 +164,11 @@ def nowdcl(f, X, y, bounds, x_0, niters):
     '''
     ndata = len(y)  # total number of data points
     learning_size = len(x_0)  # size of the (constraint) function to be learned locally
-    ndata_model_0 = np.minimum(MAX_NDATA, np.minimum(3 * learning_size,
+    ndata_model_0 = np.minimum(MAX_NDATA, np.minimum(5 * learning_size,
                                                      ndata))  # number of data points to be included in model construction
+    #initial_point
+    print("iteration 0:", " trial_x: ", xit, "f(x): ", f(xit), "g(x): ", g(xit))
+
     for i in range(niters):
         # model construction -- initialize
         model_degree = 1
@@ -255,7 +258,7 @@ def nowdcl(f, X, y, bounds, x_0, niters):
         if (np.linalg.norm(x_trial[:n] - xit) < DELTA_MIN):
             return 0
         xit = x_trial[:n]
-        print("iteration ", i, ", trial_x: ", xit, "f(x): ", f(xit), "g(x): ", g(xit), "g_locmodel(x) =",
+        print("iteration ", i+1, ", trial_x: ", xit, "f(x): ", f(xit), "g(x): ", g(xit), "g_locmodel(x) =",
               g_locmodel(np.array(xit)))
             # end while
     return -1
@@ -272,7 +275,8 @@ np.random.seed(102)
 random.seed(102)
 print("Random seed fixed!")
 nsamples = 100  # number of samples
-X = 0.0 + 3 * np.random.randn(nsamples, 3)
+X = 0.0 + 2 * np.random.randn(nsamples, 3)
+
 # noise = 0.0001 * np.random.randn(nsamples)
 noise = 0.0 * np.random.randn(nsamples)
 y = np.array([g(X[i, :]) for i in range(nsamples)]) + noise
@@ -315,7 +319,7 @@ print('Solution using the global model with ', nsamples, ' samples: ', res_g.x)
 x_ast_model = res_g.x
 
 # Solve via local modelling
-niters = 5  # number of iterations
+niters = 6  # number of iterations
 exitcode = nowdcl(f, X, y, bounds, x_0, niters)
 
 
