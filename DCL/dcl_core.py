@@ -2,16 +2,25 @@
 #This file contains the basic procedures of dynamic constraint learning
 import numpy as np
 
+import math
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from dataclasses import dataclass
+
 #options class
 class dcl_options:
     trust_region = "convex_hull"
-    learning_model_type = "polynom_regression"
+    learning_model_type = "polynom_regression"   #or "cart" etc.
     test_data_ratio = 0.2
     max_iterations = 100
     x_init = None
     delta_min = 1e-6
     rmse_thresh = 0.1
     max_model_degree = 4
+    tree_seed = 0 #?
+    max_ndata = 2000
+    
     #subproblem_solver??
 
     #def check_options(self): 
@@ -37,7 +46,7 @@ class dcl_solver:
         x_init = x_init_
 
     def solve(self):
-        if(self.x_init == Null):
+        if(self.x_init == None):
             x_init = dcl_init(self.X)
         #main loop
         X = self.X
@@ -47,8 +56,8 @@ class dcl_solver:
         sorted_indices = np.argsort(dists).tolist()
     
         ndata = len(y)
-        learning_size  = 2 * len(x_0)
-        ndata_model_0  = np.minimum(MAX_NDATA, np.minimum(5 * learning_size, ndata))
+        learning_size  = 2 * len(x_init)
+        ndata_model_0  = np.minimum(max_ndata, np.minimum(5 * learning_size, ndata))
     
         for i in range(self.options.max_iterations):
             model_degree = 1
@@ -89,7 +98,9 @@ class dcl_solver:
                 return -2, xis, local_models, poly_locals, subsets_used
     
             #x_trial, res_loc = dcl_solve_subproblem(self.problem_model, learned_model, self.options.trust_region) #TODO
-    
+            
+            x_trial = xit.copy()  # placeholder so code runs?
+            
             if np.linalg.norm(x_trial[:n] - xit) < options.delta_min:
                 print("No significant progress; terminating.")
                 return 0, xis, local_models, poly_locals, subsets_used
@@ -118,7 +129,7 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
     ndata_test  = ndata_model - ndata_train
 
     idata_model = sorted_indices[0:ndata_model]
-    idata_train = random.sample(idata_model, k=ndata_train)
+    idata_train = np.random.sample(idata_model, k=ndata_train)
     idata_test  = np.setdiff1d(idata_model, idata_train).tolist()
 
     Xbar_train = Xbar[idata_train, :]
