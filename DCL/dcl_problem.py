@@ -2,9 +2,17 @@
 import gurobipy as gp
 from gurobipy import GRB
 
+import pandas as pd
+from pathlib import Path
+from typing import Tuple
+from dataclasses import dataclass
 
 #This file contains procedures for setting up problems to be solved by dcl
 
+syria_xlsx_path = Path("/swh/data/Syria_instance.xlsx")
+wfp_csv_path = Path("/swh/data/WFP_dataset.csv")
+
+@dataclass
 class SyriaInstance:
     nutr_val: pd.DataFrame   #index=Food, columns=nutrients
     nutr_req: pd.DataFrame   #index=Type, columns=nutrients
@@ -51,6 +59,33 @@ def setup_problem_wfp(problem_model_type):
         #model.addVar...
         #model.setObjective...
         #CONTINUE: Add regular constraints, bounds, etc 
+        
+        foods = list(instance.nutr_val.index)
+        nutrients = list(instance.nutr_req.columns)
+
+        A = instance.nutr_val.loc[foods, nutrients].to_numpy(dtype=float)    
+        req = instance.nutr_req.iloc[0][nutrients].to_numpy(dtype=float)     
+        cost = instance.cost_p.loc[foods].to_numpy(dtype=float)              
+        
+        F = len(foods)
+        
+        x = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="x")
+
+        model.addConstr(A.T @ x >= req, name="nutr_req")
+        
+        sugar_i = foods.index("Sugar")
+        salt_i = foods.index("Salt")
+        model.addConstr(x[sugar_i] == 0.2, name="fix_sugar")
+        model.addConstr(x[salt_i]  == 0.05, name="fix_salt")
+    
+        model.setObjective(cost @ x, GRB.MINIMIZE)
+
+        model._x = x
+        model._foods = foods
+        model._nutrients = nutrients
+
+        model.update()
+        
     #else if(problem_model_type=="pyomo"): #TODO 
     return model, problem_model_type, X, y
 
