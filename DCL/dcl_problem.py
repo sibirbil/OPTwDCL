@@ -69,8 +69,8 @@ def setup_problem_wfp(problem_model_type):
         
         F = len(foods)
         
-        x = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="x")
-
+        x = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="input_vars") #change notation to x = [z;y]
+#add output_vars (palatibility), add palatibility lower_bound=palatibility_req
         model.addConstr(A.T @ x >= req, name="nutr_req")
         
         sugar_i = foods.index("Sugar")
@@ -80,7 +80,7 @@ def setup_problem_wfp(problem_model_type):
     
         model.setObjective(cost @ x, GRB.MINIMIZE)
 
-        model._x = x
+        model._x = x #FGN: ??
         model._foods = foods
         model._nutrients = nutrients
 

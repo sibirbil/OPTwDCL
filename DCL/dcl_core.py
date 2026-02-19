@@ -8,9 +8,11 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from dataclasses import dataclass
 
+ENABLE_WEIGHTING = 0
+
 #options class
 class dcl_options:
-    trust_region = "convex_hull"
+    trust_region = "convex_hull" #TR_MODE
     learning_model_type = "polynom_regression"   #or "cart" etc.
     test_data_ratio = 0.2
     max_iterations = 100
@@ -44,27 +46,35 @@ class dcl_solver:
         X = X_
         y = y_
         x_init = x_init_
+        return_code = 0
+        xit = None
 
     def solve(self):
-        if(self.x_init == None):
-            x_init = dcl_init(self.X)
+        #if(self.x_init == None):
+        #    x_init = dcl_init(self.X)
         #main loop
         X = self.X
         y = self.y
-        xit = x_init
+        options = self.options
+        xit =self.x_init
         dists = np.linalg.norm(xit - X, axis=1)
         sorted_indices = np.argsort(dists).tolist()
     
         ndata = len(y)
-        learning_size  = 2 * len(x_init)
-        ndata_model_0  = np.minimum(max_ndata, np.minimum(5 * learning_size, ndata))
+        learning_size  = 2 * len(self.x_init)
+        ndata_model_0  = np.minimum(options.max_ndata, np.minimum(5 * learning_size, ndata))
     
         for i in range(self.options.max_iterations):
             model_degree = 1
             ndata_model  = ndata_model_0
-            weights = update_weights(xit, dists)
-            ybar = weights * y
-            Xbar = weights.reshape(-1, 1) * X
+            #We are not currently using weighting
+            if(ENABLE_WEIGHTING):
+                weights = update_weights(xit, dists)
+                ybar = weights * y
+                Xbar = weights.reshape(-1, 1) * X
+            else:
+                Xbar = X
+                ybar = y
     
             best_test_rmse   = np.inf
             best_ndata_model = 0
@@ -95,17 +105,19 @@ class dcl_solver:
        
             if best_test_rmse > self.options.rmse_thresh:
                 print("Stopping: local model not accurate enough (rmse =", best_test_rmse, ")")
-                return -2, xis, local_models, poly_locals, subsets_used
+                self.return_code = -2
+                self.xit = xit
+                return 
     
-            #x_trial, res_loc = dcl_solve_subproblem(self.problem_model, learned_model, self.options.trust_region) #TODO
-            
-            x_trial = xit.copy()  # placeholder so code runs?
+            #x_trial, res_loc = dcl_solve_subproblem(self.problem_model, accepted_model, self.options.trust_region) #TODO
             
             if np.linalg.norm(x_trial[:n] - xit) < options.delta_min:
                 print("No significant progress; terminating.")
-                return 0, xis, local_models, poly_locals, subsets_used
+                self.return_code = -1
+                self.xit = xit
+                return 
     
-            xit = x_trial[:n]
+            #xit = x_trial[:n]
 
 
 #Initialize
@@ -115,9 +127,16 @@ class dcl_solver:
 
 
 #Construct and solve subproblem
-#def dcl_solve_subproblem():
+#def dcl_solve_subproblem(problem_model, accepted_model, trust_region):
     #TODO
-
+    #add accepted_model.learned_model (scikit learn objesi) to problem_model as a constraint via gurobiml library, 
+    #also add trust_region of desired type to problem_model (eğer convex hull ise önceki kullandığımız doğrusal kısıt)
+    #learned_constraint y = g(z)
+    #input_vars = x  #Mvar for z in the gurobbi model problem_model, getVarByName(name)
+    #output_vars = y  #Mvar for y in the gurobbi model problem_model 
+    #problem_model_local = problem_model
+    #learned_constraint = add_predictor_constr( = problem_model, accepted_model.learned_model, input_vars, output_vars)
+    #return [input_vars.X, output_vars.X]  x = [z;y]
 
 def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata_model, Xbar, ybar, options):
     RMSE_THRESH = options.rmse_thresh
@@ -179,3 +198,6 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
         model_degree     += 1
 
 
+def update_weights(xit, dists):
+    lam = 0.0
+    return np.exp(-lam * dists)
