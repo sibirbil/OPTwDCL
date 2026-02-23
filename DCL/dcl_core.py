@@ -43,26 +43,32 @@ class dcl_local_model:
 class dcl_solver:
     local_models = [] #holds information on local models
     def __init__(self,problem_,problem_model_type_,options_,X_,y_,x_init_):
-        problem_model = problem_
-        problem_model_type = problem_model_type_
-        options = options_
-        X = X_
-        y = y_
-        x_init = x_init_
-        return_code = 0
-        xit = None
-
+        self.problem_model = problem_
+        self.problem_model_type = problem_model_type_
+        self.options = options_
+        self.X = X_
+        self.y = y_
+        self.x_init = x_init_
+        self.return_code = 0
+        self.xit = None
+        
     def solve(self):
-        #if(self.x_init == None):
-        #    x_init = dcl_init(self.X)
         #main loop
         X = self.X
         y = self.y
         options = self.options
+        problem_model = self.problem_model
+        #get problem size
+        if(self.problem_model_type=="gurobi"):
+            n = problem_model.NumVars #CHECK
+        #else...    
+        if(self.x_init == None):
+            self.x_init = dcl_init(self.X, n) #TODO
+            
         xit =self.x_init
         dists = np.linalg.norm(xit - X, axis=1)
         sorted_indices = np.argsort(dists).tolist()
-    
+        
         ndata = len(y)
         learning_size  = 2 * len(self.x_init)
         ndata_model_0  = np.minimum(options.max_ndata, np.minimum(5 * learning_size, ndata))
@@ -112,7 +118,7 @@ class dcl_solver:
                 self.xit = xit
                 return 
     
-            #x_trial, res_loc = dcl_solve_subproblem(self.problem_model, accepted_model, self.options.trust_region) #TODO
+            x_trial, res_loc = dcl_solve_subproblem(self.problem_model, accepted_model, self.options.trust_region) #TODO
             
             if np.linalg.norm(x_trial[:n] - xit) < options.delta_min:
                 print("No significant progress; terminating.")
@@ -124,7 +130,7 @@ class dcl_solver:
 
 
 #Initialize
-#def dcl_init(X):
+#def dcl_init(X, size):
     #choose initial_point based on X
     #TODO: Add a procedure for initial point computation
 
@@ -181,7 +187,7 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
         Xnp = np.asarray(X, dtype=float)
 
     # ---- learned constraint: output_vars = g(input_vars) ----
-    m.Params.NonConvex = 2  # safe for polynomial/pipeline models
+    #m.Params.NonConvex = 2  # safe for polynomial/pipeline models
     add_predictor_constr(
         m,
         accepted_model.learned_model,

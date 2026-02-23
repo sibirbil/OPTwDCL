@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import gurobipy as gp
 from gurobipy import GRB
-
+#import random
+#import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Tuple
@@ -9,8 +10,14 @@ from dataclasses import dataclass
 
 #This file contains procedures for setting up problems to be solved by dcl
 
-syria_xlsx_path = Path("/swh/data/Syria_instance.xlsx")
-wfp_csv_path = Path("/swh/data/WFP_dataset.csv")
+syria_xlsx_path = Path("../../OptiCL/notebooks/WFP/processed-data/Syria_instance.xlsx")
+wfp_csv_path = Path("../../OptiCL/notebooks/WFP/processed-data/WFP_dataset.csv")
+
+SEED = 33
+
+#def _set_seeds(seed: int = SEED) -> None:
+#    random.seed(seed)
+#    np.random.seed(seed)
 
 @dataclass
 class SyriaInstance:
@@ -45,12 +52,15 @@ def load_syria_instance(xlsx_path: str | Path) -> SyriaInstance:
 
 def load_wfp_dataset(csv_path: str | Path, *, shuffle_seed: int = 0) -> Tuple[pd.DataFrame, pd.Series]:
     df = pd.read_csv(csv_path)
-    df = df.sample(frac=1, random_state=shuffle_seed).reset_index(drop=True)  #FGN:??
+    df = df.sample(frac=1, random_state=shuffle_seed).reset_index(drop=True)  
     y = df["label"].astype(float)
     X = df.drop(columns=["label"])
     return X, y
 
 
+#In this routine we add regular constraints, bounds, etc all components of the 
+#optimization problem except the learned constraint
+#We shuffle the data set here before training
 def setup_problem_wfp(
     problem_model_type,
     *,
@@ -61,9 +71,6 @@ def setup_problem_wfp(
     X, y = load_wfp_dataset(wfp_csv_path, shuffle_seed=shuffle_seed)
     if(problem_model_type=="gurobi"):
         model = gp.Model()
-        #model.addVar...
-        #model.setObjective...
-        #CONTINUE: Add regular constraints, bounds, etc 
         
         foods = list(instance.nutr_val.index)
         nutrients = list(instance.nutr_req.columns)
@@ -89,19 +96,18 @@ def setup_problem_wfp(
     
         model.setObjective(cost @ x, GRB.MINIMIZE)
 
-        model._x = x #FGN: ??
-        model._foods = foods
-        model._nutrients = nutrients
-
         model.update()
         
     #else if(problem_model_type=="pyomo"): #TODO 
     return model, problem_model_type, X, y
 
 
-def dcl_setup_problem(problem_name, learning_model_type):
+def dcl_setup_problem(problem_name, learning_model_type, adjustable_problem_parameters):
 #read problem data and put into input and output data structures
 #construct the objective / additional constraints of the problem
+
+    #_set_seeds(SEED)
+        
     #set problem_model_type
     if(learning_model_type=="cart"): #TODO: Add more MIP-representable types
         problem_model_type = "gurobi"
@@ -109,7 +115,8 @@ def dcl_setup_problem(problem_name, learning_model_type):
         problem_model_type = "pyomo" 
 
     if(problem_name=="wfp"):
-        return setup_problem_wfp(problem_model_type)
+        return setup_problem_wfp(problem_model_type, shuffle_seed=SEED, 
+                                 pal_req=adjustable_problem_parameters)
     #elif(problem_name=="rsnbrk"):
     #    return setup_problem_rsnbrk(problem_model_type)
     #else:
