@@ -7,6 +7,8 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from dataclasses import dataclass
+import gurobipy as gp
+from gurobipy import GRB
 
 ENABLE_WEIGHTING = 0
 
@@ -30,10 +32,11 @@ class dcl_options:
 
 #learned model class
 class dcl_local_model:
-    data_indices = None
-    learned_model = None  #scikit learn object
-    test_rmse = None
-    model_degree = 1
+    def __init__(self):
+        self.data_indices = None
+        self.learned_model = None  # scikit learn object
+        self.test_rmse = None
+        self.model_degree = 1
 
 
 #solver class
@@ -130,6 +133,7 @@ class dcl_solver:
 #def dcl_solve_subproblem(problem_model, accepted_model, trust_region):
     #TODO
     #add accepted_model.learned_model (scikit learn objesi) to problem_model as a constraint via gurobiml library, 
+    
     #also add trust_region of desired type to problem_model (eğer convex hull ise önceki kullandığımız doğrusal kısıt)
     #learned_constraint y = g(z)
     #input_vars = x  #Mvar for z in the gurobbi model problem_model, getVarByName(name)
@@ -137,6 +141,88 @@ class dcl_solver:
     #problem_model_local = problem_model
     #learned_constraint = add_predictor_constr( = problem_model, accepted_model.learned_model, input_vars, output_vars)
     #return [input_vars.X, output_vars.X]  x = [z;y]
+
+
+def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
+
+    from gurobi_ml import add_predictor_constr
+
+    m = problem_model.copy()
+
+    # ---- infer n from input_vars[i] names ----
+    n = 0
+    while True:
+        v = m.getVarByName(f"input_vars[{n}]")
+        if v is None:
+            break
+        n += 1
+    if n == 0:
+        raise KeyError(
+            "No variables found named 'input_vars[0]'. "
+            "Make sure your base model uses addMVar(..., name='input_vars')."
+        )
+
+    # ---- get input_vars and output_vars by name ----
+    input_vars = [m.getVarByName(f"input_vars[{i}]") for i in range(n)]
+    if any(v is None for v in input_vars):
+        raise KeyError("Some 'input_vars[i]' were not found in the model copy.")
+
+    out0 = m.getVarByName("output_vars[0]")
+    if out0 is None:
+        raise KeyError(
+            "Could not find 'output_vars[0]'. "
+            "Make sure your base model uses addMVar(shape=1, name='output_vars')."
+        )
+
+    # ---- X to numpy ----
+    if hasattr(X, "to_numpy"):
+        Xnp = X.to_numpy(dtype=float)
+    else:
+        Xnp = np.asarray(X, dtype=float)
+
+    # ---- learned constraint: output_vars = g(input_vars) ----
+    m.Params.NonConvex = 2  # safe for polynomial/pipeline models
+    add_predictor_constr(
+        m,
+        accepted_model.learned_model,
+        input_vars=np.array(input_vars, dtype=object),
+        output_vars=np.array([out0], dtype=object),
+    )
+
+    # ---- trust region ----
+    if trust_region == "convex_hull":
+        idx = list(accepted_model.data_indices) if accepted_model.data_indices is not None else []
+        k = len(idx)
+        if k == 0:
+            raise ValueError("accepted_model.data_indices is empty; cannot build convex hull trust region.")
+
+        lam = m.addMVar(shape=k, lb=0.0, vtype=GRB.CONTINUOUS, name="lam_tr")
+        m.addConstr(gp.quicksum(lam[i] for i in range(k)) == 1.0, name="tr_sum")
+
+        for j in range(n):
+            m.addConstr(
+                input_vars[j] == gp.quicksum(lam[i] * float(Xnp[idx[i], j]) for i in range(k)),
+                name=f"tr_x[{j}]",
+            )
+
+    elif trust_region in (None, "none"):
+        pass
+    else:
+        raise NotImplementedError(f"Unknown trust_region='{trust_region}'. Use 'convex_hull' or 'none'.")
+
+    # ---- solve ----
+    m.optimize()
+    if m.Status != GRB.OPTIMAL:
+        return None, {"status": int(m.Status)}
+
+    # ---- return [input_vars; output_vars] ----
+    z_sol = np.array([v.X for v in input_vars], dtype=float)
+    y_sol = float(out0.X)
+    x_trial = np.concatenate([z_sol, np.array([y_sol])])
+
+    res = {"status": int(m.Status), "obj": float(m.ObjVal), "output": y_sol}
+    return x_trial, res
+
 
 def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata_model, Xbar, ybar, options):
     RMSE_THRESH = options.rmse_thresh

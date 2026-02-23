@@ -51,9 +51,14 @@ def load_wfp_dataset(csv_path: str | Path, *, shuffle_seed: int = 0) -> Tuple[pd
     return X, y
 
 
-def setup_problem_wfp(problem_model_type):
+def setup_problem_wfp(
+    problem_model_type,
+    *,
+    shuffle_seed: int = 0,
+    pal_req: float = 0.0,          #palatability requirement (lower bound)
+):
     instance = load_syria_instance(syria_xlsx_path)
-    X, y = load_wfp_dataset(wfp_csv_path, shuffle_seed=0)
+    X, y = load_wfp_dataset(wfp_csv_path, shuffle_seed=shuffle_seed)
     if(problem_model_type=="gurobi"):
         model = gp.Model()
         #model.addVar...
@@ -70,7 +75,11 @@ def setup_problem_wfp(problem_model_type):
         F = len(foods)
         
         x = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="input_vars") #change notation to x = [z;y]
-#add output_vars (palatibility), add palatibility lower_bound=palatibility_req
+#add output_vars (palatability), add palatability lower_bound=palatability_req
+        
+        pal = model.addMVar(shape=1, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="pal")
+        model.addConstr(pal[0] >= float(pal_req), name="pal_lb")
+        
         model.addConstr(A.T @ x >= req, name="nutr_req")
         
         sugar_i = foods.index("Sugar")
