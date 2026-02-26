@@ -10,6 +10,9 @@ from dataclasses import dataclass
 import gurobipy as gp
 from gurobipy import GRB
 
+import gurobi_ml
+from gurobi_ml import add_predictor_constr
+
 ENABLE_WEIGHTING = 0
 
 #options class
@@ -41,8 +44,8 @@ class dcl_local_model:
 
 #solver class
 class dcl_solver:
-    local_models = [] #holds information on local models
     def __init__(self,problem_,problem_model_type_,options_,X_,y_,x_init_):
+        self.local_models = [] #holds information on local models, new: initin icine tasindi
         self.problem_model = problem_
         self.problem_model_type = problem_model_type_
         self.options = options_
@@ -59,13 +62,27 @@ class dcl_solver:
         options = self.options
         problem_model = self.problem_model
         #get problem size
-        if(self.problem_model_type=="gurobi"):
-            n = problem_model.NumVars #CHECK
+        #if(self.problem_model_type=="gurobi"):
+        #    n = problem_model.NumVars #CHECK
         #else...    
-        if(self.x_init == None):
-            self.x_init = dcl_init(self.X, n) #TODO
-            
-        xit =self.x_init
+        #if self.x_init is None:
+        #    self.x_init = dcl_init(self.X) #TODO????
+        
+        #new: need to work with numpy for distances
+        Xnp = X.to_numpy(dtype=float) if hasattr(X, "to_numpy") else np.asarray(X, dtype=float)
+
+        #new?
+        if self.problem_model_type == "gurobi":
+            n = int(problem_model._input_vars.shape[0])   # <-- 25, not 26
+        else:
+            n = int(Xnp.shape[1])    
+        
+        #new: initialize xit if needed
+        if self.x_init is None:
+            self.x_init = dcl_init(Xnp)   # returns length n
+        xit = np.asarray(self.x_init, dtype=float)
+
+        #xit =self.x_init
         dists = np.linalg.norm(xit - X, axis=1)
         sorted_indices = np.argsort(dists).tolist()
         
@@ -91,8 +108,14 @@ class dcl_solver:
             #poly_local  = None
     
             while ndata_model <= ndata:
-                md_tmp, rmse_tmp, lm_tmp = dcl_set_model_degree(
-                    model_degree, sorted_indices, ndata_model, Xbar, ybar, self.options
+                md_tmp, rmse_tmp, lm_tmp, p_tmp = dcl_set_model_degree(
+                self.options.learning_model_type,  #new
+                model_degree,
+                sorted_indices,
+                ndata_model,
+                Xbar,
+                ybar,
+                self.options
                 )
                 if rmse_tmp < best_test_rmse:
                     best_test_rmse   = rmse_tmp
@@ -118,22 +141,72 @@ class dcl_solver:
                 self.xit = xit
                 return 
     
-            x_trial, res_loc = dcl_solve_subproblem(self.problem_model, accepted_model, self.options.trust_region) #TODO
-            
-            if np.linalg.norm(x_trial[:n] - xit) < options.delta_min:
+    #
+            x_trial, res_loc = dcl_solve_subproblem(
+                self.problem_model,
+                accepted_model,
+                self.options.trust_region,
+                self.X,
+                )
+
+            if x_trial is None:
+                print(f"Stopping: subproblem not optimal (status={res_loc.get('status')})")
+                self.return_code = -3
+                self.xit = xit
+                return
+
+            # ---- progress + update neighborhood ----
+            step = np.linalg.norm(x_trial[:n] - xit)
+            print(f"iter {i}: step = {step:.3e}, obj = {res_loc.get('obj')}")
+
+            if step < options.delta_min:
                 print("No significant progress; terminating.")
                 self.return_code = -1
                 self.xit = xit
-                return 
-    
-            #xit = x_trial[:n]
+                return
 
+            # update iterate (inputs only)
+            xit = x_trial[:n]
+
+            # recompute neighborhood around new xit
+            # (make sure Xnp exists; see note below)
+            dists = np.linalg.norm(Xnp - xit, axis=1)
+            sorted_indices = np.argsort(dists).tolist()
+            
 
 #Initialize
 #def dcl_init(X, size):
     #choose initial_point based on X
     #TODO: Add a procedure for initial point computation
 
+def dcl_init(X, size=None):
+    """
+    Initial point = arithmetic average (centroid) of samples in X.
+    Works with numpy arrays and pandas DataFrames.
+
+    X: shape (n_samples, n_features)
+    returns: shape (n_features,)
+    """
+    # pandas DataFrame -> numpy
+    if hasattr(X, "to_numpy"):
+        Xnp = X.to_numpy(dtype=float)
+    else:
+        Xnp = np.asarray(X, dtype=float)
+
+    if Xnp.size == 0:
+        raise ValueError("X is empty, cannot compute arithmetic average.")
+
+    if Xnp.ndim != 2:
+        raise ValueError(f"X must be 2D (n_samples, n_features). Got shape {Xnp.shape}")
+
+    x0 = Xnp.mean(axis=0)  # arithmetic average of the set (column-wise mean)
+
+    # Optional consistency check
+    if size is not None and len(x0) != size:
+        # only warn if size is inconsistent (often happens if size = total vars incl. output)
+        print(f"Warning: dcl_init returned length {len(x0)} but size={size}")
+
+    return x0
 
 #Construct and solve subproblem
 #def dcl_solve_subproblem(problem_model, accepted_model, trust_region):
@@ -149,53 +222,42 @@ class dcl_solver:
     #return [input_vars.X, output_vars.X]  x = [z;y]
 
 
+
 def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
-
-    from gurobi_ml import add_predictor_constr
-
     m = problem_model.copy()
 
-    # ---- infer n from input_vars[i] names ----
-    n = 0
-    while True:
-        v = m.getVarByName(f"input_vars[{n}]")
-        if v is None:
-            break
-        n += 1
-    if n == 0:
-        raise KeyError(
-            "No variables found named 'input_vars[0]'. "
-            "Make sure your base model uses addMVar(..., name='input_vars')."
-        )
+    # number of input vars (from original model's MVar)
+    n = int(problem_model._input_vars.shape[0])
 
-    # ---- get input_vars and output_vars by name ----
+    # get copied vars by explicit names (these names come from addMVar(..., name="input_vars"))
     input_vars = [m.getVarByName(f"input_vars[{i}]") for i in range(n)]
     if any(v is None for v in input_vars):
-        raise KeyError("Some 'input_vars[i]' were not found in the model copy.")
+        raise KeyError("Some 'input_vars[i]' were not found in copied model.")
 
     out0 = m.getVarByName("output_vars[0]")
     if out0 is None:
-        raise KeyError(
-            "Could not find 'output_vars[0]'. "
-            "Make sure your base model uses addMVar(shape=1, name='output_vars')."
-        )
+        raise KeyError("Could not find 'output_vars[0]' in copied model.")
 
-    # ---- X to numpy ----
+    # X -> numpy
     if hasattr(X, "to_numpy"):
         Xnp = X.to_numpy(dtype=float)
     else:
         Xnp = np.asarray(X, dtype=float)
 
-    # ---- learned constraint: output_vars = g(input_vars) ----
-    #m.Params.NonConvex = 2  # safe for polynomial/pipeline models
+    # new
+    inp = np.array(input_vars, dtype=object).reshape(1, -1)   # (1, n)
+    out = np.array([out0], dtype=object).reshape(1, 1)        # (1, 1)
+
+    
+    # learned constraint: output_vars = g(input_vars)
     add_predictor_constr(
         m,
         accepted_model.learned_model,
-        input_vars=np.array(input_vars, dtype=object),
-        output_vars=np.array([out0], dtype=object),
+        input_vars=inp,
+        output_vars=out,
     )
 
-    # ---- trust region ----
+    # trust region
     if trust_region == "convex_hull":
         idx = list(accepted_model.data_indices) if accepted_model.data_indices is not None else []
         k = len(idx)
@@ -214,25 +276,26 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
     elif trust_region in (None, "none"):
         pass
     else:
-        raise NotImplementedError(f"Unknown trust_region='{trust_region}'. Use 'convex_hull' or 'none'.")
+        raise NotImplementedError(f"Unknown trust_region='{trust_region}'.")
 
-    # ---- solve ----
     m.optimize()
     if m.Status != GRB.OPTIMAL:
         return None, {"status": int(m.Status)}
 
-    # ---- return [input_vars; output_vars] ----
     z_sol = np.array([v.X for v in input_vars], dtype=float)
     y_sol = float(out0.X)
     x_trial = np.concatenate([z_sol, np.array([y_sol])])
 
-    res = {"status": int(m.Status), "obj": float(m.ObjVal), "output": y_sol}
-    return x_trial, res
-
+    return x_trial, {"status": int(m.Status), "obj": float(m.ObjVal), "output": y_sol}
 
 def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata_model, Xbar, ybar, options):
     RMSE_THRESH = options.rmse_thresh
     MAX_MODEL_DEGREE = options.max_model_degree
+    
+    
+    # new some fixing--- make indexing consistent (works for numpy or pandas) ---
+    is_pandas_X = hasattr(Xbar, "iloc")
+    is_pandas_y = hasattr(ybar, "iloc")
     
     model_degree = degree_init
 
@@ -240,37 +303,103 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
     ndata_test  = ndata_model - ndata_train
 
     idata_model = sorted_indices[0:ndata_model]
-    idata_train = np.random.sample(idata_model, k=ndata_train)
+    
+    import random
+    idata_train = random.sample(idata_model, k=ndata_train) #new
+    #idata_train = np.random.sample(idata_model, k=ndata_train)
     idata_test  = np.setdiff1d(idata_model, idata_train).tolist()
 
-    Xbar_train = Xbar[idata_train, :]
-    ybar_train = ybar[idata_train]
-    Xbar_test  = Xbar[idata_test, :]
-    ybar_test  = ybar[idata_test]
+    # newwww but may be useless?
+    
+    if is_pandas_X:
+        Xbar_train = Xbar.iloc[idata_train, :]
+        Xbar_test  = Xbar.iloc[idata_test, :]
+    else:
+        Xbar_train = Xbar[idata_train, :]
+        Xbar_test  = Xbar[idata_test, :]
 
-    isDone = False
+    if is_pandas_y:
+        ybar_train = ybar.iloc[idata_train]
+        ybar_test  = ybar.iloc[idata_test]
+    else:
+        ybar_train = ybar[idata_train]
+        ybar_test  = ybar[idata_test]
+        
+    #Xbar_train = Xbar.iloc[idata_train, :]  #new ilocs added 
+    #ybar_train = ybar.iloc[idata_train]
+    #Xbar_test  = Xbar.iloc[idata_test, :]
+    #ybar_test  = ybar.iloc[idata_test]
+    
+    # new --- ensure numpy arrays for sklearn ---
+    Xbar_train = np.asarray(Xbar_train, dtype=float)
+    Xbar_test  = np.asarray(Xbar_test, dtype=float)
+    ybar_train = np.asarray(ybar_train, dtype=float).ravel()
+    ybar_test  = np.asarray(ybar_test, dtype=float).ravel()
+    
+    #isDone = False  
     test_rmse_prev = np.inf
+    
+    #new
+    model_degree_prev = None
+    loc_model_prev = None
+    p_local_prev = None
+    
 
-    while not isDone:
-        if(learning_model_type == "cart"):
-            tree = DecisionTreeRegressor(max_depth=model_degree, random_state=tree_seed)
-            loc_model = tree.fit(Xbar_train, ybar_train)
-            #ypred_test = ...
+    #while not isDone:
+    #    if(learning_model_type == "cart"):
+    #        tree = DecisionTreeRegressor(max_depth=model_degree, random_state=options.tree_seed) #new options.tree_seed
+    #        loc_model = tree.fit(Xbar_train, ybar_train)
+    #        #ypred_test = ...
 
-        elif(learning_model_type == "polynom_regression"):
-        	    p_local = PolynomialFeatures(degree=model_degree)
-        	    X_poly_local = p_local.fit_transform(Xbar_train)
-        	    loc_model = LinearRegression().fit(X_poly_local, ybar_train)
+    #    elif(learning_model_type == "polynom_regression"):
+    #    	    p_local = PolynomialFeatures(degree=model_degree)
+    #    	    X_poly_local = p_local.fit_transform(Xbar_train)
+    #    	    loc_model = LinearRegression().fit(X_poly_local, ybar_train)
 
-        X_poly_test = p_local.fit_transform(Xbar_test)
-        ypred_test  = loc_model.predict(X_poly_test)
+    #    X_poly_test = p_local.fit_transform(Xbar_test)
+    #    ypred_test  = loc_model.predict(X_poly_test)
        
         #else:
 
-        test_rmse = np.linalg.norm(
-            (ypred_test - ybar_test) / np.maximum(np.maximum(np.abs(ypred_test), np.abs(ybar_test)), 1e-12)
-        ) / max(ndata_test, 1)
+    #    test_rmse = np.linalg.norm(
+    #        (ypred_test - ybar_test) / np.maximum(np.maximum(np.abs(ypred_test), np.abs(ybar_test)), 1e-12)
+    #    ) / max(ndata_test, 1)
 
+    #new but check?
+    
+    
+    
+    while True:
+        p_local = None  # default for non-polynomial models
+
+        if learning_model_type == "cart":
+            loc_model = DecisionTreeRegressor(
+                max_depth=model_degree,
+                random_state=options.tree_seed
+            ).fit(Xbar_train, ybar_train)
+
+            ypred_test = loc_model.predict(Xbar_test)
+
+        elif learning_model_type == "polynom_regression":
+            p_local = PolynomialFeatures(degree=model_degree, include_bias=True)
+            X_poly_train = p_local.fit_transform(Xbar_train)
+            loc_model = LinearRegression().fit(X_poly_train, ybar_train)
+
+            X_poly_test = p_local.transform(Xbar_test)
+            ypred_test  = loc_model.predict(X_poly_test)
+
+        else:
+            raise NotImplementedError(
+                f"Unknown learning_model_type='{learning_model_type}'. "
+                "Use 'polynom_regression' or 'cart'."
+            )
+
+        denom = np.maximum(np.maximum(np.abs(ypred_test), np.abs(ybar_test)), 1e-12)
+        test_rmse = np.linalg.norm((ypred_test - ybar_test) / denom) / max(len(ybar_test), 1)
+        
+        
+        
+        
         print("ndata_model : ", ndata_model,
               "ndata_test : ",  ndata_test,
               "ndata_train : ", ndata_train,
@@ -278,15 +407,17 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
               "test_rmse : ",    test_rmse)
 
         if test_rmse > test_rmse_prev:
+            if model_degree_prev is None:
+                return model_degree, test_rmse, loc_model, p_local
             return model_degree_prev, test_rmse_prev, loc_model_prev, p_local_prev
 
         if test_rmse < RMSE_THRESH or model_degree == MAX_MODEL_DEGREE:
             return model_degree, test_rmse, loc_model, p_local
 
-        #model_degree_prev = model_degree
+        model_degree_prev = model_degree
         test_rmse_prev    = test_rmse
-        #loc_model_prev    = loc_model
-        #p_local_prev      = p_local
+        loc_model_prev    = loc_model
+        p_local_prev      = p_local
         model_degree     += 1
 
 

@@ -81,12 +81,20 @@ def setup_problem_wfp(
         
         F = len(foods)
         
-        x = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="input_vars") #change notation to x = [z;y]
-#add output_vars (palatability), add palatability lower_bound=palatability_req
+       
+        #x = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="input_vars") #change notation to x = [z;y]
+        x = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="input_vars")
+        output_var = model.addMVar(shape=1, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="output_vars")
+        #add output_vars (palatability), add palatability lower_bound=palatability_req
         
-        pal = model.addMVar(shape=1, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="pal")
-        model.addConstr(pal[0] >= float(pal_req), name="pal_lb")
-        
+        #new?
+        model._input_vars = x
+        model._output_var = output_var
+
+        #pal = model.addMVar(shape=1, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="pal")
+        #model.addConstr(pal[0] >= float(pal_req), name="pal_lb")
+        model.addConstr(output_var[0] >= float(pal_req), name="pal_lb")
+
         model.addConstr(A.T @ x >= req, name="nutr_req")
         
         sugar_i = foods.index("Sugar")

@@ -4,6 +4,7 @@ import dcl_core as dcl
 import dcl_problem as dclp
 
 
+
 def main():
 
     #set problem  
@@ -19,6 +20,12 @@ def main():
     options.learning_model_type = learning_model_type
     options.max_iterations = 10
     #options.check_options()
+    
+    #new for reproducibility?
+    import random, numpy as np
+    random.seed(33)
+    np.random.seed(33)
+    options.tree_seed = 33
     
     #solve!    
     dcls = dcl.dcl_solver(problem, problem_model_type, options, X,y, None)
