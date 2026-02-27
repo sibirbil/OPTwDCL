@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 #This file contains the basic procedures of dynamic constraint learning
 import numpy as np
-
+import random
 import math
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
-from dataclasses import dataclass
+#from dataclasses import dataclass
 import gurobipy as gp
 from gurobipy import GRB
 
-import gurobi_ml
 from gurobi_ml import add_predictor_constr
 
 ENABLE_WEIGHTING = 0
@@ -19,14 +18,15 @@ ENABLE_WEIGHTING = 0
 class dcl_options:
     trust_region = "convex_hull" #TR_MODE
     learning_model_type = "polynom_regression"   #or "cart" etc.
-    test_data_ratio = 0.2
+    train_data_ratio = 0.7
+    init_data_ratio = 0.1 #BURADA KALDIK!!
     max_iterations = 100
     x_init = None
     delta_min = 1e-6
     rmse_thresh = 0.1
     max_model_degree = 4
-    tree_seed = 0 #?
-    max_ndata = 2000
+    seed = 0
+    max_ndata = 1000000
     
     #subproblem_solver??
 
@@ -60,27 +60,19 @@ class dcl_solver:
         X = self.X
         y = self.y
         options = self.options
-        problem_model = self.problem_model
-        #get problem size
-        #if(self.problem_model_type=="gurobi"):
-        #    n = problem_model.NumVars #CHECK
-        #else...    
-        #if self.x_init is None:
-        #    self.x_init = dcl_init(self.X) #TODO????
+
         
         #new: need to work with numpy for distances
         Xnp = X.to_numpy(dtype=float) if hasattr(X, "to_numpy") else np.asarray(X, dtype=float)
-
-        #new?
-        if self.problem_model_type == "gurobi":
-            n = int(problem_model._input_vars.shape[0])   # <-- 25, not 26
-        else:
-            n = int(Xnp.shape[1])    
+      
+        #get problem size
+        n = int(Xnp.shape[1])    
         
         #new: initialize xit if needed
         if self.x_init is None:
             self.x_init = dcl_init(Xnp)   # returns length n
         xit = np.asarray(self.x_init, dtype=float)
+        print("x_init",xit)
 
         #xit =self.x_init
         dists = np.linalg.norm(xit - X, axis=1)
@@ -88,6 +80,7 @@ class dcl_solver:
         
         ndata = len(y)
         learning_size  = 2 * len(self.x_init)
+        #FGN: TODO: Burada options.init_data_ratio kullanalım
         ndata_model_0  = np.minimum(options.max_ndata, np.minimum(5 * learning_size, ndata))
     
         for i in range(self.options.max_iterations):
@@ -226,8 +219,14 @@ def dcl_init(X, size=None):
 def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
     m = problem_model.copy()
 
+    # X -> numpy
+    if hasattr(X, "to_numpy"):
+        Xnp = X.to_numpy(dtype=float)
+    else:
+        Xnp = np.asarray(X, dtype=float)
+
     # number of input vars (from original model's MVar)
-    n = int(problem_model._input_vars.shape[0])
+    n = int(Xnp.shape[1])  
 
     # get copied vars by explicit names (these names come from addMVar(..., name="input_vars"))
     input_vars = [m.getVarByName(f"input_vars[{i}]") for i in range(n)]
@@ -237,12 +236,6 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
     out0 = m.getVarByName("output_vars[0]")
     if out0 is None:
         raise KeyError("Could not find 'output_vars[0]' in copied model.")
-
-    # X -> numpy
-    if hasattr(X, "to_numpy"):
-        Xnp = X.to_numpy(dtype=float)
-    else:
-        Xnp = np.asarray(X, dtype=float)
 
     # new
     inp = np.array(input_vars, dtype=object).reshape(1, -1)   # (1, n)
@@ -288,6 +281,7 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
 
     return x_trial, {"status": int(m.Status), "obj": float(m.ObjVal), "output": y_sol}
 
+
 def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata_model, Xbar, ybar, options):
     RMSE_THRESH = options.rmse_thresh
     MAX_MODEL_DEGREE = options.max_model_degree
@@ -299,17 +293,16 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
     
     model_degree = degree_init
 
-    ndata_train = math.floor(0.7 * ndata_model)
+    ndata_train = math.floor(options.train_data_ratio * ndata_model)
     ndata_test  = ndata_model - ndata_train
 
     idata_model = sorted_indices[0:ndata_model]
     
-    import random
     idata_train = random.sample(idata_model, k=ndata_train) #new
     #idata_train = np.random.sample(idata_model, k=ndata_train)
     idata_test  = np.setdiff1d(idata_model, idata_train).tolist()
 
-    # newwww but may be useless?
+    # new but may be useless?
     
     if is_pandas_X:
         Xbar_train = Xbar.iloc[idata_train, :]
@@ -347,7 +340,7 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
 
     #while not isDone:
     #    if(learning_model_type == "cart"):
-    #        tree = DecisionTreeRegressor(max_depth=model_degree, random_state=options.tree_seed) #new options.tree_seed
+    #        tree = DecisionTreeRegressor(max_depth=model_degree, random_state=options.seed) #new options.seed
     #        loc_model = tree.fit(Xbar_train, ybar_train)
     #        #ypred_test = ...
 
@@ -375,7 +368,7 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
         if learning_model_type == "cart":
             loc_model = DecisionTreeRegressor(
                 max_depth=model_degree,
-                random_state=options.tree_seed
+                random_state=options.seed
             ).fit(Xbar_train, ybar_train)
 
             ypred_test = loc_model.predict(Xbar_test)
@@ -396,10 +389,7 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
 
         denom = np.maximum(np.maximum(np.abs(ypred_test), np.abs(ybar_test)), 1e-12)
         test_rmse = np.linalg.norm((ypred_test - ybar_test) / denom) / max(len(ybar_test), 1)
-        
-        
-        
-        
+
         print("ndata_model : ", ndata_model,
               "ndata_test : ",  ndata_test,
               "ndata_train : ", ndata_train,

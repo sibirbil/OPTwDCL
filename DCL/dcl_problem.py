@@ -13,12 +13,6 @@ from dataclasses import dataclass
 syria_xlsx_path = Path("../../OptiCL/notebooks/WFP/processed-data/Syria_instance.xlsx")
 wfp_csv_path = Path("../../OptiCL/notebooks/WFP/processed-data/WFP_dataset.csv")
 
-SEED = 33
-
-#def _set_seeds(seed: int = SEED) -> None:
-#    random.seed(seed)
-#    np.random.seed(seed)
-
 @dataclass
 class SyriaInstance:
     nutr_val: pd.DataFrame   #index=Food, columns=nutrients
@@ -81,28 +75,25 @@ def setup_problem_wfp(
         
         F = len(foods)
         
-       
-        #x = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="input_vars") #change notation to x = [z;y]
-        x = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="input_vars")
-        output_var = model.addMVar(shape=1, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="output_vars")
+        #change notation to x = [z;output_var], output_var = g(z)
+        input_vars = model.addMVar(shape=F, lb=0.0, vtype=GRB.CONTINUOUS, name="input_vars") #z
+        output_var = model.addMVar(shape=1, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="output_vars") 
         #add output_vars (palatability), add palatability lower_bound=palatability_req
         
-        #new?
-        model._input_vars = x
-        model._output_var = output_var
+        z = input_vars
 
         #pal = model.addMVar(shape=1, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS, name="pal")
         #model.addConstr(pal[0] >= float(pal_req), name="pal_lb")
         model.addConstr(output_var[0] >= float(pal_req), name="pal_lb")
 
-        model.addConstr(A.T @ x >= req, name="nutr_req")
+        model.addConstr(A.T @ z >= req, name="nutr_req")
         
         sugar_i = foods.index("Sugar")
         salt_i = foods.index("Salt")
-        model.addConstr(x[sugar_i] == 0.2, name="fix_sugar")
-        model.addConstr(x[salt_i]  == 0.05, name="fix_salt")
+        model.addConstr(z[sugar_i] == 0.2, name="fix_sugar")
+        model.addConstr(z[salt_i]  == 0.05, name="fix_salt")
     
-        model.setObjective(cost @ x, GRB.MINIMIZE)
+        model.setObjective(cost @ z, GRB.MINIMIZE)
 
         model.update()
         
@@ -110,11 +101,9 @@ def setup_problem_wfp(
     return model, problem_model_type, X, y
 
 
-def dcl_setup_problem(problem_name, learning_model_type, adjustable_problem_parameters):
+def dcl_setup_problem(problem_name, learning_model_type, adjustable_problem_parameters,seed):
 #read problem data and put into input and output data structures
 #construct the objective / additional constraints of the problem
-
-    #_set_seeds(SEED)
         
     #set problem_model_type
     if(learning_model_type=="cart"): #TODO: Add more MIP-representable types
@@ -123,7 +112,7 @@ def dcl_setup_problem(problem_name, learning_model_type, adjustable_problem_para
         problem_model_type = "pyomo" 
 
     if(problem_name=="wfp"):
-        return setup_problem_wfp(problem_model_type, shuffle_seed=SEED, 
+        return setup_problem_wfp(problem_model_type, shuffle_seed=seed, 
                                  pal_req=adjustable_problem_parameters)
     #elif(problem_name=="rsnbrk"):
     #    return setup_problem_rsnbrk(problem_model_type)
