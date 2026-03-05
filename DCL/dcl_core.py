@@ -109,7 +109,7 @@ class dcl_solver:
             local_model = None
             #poly_local  = None
     
-            while ndata_model <= ndata:
+            while ndata_model <= min(ndata,options.max_ndata):
                 md_tmp, rmse_tmp, lm_tmp, p_tmp = dcl_set_model_degree(
                 self.options.learning_model_type,  #new
                 model_degree,

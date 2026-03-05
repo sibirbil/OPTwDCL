@@ -106,7 +106,7 @@ def dcl_setup_problem(problem_name, learning_model_type, adjustable_problem_para
 #construct the objective / additional constraints of the problem
         
     #set problem_model_type
-    if(learning_model_type=="cart", "nn"): #TODO: Add more MIP-representable types
+    if(learning_model_type=="cart" or learning_model_type=="nn"): #TODO: Add more MIP-representable types
         problem_model_type = "gurobi"
     else:
         problem_model_type = "pyomo" 
