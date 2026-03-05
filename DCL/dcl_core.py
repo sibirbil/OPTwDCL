@@ -23,28 +23,15 @@ class dcl_options:
     trust_region = "convex_hull" #TR_MODE
     learning_model_type = "polynom_regression"   #or "cart" etc.
     train_data_ratio = 0.7
-    init_data_ratio = 0.1 #BURADA KALDIK!!
+    init_data_ratio = 0.1 
     max_iterations = 100
     x_init = None
     delta_min = 1e-6
     rmse_thresh = 0.1
+    rmse_target = 0.001
     max_model_degree = 4
     seed = 0
-    max_ndata = 1000000
-    
-    #new
-    # NN-specific
-    nn_architectures = [
-        (8,),
-        (16,),
-        (16, 16),
-        (32, 16),
-    ]
-    nn_solver = "lbfgs"
-    nn_alpha = 1e-4
-    nn_max_iter = 3000
-    nn_tol = 1e-6
-    
+    max_ndata = 1000000    
     #subproblem_solver??
 
     #def check_options(self): 
@@ -89,19 +76,19 @@ class dcl_solver:
         if self.x_init is None:
             self.x_init = dcl_init(Xnp)   # returns length n
         xit = np.asarray(self.x_init, dtype=float)
-        print("x_init",xit)
-
+        
         #xit =self.x_init
         dists = np.linalg.norm(xit - X, axis=1)
         sorted_indices = np.argsort(dists).tolist()
         
         ndata = len(y)
         learning_size  = 2 * len(self.x_init)
-        #FGN: TODO: Burada options.init_data_ratio kullanalım    
+        #TODO: Rosenbrock sonuçlarını aşağıdaki initialization ile almıştık, karşılık gelen init_data_ratio hesaplayalım
         #ndata_model_0  = np.minimum(options.max_ndata, np.minimum(5 * learning_size, ndata))
         #new
         ndata = len(y)
-        min_local_size = max(2 * n, 4)
+        min_local_size = max(2 * n, 4) 
+        #TODO: check_options rutitnini yazdığımızda init_data_ratio için alt sınır verelim bunun yerine
         ndata_model_0 = max(min_local_size, math.ceil(options.init_data_ratio * ndata))
         ndata_model_0 = min(options.max_ndata, ndata_model_0, ndata)
 
@@ -189,11 +176,8 @@ class dcl_solver:
             sorted_indices = np.argsort(dists).tolist()
             
 
-#Initialize
-#def dcl_init(X, size):
-    #choose initial_point based on X
-    #TODO: Add a procedure for initial point computation
 
+#Choose initial_point based on X
 def dcl_init(X, size=None):
     """
     Initial point = arithmetic average (centroid) of samples in X.
@@ -224,20 +208,6 @@ def dcl_init(X, size=None):
     return x0
 
 #Construct and solve subproblem
-#def dcl_solve_subproblem(problem_model, accepted_model, trust_region):
-    #TODO
-    #add accepted_model.learned_model (scikit learn objesi) to problem_model as a constraint via gurobiml library, 
-    
-    #also add trust_region of desired type to problem_model (eğer convex hull ise önceki kullandığımız doğrusal kısıt)
-    #learned_constraint y = g(z)
-    #input_vars = x  #Mvar for z in the gurobbi model problem_model, getVarByName(name)
-    #output_vars = y  #Mvar for y in the gurobbi model problem_model 
-    #problem_model_local = problem_model
-    #learned_constraint = add_predictor_constr( = problem_model, accepted_model.learned_model, input_vars, output_vars)
-    #return [input_vars.X, output_vars.X]  x = [z;y]
-
-
-
 def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
     m = problem_model.copy()
 
@@ -305,7 +275,7 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
 
 
 def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata_model, Xbar, ybar, options):
-    RMSE_THRESH = options.rmse_thresh
+    RMSE_THRESH = options.rmse_target
 
     is_pandas_X = hasattr(Xbar, "iloc")
     is_pandas_y = hasattr(ybar, "iloc")
@@ -342,6 +312,14 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
     model_degree_prev = None
     loc_model_prev = None
     p_local_prev = None
+    
+    if learning_model_type=="nn":
+        # NN-specific options (we are currently using the settings in OptiCL)
+        nn_architectures = [(10,),(20,),(50,),(100,)] #[ (8,),(16,),(16, 16),(32, 16)]
+        nn_solver = "adam" if ndata_train >= 1000 else "lbfgs"
+        #nn_alpha = 1e-4
+        nn_max_iter = 10000 #3000
+        #nn_tol = 1e-6
 
     while True:
         p_local = None
@@ -363,18 +341,18 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
             ypred_test  = loc_model.predict(X_poly_test)
 
         elif learning_model_type == "nn":
-            arch_idx = min(model_degree - 1, len(options.nn_architectures) - 1)
-            arch = options.nn_architectures[arch_idx]
+            arch_idx = min(model_degree - 1, len(nn_architectures) - 1)
+            arch = nn_architectures[arch_idx]
 
             loc_model = Pipeline([
                 ("scaler", StandardScaler()),
                 ("nn", MLPRegressor(
                     hidden_layer_sizes=arch,
                     activation="relu",
-                    solver=options.nn_solver,
-                    alpha=options.nn_alpha,
-                    max_iter=options.nn_max_iter,
-                    tol=options.nn_tol,
+                    solver=nn_solver,
+                    #alpha=nn_alpha,
+                    max_iter=nn_max_iter,
+                    #tol=nn_tol,
                     random_state=options.seed
                 ))
             ])
@@ -396,15 +374,13 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
               "model_degree : ", model_degree,
               "test_rmse : ",    test_rmse)
 
-        if test_rmse > test_rmse_prev:
-            if model_degree_prev is None:
-                return model_degree, test_rmse, loc_model, p_local
+        if (model_degree_prev != None) and (test_rmse > test_rmse_prev):
             return model_degree_prev, test_rmse_prev, loc_model_prev, p_local_prev
 
         if learning_model_type == "nn":
-            reached_max = model_degree >= min(options.max_model_degree, len(options.nn_architectures))
+            reached_max = (model_degree >= min(options.max_model_degree, len(nn_architectures)))
         else:
-            reached_max = model_degree == options.max_model_degree
+            reached_max = (model_degree == options.max_model_degree)
 
         if test_rmse < RMSE_THRESH or reached_max:
             return model_degree, test_rmse, loc_model, p_local

@@ -18,6 +18,7 @@ def main():
     problem_name = "wfp"
     adjustable_problem_parameters = 0.6 #palatability threshold for the wfp problem
     learning_model_type = "nn"
+    #learning_model_type = "cart"
     problem, problem_model_type, X, y = dclp.dcl_setup_problem(problem_name, learning_model_type, adjustable_problem_parameters, SEED)
     #x_init = SET #TODO
 
@@ -26,7 +27,8 @@ def main():
     options.trust_region = "convex_hull"
     options.learning_model_type = learning_model_type
     options.max_iterations = 10
-    options.max_ndata = 2000 #FGN: Tüm veri setini kullanmak istediğimizde bunu yükseltmemiz gerek
+    #options.max_ndata = 1000 #FGN: Tüm veri setini kullanmak istediğimizde bunu yükseltmemiz gerek
+    options.init_data_ratio = 1.0
     #options.check_options()
     
     #new for reproducibility?
