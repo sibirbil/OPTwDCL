@@ -17,7 +17,7 @@ def main():
     #set problem  
     problem_name = "wfp"
     adjustable_problem_parameters = 0.6 #palatability threshold for the wfp problem
-    learning_model_type = "cart"
+    learning_model_type = "nn"
     problem, problem_model_type, X, y = dclp.dcl_setup_problem(problem_name, learning_model_type, adjustable_problem_parameters, SEED)
     #x_init = SET #TODO
 

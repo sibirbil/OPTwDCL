@@ -12,6 +12,10 @@ from gurobipy import GRB
 
 from gurobi_ml import add_predictor_constr
 
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
 ENABLE_WEIGHTING = 0
 
 #options class
@@ -27,6 +31,19 @@ class dcl_options:
     max_model_degree = 4
     seed = 0
     max_ndata = 1000000
+    
+    #new
+    # NN-specific
+    nn_architectures = [
+        (8,),
+        (16,),
+        (16, 16),
+        (32, 16),
+    ]
+    nn_solver = "lbfgs"
+    nn_alpha = 1e-4
+    nn_max_iter = 3000
+    nn_tol = 1e-6
     
     #subproblem_solver??
 
@@ -80,9 +97,14 @@ class dcl_solver:
         
         ndata = len(y)
         learning_size  = 2 * len(self.x_init)
-        #FGN: TODO: Burada options.init_data_ratio kullanalım
-        ndata_model_0  = np.minimum(options.max_ndata, np.minimum(5 * learning_size, ndata))
-    
+        #FGN: TODO: Burada options.init_data_ratio kullanalım    
+        #ndata_model_0  = np.minimum(options.max_ndata, np.minimum(5 * learning_size, ndata))
+        #new
+        ndata = len(y)
+        min_local_size = max(2 * n, 4)
+        ndata_model_0 = max(min_local_size, math.ceil(options.init_data_ratio * ndata))
+        ndata_model_0 = min(options.max_ndata, ndata_model_0, ndata)
+
         for i in range(self.options.max_iterations):
             model_degree = 1
             ndata_model  = ndata_model_0
@@ -284,26 +306,19 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
 
 def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata_model, Xbar, ybar, options):
     RMSE_THRESH = options.rmse_thresh
-    MAX_MODEL_DEGREE = options.max_model_degree
-    
-    
-    # new some fixing--- make indexing consistent (works for numpy or pandas) ---
+
     is_pandas_X = hasattr(Xbar, "iloc")
     is_pandas_y = hasattr(ybar, "iloc")
-    
+
     model_degree = degree_init
 
     ndata_train = math.floor(options.train_data_ratio * ndata_model)
     ndata_test  = ndata_model - ndata_train
 
     idata_model = sorted_indices[0:ndata_model]
-    
-    idata_train = random.sample(idata_model, k=ndata_train) #new
-    #idata_train = np.random.sample(idata_model, k=ndata_train)
+    idata_train = random.sample(idata_model, k=ndata_train)
     idata_test  = np.setdiff1d(idata_model, idata_train).tolist()
 
-    # new but may be useless?
-    
     if is_pandas_X:
         Xbar_train = Xbar.iloc[idata_train, :]
         Xbar_test  = Xbar.iloc[idata_test, :]
@@ -317,53 +332,19 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
     else:
         ybar_train = ybar[idata_train]
         ybar_test  = ybar[idata_test]
-        
-    #Xbar_train = Xbar.iloc[idata_train, :]  #new ilocs added 
-    #ybar_train = ybar.iloc[idata_train]
-    #Xbar_test  = Xbar.iloc[idata_test, :]
-    #ybar_test  = ybar.iloc[idata_test]
-    
-    # new --- ensure numpy arrays for sklearn ---
+
     Xbar_train = np.asarray(Xbar_train, dtype=float)
     Xbar_test  = np.asarray(Xbar_test, dtype=float)
     ybar_train = np.asarray(ybar_train, dtype=float).ravel()
     ybar_test  = np.asarray(ybar_test, dtype=float).ravel()
-    
-    #isDone = False  
+
     test_rmse_prev = np.inf
-    
-    #new
     model_degree_prev = None
     loc_model_prev = None
     p_local_prev = None
-    
 
-    #while not isDone:
-    #    if(learning_model_type == "cart"):
-    #        tree = DecisionTreeRegressor(max_depth=model_degree, random_state=options.seed) #new options.seed
-    #        loc_model = tree.fit(Xbar_train, ybar_train)
-    #        #ypred_test = ...
-
-    #    elif(learning_model_type == "polynom_regression"):
-    #    	    p_local = PolynomialFeatures(degree=model_degree)
-    #    	    X_poly_local = p_local.fit_transform(Xbar_train)
-    #    	    loc_model = LinearRegression().fit(X_poly_local, ybar_train)
-
-    #    X_poly_test = p_local.fit_transform(Xbar_test)
-    #    ypred_test  = loc_model.predict(X_poly_test)
-       
-        #else:
-
-    #    test_rmse = np.linalg.norm(
-    #        (ypred_test - ybar_test) / np.maximum(np.maximum(np.abs(ypred_test), np.abs(ybar_test)), 1e-12)
-    #    ) / max(ndata_test, 1)
-
-    #new but check?
-    
-    
-    
     while True:
-        p_local = None  # default for non-polynomial models
+        p_local = None
 
         if learning_model_type == "cart":
             loc_model = DecisionTreeRegressor(
@@ -381,10 +362,29 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
             X_poly_test = p_local.transform(Xbar_test)
             ypred_test  = loc_model.predict(X_poly_test)
 
+        elif learning_model_type == "nn":
+            arch_idx = min(model_degree - 1, len(options.nn_architectures) - 1)
+            arch = options.nn_architectures[arch_idx]
+
+            loc_model = Pipeline([
+                ("scaler", StandardScaler()),
+                ("nn", MLPRegressor(
+                    hidden_layer_sizes=arch,
+                    activation="relu",
+                    solver=options.nn_solver,
+                    alpha=options.nn_alpha,
+                    max_iter=options.nn_max_iter,
+                    tol=options.nn_tol,
+                    random_state=options.seed
+                ))
+            ])
+
+            loc_model.fit(Xbar_train, ybar_train)
+            ypred_test = loc_model.predict(Xbar_test)
+
         else:
             raise NotImplementedError(
-                f"Unknown learning_model_type='{learning_model_type}'. "
-                "Use 'polynom_regression' or 'cart'."
+                f"Unknown learning_model_type='{learning_model_type}'."
             )
 
         denom = np.maximum(np.maximum(np.abs(ypred_test), np.abs(ybar_test)), 1e-12)
@@ -401,7 +401,12 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
                 return model_degree, test_rmse, loc_model, p_local
             return model_degree_prev, test_rmse_prev, loc_model_prev, p_local_prev
 
-        if test_rmse < RMSE_THRESH or model_degree == MAX_MODEL_DEGREE:
+        if learning_model_type == "nn":
+            reached_max = model_degree >= min(options.max_model_degree, len(options.nn_architectures))
+        else:
+            reached_max = model_degree == options.max_model_degree
+
+        if test_rmse < RMSE_THRESH or reached_max:
             return model_degree, test_rmse, loc_model, p_local
 
         model_degree_prev = model_degree
@@ -409,7 +414,6 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
         loc_model_prev    = loc_model
         p_local_prev      = p_local
         model_degree     += 1
-
 
 def update_weights(xit, dists):
     lam = 0.0
