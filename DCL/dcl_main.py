@@ -27,18 +27,21 @@ def main():
     options.trust_region = "convex_hull"
     options.learning_model_type = learning_model_type
     options.max_iterations = 10
-    options.max_ndata = 1000 
+    #options.max_ndata = 1000 
     options.max_model_degree = 4
     #options.init_data_ratio = 1.0
     #options.check_options()
     
-    #new for reproducibility?
+    #for reproducibility
     _set_seeds(options,SEED)
     
     #solve!    
     dcls = dcl.dcl_solver(problem, problem_model_type, options, X,y, None)
     dcls.solve()
 
+    print("final x =", dcls.xit)
+    print("final objective =", dcls.final_obj)
+    dcl.dcl_print_iteration_log(dcls)
 
 if __name__ == "__main__":
     main()
