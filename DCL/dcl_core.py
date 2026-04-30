@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# This file contains the basic procedures of dynamic constraint learning
+# This file contains the basic procedures of dynamic constraint learning.
+
+import math
+import random
 
 import numpy as np
-import random
-import math
 
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import PolynomialFeatures
@@ -14,9 +15,15 @@ from sklearn.pipeline import Pipeline
 
 from scipy.optimize import LinearConstraint, NonlinearConstraint, Bounds, minimize
 
-import gurobipy as gp
-from gurobipy import GRB
-from gurobi_ml import add_predictor_constr
+try:
+    import gurobipy as gp
+    from gurobipy import GRB
+    from gurobi_ml import add_predictor_constr
+except ImportError:  # keeps the Rosenbrock/SciPy path usable without Gurobi installed
+    gp = None
+    GRB = None
+    add_predictor_constr = None
+
 
 ENABLE_WEIGHTING = 0
 
@@ -29,6 +36,7 @@ class dcl_options:
     learning_model_type = "cart"          # "cart", "polynom_regression", "nn"
     train_data_ratio = 0.7
     init_data_ratio = 0.1
+    init_ndata_model = None               # if not None, overrides init_data_ratio
     max_iterations = 1
     x_init = None
     delta_min = 1e-6
@@ -37,6 +45,7 @@ class dcl_options:
     max_model_degree = 4
     seed = 0
     max_ndata = 1000000
+    scipy_accept_failed_result = False    # set True for x_new-compatible Rosenbrock runs
 
     # def check_options(self):
     #     TODO
@@ -71,6 +80,7 @@ class dcl_local_model:
 
         # generic solver info
         self.solver_status = None
+        self.solver_success = None
         self.solver_message = None
         self.solver_nit = None
 
@@ -79,7 +89,7 @@ class dcl_local_model:
 # Helper metric
 # =========================
 def dcl_relative_rmse(y_pred, y_true):
-    #Not standart RMSE here
+    # Not standard RMSE here; this matches x_new's normalized test error.
     y_pred = np.asarray(y_pred, dtype=float).ravel()
     y_true = np.asarray(y_true, dtype=float).ravel()
 
@@ -126,7 +136,7 @@ class dcl_solver:
         y = self.y
         options = self.options
 
-        # work with numpy for distances
+        # work with numpy for distances and SciPy/Gurobi trust-region construction
         Xnp = X.to_numpy(dtype=float) if hasattr(X, "to_numpy") else np.asarray(X, dtype=float)
         ynp = y.to_numpy(dtype=float) if hasattr(y, "to_numpy") else np.asarray(y, dtype=float)
 
@@ -139,6 +149,18 @@ class dcl_solver:
 
         xit = np.asarray(self.x_init, dtype=float).copy()
 
+        true_constraint = None
+        if isinstance(self.problem_model, dict):
+            true_constraint = self.problem_model.get("true_constraint", None)
+
+        if callable(true_constraint):
+            print(
+                "iteration 0:",
+                " trial_x: ", xit,
+                "f(x): ", float(self.problem_model["objective"](xit)),
+                "g(x): ", float(true_constraint(xit)),
+            )
+
         # initial neighborhood
         dists = np.linalg.norm(Xnp - xit, axis=1)
         sorted_indices = np.argsort(dists).tolist()
@@ -146,19 +168,24 @@ class dcl_solver:
         ndata = len(ynp)
         learning_size = 2 * n
 
-        min_local_size = max(2 * n, 4)
-        ndata_model_0 = max(min_local_size, math.ceil(options.init_data_ratio * ndata))
-        ndata_model_0 = min(options.max_ndata, ndata_model_0, ndata)
+        if options.init_ndata_model is not None:
+            ndata_model_0 = int(options.init_ndata_model)
+            ndata_model_0 = min(options.max_ndata, ndata_model_0, ndata)
+        else:
+            min_local_size = max(2 * n, 4)
+            ndata_model_0 = max(min_local_size, math.ceil(options.init_data_ratio * ndata))
+            ndata_model_0 = min(options.max_ndata, ndata_model_0, ndata)
 
         for i in range(options.max_iterations):
+            x_start = xit.copy()
             model_degree = 1
             ndata_model = ndata_model_0
 
-            # currently not using weighting
+            # x_new uses lam = 0 in update_weights
             if ENABLE_WEIGHTING:
                 weights = update_weights(xit, dists)
-                ybar = weights * y
-                Xbar = weights.reshape(-1, 1) * X
+                ybar = weights * ynp
+                Xbar = weights.reshape(-1, 1) * Xnp
             else:
                 Xbar = X
                 ybar = y
@@ -177,7 +204,7 @@ class dcl_solver:
                     ndata_model,
                     Xbar,
                     ybar,
-                    self.options
+                    self.options,
                 )
 
                 if test_rmse_tmp < best_test_rmse:
@@ -225,6 +252,7 @@ class dcl_solver:
                     self.options.trust_region,
                     self.X,
                     xit,
+                    accept_failed_result=self.options.scipy_accept_failed_result,
                 )
             else:
                 raise NotImplementedError(
@@ -250,11 +278,27 @@ class dcl_solver:
             accepted_model.num_int = res_loc.get("num_int")
             accepted_model.num_genconstrs = res_loc.get("num_genconstrs")
             accepted_model.solver_status = res_loc.get("status")
+            accepted_model.solver_success = res_loc.get("success")
             accepted_model.solver_message = res_loc.get("message")
             accepted_model.solver_nit = res_loc.get("nit")
 
+            local_pred_start = None
+            local_pred_solution = None
+            true_g_start = None
+            true_g_solution = None
+            try:
+                local_pred_start = dcl_predict_local_model(accepted_model, x_start)
+                local_pred_solution = dcl_predict_local_model(accepted_model, accepted_model.solution_x)
+            except Exception:
+                pass
+
+            if callable(true_constraint):
+                true_g_start = float(true_constraint(x_start))
+                true_g_solution = float(true_constraint(accepted_model.solution_x))
+
             self.iteration_log.append({
                 "iter": i,
+                "start_x": x_start.copy(),
                 "objective": res_loc.get("obj"),
                 "data_size": accepted_model.ndata_model,
                 "degree": accepted_model.model_degree,
@@ -269,35 +313,47 @@ class dcl_solver:
                 "num_int": accepted_model.num_int,
                 "num_genconstrs": accepted_model.num_genconstrs,
                 "solver_status": accepted_model.solver_status,
+                "solver_success": accepted_model.solver_success,
                 "solver_message": accepted_model.solver_message,
                 "solver_nit": accepted_model.solver_nit,
                 "solution_x": accepted_model.solution_x.copy(),
                 "solution_y": accepted_model.solution_y,
+                "local_pred_start": local_pred_start,
+                "local_pred_solution": local_pred_solution,
+                "true_g_start": true_g_start,
+                "true_g_solution": true_g_solution,
             })
 
             # progress
             step = np.linalg.norm(x_trial[:n] - xit)
-            print(f"iter {i}: step = {step:.3e}, obj = {res_loc.get('obj')}")
+            if callable(true_constraint):
+                print(
+                    f"iter {i}: step = {step:.3e}, obj = {res_loc.get('obj')}, "
+                    f"true_g = {true_g_solution}, local_g = {local_pred_solution}"
+                )
+            else:
+                print(f"iter {i}: step = {step:.3e}, obj = {res_loc.get('obj')}")
 
-            # stop if no progress
+            # stop if no progress.  x_new returns code 0 in this case.
             if step < options.delta_min:
                 print("No significant progress; terminating.")
-                self.return_code = -1
-                self.xit = x_trial[:n].copy()
-                self.final_obj = res_loc.get("obj")
+                self.return_code = 0
+                self.xit = xit.copy()
+                self.final_obj = float(self.problem_model["objective"](xit)) if isinstance(self.problem_model, dict) else res_loc.get("obj")
                 return
 
             # accept new iterate
             xit = x_trial[:n].copy()
+            self.xit = xit.copy()
             self.final_obj = res_loc.get("obj")
 
             # recompute neighborhood
             dists = np.linalg.norm(Xnp - xit, axis=1)
             sorted_indices = np.argsort(dists).tolist()
 
-        # max_iterations reached
+        # max_iterations reached.  x_new returns -1 here.
         self.xit = xit.copy()
-        self.return_code = 1
+        self.return_code = -1
         return
 
 
@@ -335,6 +391,12 @@ def dcl_init(X, size=None):
 # Construct and solve Gurobi subproblem
 # =========================
 def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
+    if gp is None or GRB is None or add_predictor_constr is None:
+        raise ImportError(
+            "The Gurobi path requires gurobipy and gurobi_ml. "
+            "Install them or use a SciPy problem such as Rosenbrock."
+        )
+
     m = problem_model.copy()
 
     # X -> numpy
@@ -402,6 +464,7 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
     if m.Status != GRB.OPTIMAL:
         return None, {
             "status": int(m.Status),
+            "success": False,
             "mip_cols": mip_cols,
             "mip_rows": mip_rows,
             "num_bin": num_bin,
@@ -415,6 +478,7 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
 
     return x_trial, {
         "status": int(m.Status),
+        "success": True,
         "obj": float(m.ObjVal),
         "output": y_sol,
         "mip_cols": mip_cols,
@@ -431,7 +495,15 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X):
 # =========================
 # Construct and solve SciPy subproblem
 # =========================
-def dcl_solve_subproblem_scipy(problem_model, accepted_model, trust_region, X, xit):
+def dcl_solve_subproblem_scipy(
+    problem_model,
+    accepted_model,
+    trust_region,
+    X,
+    xit,
+    *,
+    accept_failed_result=False,
+):
     if hasattr(X, "to_numpy"):
         Xnp = X.to_numpy(dtype=float)
     else:
@@ -443,7 +515,7 @@ def dcl_solve_subproblem_scipy(problem_model, accepted_model, trust_region, X, x
     k = len(idx)
 
     if k == 0:
-        return None, {"status": -1, "message": "empty local subset"}
+        return None, {"status": -1, "success": False, "message": "empty local subset"}
 
     if trust_region != "convex_hull":
         raise NotImplementedError(
@@ -474,7 +546,7 @@ def dcl_solve_subproblem_scipy(problem_model, accepted_model, trust_region, X, x
     lb_vec = np.concatenate([lb_x, np.zeros(k)])
     ub_vec = np.concatenate([ub_x, np.ones(k)])
 
-    # current x + zero lambdas, as in previous code
+    # current x + zero lambdas, as in x_new
     p_init = np.concatenate([np.asarray(xit, dtype=float), np.zeros(k)])
 
     res = minimize(
@@ -486,9 +558,17 @@ def dcl_solve_subproblem_scipy(problem_model, accepted_model, trust_region, X, x
         options={"disp": False},
     )
 
-    if (not hasattr(res, "x")) or (res.x is None) or (not bool(getattr(res, "success", False))):
+    has_usable_x = (
+        hasattr(res, "x")
+        and res.x is not None
+        and np.all(np.isfinite(np.asarray(res.x[:n], dtype=float)))
+    )
+
+    success = bool(getattr(res, "success", False))
+    if (not has_usable_x) or ((not success) and (not accept_failed_result)):
         return None, {
             "status": int(getattr(res, "status", -1)),
+            "success": success,
             "message": str(getattr(res, "message", "SciPy subproblem failed")),
             "nit": int(getattr(res, "nit", -1)),
         }
@@ -499,6 +579,7 @@ def dcl_solve_subproblem_scipy(problem_model, accepted_model, trust_region, X, x
 
     return x_trial, {
         "status": int(getattr(res, "status", 0)),
+        "success": success,
         "message": str(getattr(res, "message", "")),
         "nit": int(getattr(res, "nit", -1)),
         "obj": float(getattr(res, "fun", np.nan)),
@@ -561,7 +642,7 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
         if learning_model_type == "cart":
             loc_model = DecisionTreeRegressor(
                 max_depth=model_degree,
-                random_state=options.seed
+                random_state=options.seed,
             ).fit(Xbar_train, ybar_train)
 
             ypred_train = loc_model.predict(Xbar_train)
@@ -587,8 +668,8 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
                     activation="relu",
                     solver=nn_solver,
                     max_iter=nn_max_iter,
-                    random_state=options.seed
-                ))
+                    random_state=options.seed,
+                )),
             ])
 
             loc_model.fit(Xbar_train, ybar_train)
@@ -603,16 +684,18 @@ def dcl_set_model_degree(learning_model_type, degree_init, sorted_indices, ndata
         train_rmse = dcl_relative_rmse(ypred_train, ybar_train)
         test_rmse = dcl_relative_rmse(ypred_test, ybar_test)
 
-        train_mse = np.mean((ypred_train - ybar_train)**2)
-        test_mse = np.mean((ypred_test - ybar_test)**2)
+        train_mse = np.mean((ypred_train - ybar_train) ** 2)
+        test_mse = np.mean((ypred_test - ybar_test) ** 2)
         print("train_mse :", train_mse, "test_mse :", test_mse)
 
-        print("ndata_model : ", ndata_model,
-              "ndata_test : ", ndata_test,
-              "ndata_train : ", ndata_train,
-              "model_degree : ", model_degree,
-              "test_rmse : ", test_rmse,
-              "train_rmse : ", train_rmse)
+        print(
+            "ndata_model : ", ndata_model,
+            "ndata_test : ", ndata_test,
+            "ndata_train : ", ndata_train,
+            "model_degree : ", model_degree,
+            "test_rmse : ", test_rmse,
+            "train_rmse : ", train_rmse,
+        )
 
         if (model_degree_prev is not None) and (test_rmse > test_rmse_prev):
             return model_degree_prev, test_rmse_prev, train_rmse_prev, loc_model_prev, p_local_prev
@@ -647,15 +730,27 @@ def update_weights(xit, dists):
 def dcl_print_iteration_log(solver):
     print("\n===== DCL ITERATION LOG =====")
     for row in solver.iteration_log:
-        print(f"iter={row['iter']}, "
-              f"obj={row['objective']}, "
-              f"data_size={row['data_size']}, "
-              f"degree={row['degree']}, "
-              f"test_rmse={row['test_rmse']}, "
-              f"train_rmse={row['train_rmse']}, "
-              f"status={row['solver_status']}")
+        print(
+            f"iter={row['iter']}, "
+            f"obj={row['objective']}, "
+            f"data_size={row['data_size']}, "
+            f"degree={row['degree']}, "
+            f"test_rmse={row['test_rmse']}, "
+            f"train_rmse={row['train_rmse']}, "
+            f"status={row['solver_status']}, "
+            f"success={row.get('solver_success')}"
+        )
+        print("start_x =", row.get("start_x"))
         print("solution_x =", row["solution_x"])
         print("solution_y =", row["solution_y"])
+        if row.get("true_g_start") is not None:
+            print("true_g_start =", row["true_g_start"])
+        if row.get("local_pred_start") is not None:
+            print("local_pred_start =", row["local_pred_start"])
+        if row.get("true_g_solution") is not None:
+            print("true_g_solution =", row["true_g_solution"])
+        if row.get("local_pred_solution") is not None:
+            print("local_pred_solution =", row["local_pred_solution"])
         if row.get("solver_message") is not None:
             print("solver_message =", row["solver_message"])
         print("-" * 60)
@@ -666,3 +761,5 @@ def dcl_print_iteration_log(solver):
 # =========================
 def dcl_get_result_rows(solver):
     return solver.iteration_log
+    
+    

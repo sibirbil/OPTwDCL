@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np
-import pandas as pd
-import gurobipy as gp
-from gurobipy import GRB
-
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Tuple
-from dataclasses import dataclass
 
-# This file contains procedures for setting up problems to be solved by dcl
+import numpy as np
+import pandas as pd
+
+try:
+    import gurobipy as gp
+    from gurobipy import GRB
+except ImportError:  # keeps the Rosenbrock/SciPy path usable without Gurobi installed
+    gp = None
+    GRB = None
+
+
+# This file contains procedures for setting up problems to be solved by dcl.
 
 syria_xlsx_path = Path("../../OptiCL/notebooks/WFP/processed-data/Syria_instance.xlsx")
 wfp_csv_path = Path("../../OptiCL/notebooks/WFP/processed-data/WFP_dataset.csv")
@@ -67,6 +73,11 @@ def setup_problem_wfp(
     shuffle_seed: int = 0,
     pal_req: float = 0.0,
 ):
+    if gp is None or GRB is None:
+        raise ImportError(
+            "WFP requires gurobipy. Install Gurobi/gurobipy, or choose problem_name='rosenbrock'."
+        )
+
     instance = load_syria_instance(syria_xlsx_path)
     X, y = load_wfp_dataset(wfp_csv_path, shuffle_seed=shuffle_seed)
 
@@ -131,17 +142,25 @@ def rosenbrock_constraint_value(x):
 
 
 def generate_rosenbrock_dataset(seed=102, nsamples=100, noise_std=0.0):
-    rng = np.random.default_rng(seed)
+    """
+    Generate the same Rosenbrock data as x_new.
 
-    X = 2.0 * rng.standard_normal((nsamples, 3))
+    Important detail: x_new uses the legacy NumPy RandomState sequence
+    (np.random.seed(seed); np.random.randn(...)), not default_rng.
+    With seed=102 this creates the same convex hull used in x_new.
+    """
+    rng = np.random.RandomState(seed)
+
+    X = 2.0 * rng.randn(nsamples, 3)
 
     for i in range(nsamples):
         x1 = X[i, 1]
         x2 = X[i, 2]
         valley = 100.0 * (x2 - x1 * x1) ** 2 + (1.0 - x1) ** 2
-        X[i, 0] = rng.standard_normal() + valley
+        X[i, 0] = rng.randn(1)[0] + valley
 
-    noise = noise_std * rng.standard_normal(nsamples)
+    # This consumes the same type of random draw as x_new when noise_std=0.
+    noise = noise_std * rng.randn(nsamples)
     y = np.array([rosenbrock_constraint_value(X[i, :]) for i in range(nsamples)], dtype=float) + noise
 
     Xdf = pd.DataFrame(X, columns=["x0", "x1", "x2"])
@@ -170,7 +189,8 @@ def setup_problem_rosenbrock(seed=102, nsamples=100, noise_std=0.0):
         "solver": "scipy",
         "objective": lambda x: float(x[0]),
         "bounds_lb": np.array([-np.inf, -5.0, -5.0], dtype=float),
-        "bounds_ub": np.array([ np.inf,  5.0,  5.0], dtype=float),
+        "bounds_ub": np.array([np.inf, 5.0, 5.0], dtype=float),
+        "true_constraint": rosenbrock_constraint_value,
     }
 
     return problem, "scipy", X, y
