@@ -1213,19 +1213,19 @@ def main():
 
     elif problem_name == "rosenbrock":
         # Old local Rosenbrock options, with standard RMSE and slack retained.
-        options.max_iterations = 50
+        options.max_iterations = 1
         options.max_model_degree = 4
-
         # Old x_new local data schedule:
         # len(x_init)=3 -> learning_size=2*n=6 -> initial local size = 5*6 = 30.
         # dcl_core then tries 30, 42, 54, 66, ... because it adds 2*learning_size = 12.
-        options.init_ndata_model = 5 * (2 * len(x_init))
+        #options.init_ndata_model = 5 * (2 * len(x_init))
+        options.init_ndata_model = 100
         options.max_ndata = 100000
 
         options.train_data_ratio = 0.70
 
         # Old values, now interpreted using STANDARD RMSE.
-        options.rmse_thresh = 1.25
+        options.rmse_thresh = 1.0
         options.rmse_target = 0.1
         options.delta_min = 1e-6
         options.scipy_accept_failed_result = ACCEPT_FAILED_SCIPY_RESULTS

@@ -128,10 +128,12 @@ def dcl_relative_rmse(y_pred, y_true):
     y_pred = np.asarray(y_pred, dtype=float).ravel()
     y_true = np.asarray(y_true, dtype=float).ravel()
 
-    denom = np.maximum(np.maximum(np.abs(y_pred), np.abs(y_true)), 1e-12)
+    denom = np.maximum(np.maximum(np.abs(y_pred), np.abs(y_true)), 1.0)
     rel_err = (y_pred - y_true) / denom
+    
+    rel_mse = float(np.mean(rel_err ** 2))
 
-    return float(np.sqrt(np.mean(rel_err ** 2)))
+    return float(np.sqrt(rel_mse))
 
 
 # =========================================================
@@ -296,7 +298,7 @@ class dcl_solver:
             best_train_rmse = None
             best_test_mse = None
             best_train_mse = None
-            best_test_rel_rmse = None
+            best_test_rel_rmse = np.inf
             best_train_rel_rmse = None
             best_ndata_model = 0
             local_model = None
@@ -324,7 +326,7 @@ class dcl_solver:
                     self.options,
                 )
 
-                if test_rmse_tmp < best_test_rmse:
+                if test_rel_rmse_tmp < best_test_rel_rmse:
                     best_test_rmse = test_rmse_tmp
                     best_train_rmse = train_rmse_tmp
                     best_train_mse = train_mse_tmp
@@ -338,7 +340,7 @@ class dcl_solver:
                 else:
                     break
 
-                if best_test_rmse <= self.options.rmse_target:
+                if best_test_rel_rmse <= self.options.rmse_target:
                     break
 
                 ndata_model += 2 * learning_size
@@ -365,9 +367,10 @@ class dcl_solver:
             accepted_model.ndata_model = best_ndata_model
 
             self.local_models.append(accepted_model)
+            print("Accepted model with degree ",model_degree," trained with ",best_ndata_model,"data points.")
 
-            if best_test_rmse > self.options.rmse_thresh:
-                print("Stopping: local model not accurate enough (rmse =", best_test_rmse, ")")
+            if best_test_rel_rmse > self.options.rmse_thresh:
+                print("Stopping: local model not accurate enough (rmse =", best_test_rel_rmse, ")")
                 self.return_code = -2
                 self.xit = xit.copy()
                 return
@@ -1377,7 +1380,7 @@ def dcl_set_model_degree(
             test_rel_rmse,
         )
 
-        if best is None or test_rmse < best[1]:
+        if best is None:
             best = candidate
 
     return best
