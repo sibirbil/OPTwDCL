@@ -445,7 +445,7 @@ def solve_new_global_rosenbrock(
             f"{row['train_rel_rmse']:.6e} | {row['test_rel_rmse']:.6e}"
         )
 
-        if best is None or row["test_rmse"] < best["test_rmse"]:
+        if best is None or row["test_rel_rmse"] < best["test_rel_rmse"]:
             best = row
 
     model, poly = _fit_unscaled_polynomial_model(Xnp, ynp, best["degree"])
@@ -1213,13 +1213,13 @@ def main():
 
     elif problem_name == "rosenbrock":
         # Old local Rosenbrock options, with standard RMSE and slack retained.
-        options.max_iterations = 1
-        options.max_model_degree = 4
+        options.max_iterations = 10
+        options.max_model_degree = 10
         # Old x_new local data schedule:
         # len(x_init)=3 -> learning_size=2*n=6 -> initial local size = 5*6 = 30.
         # dcl_core then tries 30, 42, 54, 66, ... because it adds 2*learning_size = 12.
-        #options.init_ndata_model = 5 * (2 * len(x_init))
-        options.init_ndata_model = 100
+        options.init_ndata_model = 5 * (2 * len(x_init))
+        #options.init_ndata_model = 100
         options.max_ndata = 100000
 
         options.train_data_ratio = 0.70

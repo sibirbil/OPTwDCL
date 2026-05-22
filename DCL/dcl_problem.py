@@ -433,10 +433,12 @@ def generate_rosenbrock_dataset(seed=102, nsamples=100, noise_std=0.0):
         x1 = X[i, 1]
         x2 = X[i, 2]
         valley = 100.0 * (x2 - x1 * x1) ** 2 + (1.0 - x1) ** 2
-        X[i, 0] = rng.randn(1)[0] + valley
-
+        #X[i, 0] = rng.randn(1)[0] + valley
+        X[i, 0] = rng.randn(1)[0] * valley + rng.randn(1)[0]
+    
+    noise_std=1.0
     noise = noise_std * rng.randn(nsamples)
-
+    
     y = np.array(
         [rosenbrock_constraint_value(X[i, :]) for i in range(nsamples)],
         dtype=float,

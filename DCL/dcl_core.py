@@ -1380,7 +1380,7 @@ def dcl_set_model_degree(
             test_rel_rmse,
         )
 
-        if best is None:
+        if best is None or candidate[8]<best[8]: #candidate test error< best test error
             best = candidate
 
     return best
