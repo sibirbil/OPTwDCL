@@ -32,7 +32,7 @@ CONCRETE_DATA_PATH = None          # Example: "Concrete_Data.xlsx"
 CONCRETE_STRENGTH_REQ = 45.0
 CONCRETE_WEIGHT_LB = 2230.0
 CONCRETE_WEIGHT_UB = 2450.0
-CONCRETE_DCL_ITERATIONS = 50
+CONCRETE_DCL_ITERATIONS = 10
 RUN_CONCRETE_GLOBAL_BASELINE = True
 
 # Rosenbrock global controls. Used only when problem_name = "rosenbrock".
@@ -837,7 +837,7 @@ def solve_global_concrete_full_hull(problem, X, y, options, strength_req):
     if any(v is None for v in x_vars) or y_var is None:
         raise RuntimeError("Could not find input_vars/output_vars in the Gurobi model.")
 
-    dcl._add_predictor_constr_safely(
+    pred_constr = dcl._add_predictor_constr_safely(
         model,
         best_rf,
         input_vars=np.array(x_vars, dtype=object).reshape(1, -1),
@@ -924,8 +924,33 @@ def solve_global_concrete_full_hull(problem, X, y, options, strength_req):
 
     embedded_strength = float(y_var.X)
     sklearn_strength = float(best_rf.predict(x_sol.reshape(1, -1))[0])
+
+    sklearn_output_diag, manual_predictor_error, gurobi_ml_predictor_error = dcl._compute_predictor_diagnostics(
+        pred_constr,
+        best_rf,
+        x_sol,
+        embedded_strength,
+    )
+
+    predictor_error = manual_predictor_error
+    if np.isfinite(gurobi_ml_predictor_error):
+        predictor_error = max(predictor_error, gurobi_ml_predictor_error)
+
+    predictor_error_tol = float(getattr(options, "predictor_error_tol", 1e-4))
+    embedding_valid = bool(predictor_error <= predictor_error_tol)
+
     cost = float(dclp.concrete_material_cost(x_sol))
     weight = float(dclp.concrete_component_weight(x_sol))
+
+    feasible_by_embedded_strength = bool(embedded_strength >= float(strength_req) - 1e-6)
+    feasible_by_sklearn_strength = bool(sklearn_strength >= float(strength_req) - predictor_error_tol)
+    feasible_by_weight = bool(CONCRETE_WEIGHT_LB - 1e-6 <= weight <= CONCRETE_WEIGHT_UB + 1e-6)
+
+    valid_point_estimation_solution = bool(
+        embedding_valid
+        and feasible_by_sklearn_strength
+        and feasible_by_weight
+    )
 
     diagnostics.update({
         "objective": _get_model_attr(model, "ObjVal"),
@@ -936,18 +961,28 @@ def solve_global_concrete_full_hull(problem, X, y, options, strength_req):
         "component_weight": weight,
         "embedded_strength": embedded_strength,
         "sklearn_strength": sklearn_strength,
+        "sklearn_output_diag": sklearn_output_diag,
         "embedded_strength_margin": embedded_strength - float(strength_req),
         "sklearn_strength_margin": sklearn_strength - float(strength_req),
         "strength_mismatch_embedded_minus_sklearn": embedded_strength - sklearn_strength,
+        "manual_predictor_error": manual_predictor_error,
+        "gurobi_ml_predictor_error": gurobi_ml_predictor_error,
+        "predictor_error": predictor_error,
+        "predictor_error_tol": predictor_error_tol,
+        "embedding_valid": embedding_valid,
+        "valid_point_estimation_solution": valid_point_estimation_solution,
         "lambda_sum": float(np.sum(lam_sol)),
         "lambda_sum_violation": float(abs(np.sum(lam_sol) - 1.0)),
         "lambda_min": float(np.min(lam_sol)),
         "lambda_max": float(np.max(lam_sol)),
         "hull_eq_violation_inf": float(np.linalg.norm(x_sol - x_from_hull, ord=np.inf)),
-        "feasible_by_embedded_strength": bool(embedded_strength >= float(strength_req) - 1e-6),
-        "feasible_by_sklearn_strength": bool(sklearn_strength >= float(strength_req) - 1e-6),
-        "feasible_by_weight": bool(CONCRETE_WEIGHT_LB - 1e-6 <= weight <= CONCRETE_WEIGHT_UB + 1e-6),
+        "feasible_by_embedded_strength": feasible_by_embedded_strength,
+        "feasible_by_sklearn_strength": feasible_by_sklearn_strength,
+        "feasible_by_weight": feasible_by_weight,
     })
+
+    diagnostics["optimizer_success"] = diagnostics["success"]
+    diagnostics["success"] = bool(diagnostics["success"] and valid_point_estimation_solution)
 
     print("\n" + "=" * 70)
     print("GLOBAL CONCRETE RF FULL-HULL BASELINE")
@@ -975,7 +1010,19 @@ def solve_global_concrete_full_hull(problem, X, y, options, strength_req):
     print("embedded strength margin =", diagnostics["embedded_strength_margin"])
     print("sklearn strength margin =", diagnostics["sklearn_strength_margin"])
     print("strength mismatch embedded - sklearn =", diagnostics["strength_mismatch_embedded_minus_sklearn"])
+    print("manual predictor error =", diagnostics["manual_predictor_error"])
+    print("gurobi_ml predictor error =", diagnostics["gurobi_ml_predictor_error"])
+    print("predictor error used =", diagnostics["predictor_error"])
+    print("predictor error tolerance =", diagnostics["predictor_error_tol"])
+    print("embedding valid =", diagnostics["embedding_valid"])
+    print("valid point-estimation solution =", diagnostics["valid_point_estimation_solution"])
     print("hull_eq_violation_inf =", diagnostics["hull_eq_violation_inf"])
+    print("manual predictor error =", diagnostics["manual_predictor_error"])
+    print("gurobi_ml predictor error =", diagnostics["gurobi_ml_predictor_error"])
+    print("predictor error used =", diagnostics["predictor_error"])
+    print("predictor error tolerance =", diagnostics["predictor_error_tol"])
+    print("embedding valid =", diagnostics["embedding_valid"])
+    print("valid point-estimation solution =", diagnostics["valid_point_estimation_solution"])
     print("lambda_sum_violation =", diagnostics["lambda_sum_violation"])
     print("mip_gap =", diagnostics["mip_gap"])
     print("obj_bound =", diagnostics["obj_bound"])
@@ -1159,7 +1206,7 @@ def main():
     )
 
     # Change this one line to run another case.
-    problem_name = "rosenbrock"   # "wfp", "rosenbrock", or "concrete"
+    problem_name = "concrete"   # "wfp", "rosenbrock", or "concrete"
 
     if problem_name == "wfp":
         adjustable_problem_parameters = 0.6
@@ -1254,8 +1301,13 @@ def main():
         options.rmse_thresh = np.inf
         options.rmse_target = 4.5
         options.max_ndata = len(y)
-        options.predictor_check_enabled = False
+
+        options.predictor_check_enabled = True
+
+        # Keep this False for local DCL so the loop can continue.
+        # We will select the best sklearn-feasible row after the run.
         options.reject_predictor_mismatch = False
+
         options.predictor_error_tol = 1e-4
         options.gurobi_feasibility_tol = 1e-9
         options.gurobi_int_feas_tol = 1e-9
@@ -1264,7 +1316,7 @@ def main():
             options.max_model_degree = 8
             options.rf_n_estimators = 100
             options.rf_min_samples_leaf = 1
-            options.tree_epsilon = 1e-5
+            options.tree_epsilon = 1e-4
 
         elif learning_model_type == "nn":
             options.max_model_degree = 4

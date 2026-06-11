@@ -184,6 +184,9 @@ def _predictor_epsilon_kwargs(learned_model, options):
 def _add_predictor_constr_safely(model, learned_model, input_vars, output_vars, options):
     predictor_kwargs = _predictor_epsilon_kwargs(learned_model, options)
 
+    if predictor_kwargs:
+        print("Embedding predictor with gurobi_ml kwargs:", predictor_kwargs)
+
     try:
         return add_predictor_constr(
             model,
@@ -192,13 +195,14 @@ def _add_predictor_constr_safely(model, learned_model, input_vars, output_vars, 
             output_vars=output_vars,
             **predictor_kwargs,
         )
-    except TypeError:
-        return add_predictor_constr(
-            model,
-            learned_model,
-            input_vars=input_vars,
-            output_vars=output_vars,
-        )
+    except TypeError as exc:
+        raise TypeError(
+            f"add_predictor_constr did not accept these predictor arguments: "
+            f"{predictor_kwargs}. Do not silently drop tree epsilon. "
+            "Either use a gurobi_ml function/version that supports epsilon for tree/RF "
+            "models, or set options.tree_epsilon = None intentionally and rely on "
+            "the post-solve sklearn mismatch check."
+        ) from exc
 
 
 def _compute_predictor_diagnostics(pred_constr, learned_model, x_sol, gurobi_output):
@@ -214,7 +218,7 @@ def _compute_predictor_diagnostics(pred_constr, learned_model, x_sol, gurobi_out
     try:
         gurobi_ml_error = float(
             np.max(
-                np.asarray(pred_constr.get_error(), dtype=float)
+                np.abs(np.asarray(pred_constr.get_error(), dtype=float))
             )
         )
     except Exception:
@@ -550,16 +554,13 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
 
     m = problem_model.copy()
 
-    # X -> numpy
     if hasattr(X, "to_numpy"):
         Xnp = X.to_numpy(dtype=float)
     else:
         Xnp = np.asarray(X, dtype=float)
 
-    # number of input vars
     n = int(Xnp.shape[1])
 
-    # get copied vars by names
     input_vars = [m.getVarByName(f"input_vars[{i}]") for i in range(n)]
 
     if any(v is None for v in input_vars):
@@ -573,15 +574,16 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
     inp = np.array(input_vars, dtype=object).reshape(1, -1)
     out = np.array([out0], dtype=object).reshape(1, 1)
 
-    # Old behavior: direct gurobi_ml embedding.
-    add_predictor_constr(
+    _maybe_set_gurobi_tolerances(m, options)
+
+    pred_constr = _add_predictor_constr_safely(
         m,
         accepted_model.learned_model,
         input_vars=inp,
         output_vars=out,
+        options=options,
     )
 
-    # trust region
     if trust_region == "convex_hull":
         idx = list(accepted_model.data_indices) if accepted_model.data_indices is not None else []
         k = len(idx)
@@ -616,7 +618,6 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
     else:
         raise NotImplementedError(f"Unknown trust_region='{trust_region}'.")
 
-    # finalize model so size attributes are correct
     m.update()
 
     mip_cols = int(m.NumVars)
@@ -644,7 +645,21 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
     y_sol = float(out0.X)
     x_trial = np.concatenate([z_sol, np.array([y_sol])])
 
-    return x_trial, {
+    sklearn_output, manual_error, gurobi_ml_error = _compute_predictor_diagnostics(
+        pred_constr,
+        accepted_model.learned_model,
+        z_sol,
+        y_sol,
+    )
+
+    predictor_error = manual_error
+    if np.isfinite(gurobi_ml_error):
+        predictor_error = max(predictor_error, gurobi_ml_error)
+
+    predictor_error_tol = float(getattr(options, "predictor_error_tol", 1e-4))
+    embedding_valid = bool(predictor_error <= predictor_error_tol)
+
+    result = {
         "status": int(m.Status),
         "success": True,
         "message": "OPTIMAL",
@@ -652,10 +667,12 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
         "original_objective": float(m.ObjVal),
         "relaxed_objective": float(m.ObjVal),
         "output": y_sol,
-        "sklearn_output": None,
-        "manual_predictor_error": None,
-        "gurobi_ml_predictor_error": None,
-        "predictor_error": None,
+        "sklearn_output": sklearn_output,
+        "manual_predictor_error": manual_error,
+        "gurobi_ml_predictor_error": gurobi_ml_error,
+        "predictor_error": predictor_error,
+        "predictor_error_tol": predictor_error_tol,
+        "embedding_valid": embedding_valid,
         "slack": 0.0,
         "relaxed_constraint_residual": y_sol,
         "mip_cols": mip_cols,
@@ -668,6 +685,18 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
         "mip_runtime": float(m.Runtime),
     }
 
+    if (
+        bool(getattr(options, "reject_predictor_mismatch", False))
+        and not embedding_valid
+    ):
+        result["success"] = False
+        result["message"] = (
+            f"Rejected: predictor mismatch {predictor_error:.6g} "
+            f"exceeds tolerance {predictor_error_tol:.6g}"
+        )
+        return None, result
+
+    return x_trial, result
 
 # =========================================================
 # Gurobi subproblem
