@@ -24,6 +24,8 @@ import dcl_core as dcl
 import dcl_problem as dclp
 
 
+
+
 SEED = 102
 ACCEPT_FAILED_SCIPY_RESULTS = True
 
@@ -32,7 +34,7 @@ CONCRETE_DATA_PATH = None          # Example: "Concrete_Data.xlsx"
 CONCRETE_STRENGTH_REQ = 45.0
 CONCRETE_WEIGHT_LB = 2230.0
 CONCRETE_WEIGHT_UB = 2450.0
-CONCRETE_DCL_ITERATIONS = 10
+CONCRETE_DCL_ITERATIONS = 30
 RUN_CONCRETE_GLOBAL_BASELINE = True
 
 # Rosenbrock global controls. Used only when problem_name = "rosenbrock".
@@ -822,7 +824,7 @@ def solve_global_concrete_full_hull(problem, X, y, options, strength_req):
             f"{stats['train_rel_rmse']:.6e} | {stats['test_rel_rmse']:.6e}"
         )
 
-        if best is None or stats["test_rmse"] < best["test_rmse"]:
+        if best is None or stats["test_rel_rmse"] < best["test_rel_rmse"]:
             best = stats
             best_rf = rf
 
@@ -1163,7 +1165,7 @@ def print_concrete_global_local_comparison(global_diag, dcls, strength_req=45.0)
     print("CONCRETE GLOBAL vs LOCAL DIAGNOSTIC COMPARISON")
     print("=" * 126)
     print(
-        "Method | Iter | Deg | Train RMSE | Test RMSE | Cost | Embedded Strength | Sklearn Strength | "
+        "Method | Iter | Deg | Train RMSE | Test RMSE - Train_rel_rmse - Test_rel_rmse | Cost | Embedded Strength | Sklearn Strength | "
         "Embedded Margin | Sklearn Margin | Weight | Feas Embed | Feas Sklearn | Feas Weight"
     )
     print("-" * 126)
@@ -1175,6 +1177,8 @@ def print_concrete_global_local_comparison(global_diag, dcls, strength_req=45.0)
             f"{r['degree']} | "
             f"{_fmt(r.get('train_rmse'))} | "
             f"{_fmt(r.get('test_rmse'))} | "
+            f"{_fmt(r.get('train_rel_rmse'))} | "
+            f"{_fmt(r.get('test_rel_rmse'))} | "
             f"{_fmt(r.get('cost'))} | "
             f"{_fmt(r.get('embedded_strength'))} | "
             f"{_fmt(r.get('sklearn_strength'))} | "
@@ -1296,11 +1300,11 @@ def main():
     elif problem_name == "concrete":
         options.max_iterations = CONCRETE_DCL_ITERATIONS
         options.delta_min = 0.0
-        options.init_ndata_model = 500
+        options.init_ndata_model = 50
         options.train_data_ratio = 0.70
         options.rmse_thresh = np.inf
-        options.rmse_target = 4.5
-        options.max_ndata = len(y)
+        options.rmse_target = 0.01 #rel for now
+ #       options.max_ndata = len(y)
 
         options.predictor_check_enabled = True
 
@@ -1313,7 +1317,7 @@ def main():
         options.gurobi_int_feas_tol = 1e-9
 
         if learning_model_type == "rf":
-            options.max_model_degree = 8
+            options.max_model_degree = 20
             options.rf_n_estimators = 100
             options.rf_min_samples_leaf = 1
             options.tree_epsilon = 1e-4
@@ -1454,5 +1458,55 @@ def main():
         )
 
 
+#if __name__ == "__main__":
+#    main()
+
 if __name__ == "__main__":
-    main()
+    # Automatically save everything printed by this program to a timestamped file.
+    # The output is also still shown in the terminal.
+    from datetime import datetime
+    from pathlib import Path
+    import sys
+    import traceback
+
+    class Tee:
+        def __init__(self, *files):
+            self.files = files
+
+        def write(self, data):
+            for file in self.files:
+                file.write(data)
+                file.flush()
+
+        def flush(self):
+            for file in self.files:
+                file.flush()
+
+    output_dir = Path("outputs")
+    output_dir.mkdir(exist_ok=True)
+
+    output_file = output_dir / f"dcl_output_{datetime.now():%Y%m%d_%H%M%S}.txt"
+
+    original_stdout = sys.stdout
+    original_stderr = sys.stderr
+    failed = False
+
+    with output_file.open("w", encoding="utf-8") as file:
+        sys.stdout = Tee(original_stdout, file)
+        sys.stderr = Tee(original_stderr, file)
+
+        try:
+            main()
+        except Exception:
+            traceback.print_exc()
+            failed = True
+        finally:
+            sys.stdout = original_stdout
+            sys.stderr = original_stderr
+
+    print(f"Output saved to: {output_file.resolve()}")
+
+    if failed:
+        sys.exit(1)
+    
+    
