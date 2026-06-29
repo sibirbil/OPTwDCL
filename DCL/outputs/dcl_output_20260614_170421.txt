@@ -1,0 +1,536 @@
+
+======================================================================
+GLOBAL CONCRETE RF DEGREE SELECTION  (degree = max_depth)
+depth | train_mse | test_mse | train_rmse | test_rmse | train_rel_rmse | test_rel_rmse
+----------------------------------------------------------------------
+    1 | 1.817314e+02 | 1.732760e+02 | 1.348078e+01 | 1.316344e+01 | 3.198603e-01 | 3.239325e-01
+    2 | 1.115693e+02 | 1.114188e+02 | 1.056264e+01 | 1.055551e+01 | 2.707711e-01 | 2.748781e-01
+    3 | 7.517811e+01 | 7.964633e+01 | 8.670531e+00 | 8.924479e+00 | 2.308959e-01 | 2.396545e-01
+    4 | 4.800672e+01 | 5.620928e+01 | 6.928688e+00 | 7.497285e+00 | 1.951534e-01 | 2.107392e-01
+    5 | 3.094657e+01 | 4.224751e+01 | 5.562964e+00 | 6.499809e+00 | 1.638495e-01 | 1.886018e-01
+    6 | 2.087135e+01 | 3.530546e+01 | 4.568517e+00 | 5.941840e+00 | 1.396040e-01 | 1.748083e-01
+    7 | 1.427196e+01 | 3.035096e+01 | 3.777825e+00 | 5.509170e+00 | 1.193105e-01 | 1.644653e-01
+    8 | 9.988120e+00 | 2.785274e+01 | 3.160399e+00 | 5.277570e+00 | 1.020564e-01 | 1.574644e-01
+    9 | 7.613059e+00 | 2.639673e+01 | 2.759177e+00 | 5.137775e+00 | 8.928825e-02 | 1.538532e-01
+   10 | 6.209550e+00 | 2.536463e+01 | 2.491897e+00 | 5.036331e+00 | 7.985729e-02 | 1.509047e-01
+   11 | 5.459377e+00 | 2.445852e+01 | 2.336531e+00 | 4.945556e+00 | 7.441271e-02 | 1.476461e-01
+   12 | 5.099285e+00 | 2.433118e+01 | 2.258160e+00 | 4.932664e+00 | 7.113367e-02 | 1.472313e-01
+   13 | 4.870280e+00 | 2.437033e+01 | 2.206871e+00 | 4.936631e+00 | 6.962349e-02 | 1.470375e-01
+   14 | 4.815564e+00 | 2.427963e+01 | 2.194439e+00 | 4.927437e+00 | 6.869756e-02 | 1.464692e-01
+   15 | 4.737328e+00 | 2.418389e+01 | 2.176540e+00 | 4.917712e+00 | 6.829439e-02 | 1.461556e-01
+   16 | 4.679019e+00 | 2.432205e+01 | 2.163104e+00 | 4.931739e+00 | 6.799659e-02 | 1.463688e-01
+   17 | 4.691766e+00 | 2.406337e+01 | 2.166048e+00 | 4.905443e+00 | 6.782194e-02 | 1.459476e-01
+   18 | 4.676309e+00 | 2.403959e+01 | 2.162478e+00 | 4.903019e+00 | 6.780963e-02 | 1.459154e-01
+   19 | 4.657841e+00 | 2.403100e+01 | 2.158203e+00 | 4.902142e+00 | 6.766960e-02 | 1.458171e-01
+   20 | 4.668661e+00 | 2.402880e+01 | 2.160708e+00 | 4.901918e+00 | 6.775714e-02 | 1.460319e-01
+Set parameter FeasibilityTol to value 1e-09
+Set parameter IntFeasTol to value 1e-09
+Embedding predictor with gurobi_ml kwargs: {'epsilon': 0.0001}
+Gurobi Optimizer version 13.0.1 build v13.0.1rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Core(TM) Ultra 9 285H, instruction set [SSE2|AVX|AVX2]
+Thread count: 16 physical cores, 16 logical processors, using up to 16 threads
+
+Non-default parameters:
+FeasibilityTol  1e-09
+IntFeasTol  1e-09
+
+Optimize a model with 313 rows, 45173 columns and 52217 nonzeros (Min)
+Model fingerprint: 0x1c8cef7e
+Model has 7 linear objective coefficients
+Model has 388607 simple general constraints
+  388607 INDICATOR
+Variable types: 1139 continuous, 44034 integer (44034 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 1e+03]
+  Objective range  [2e-03, 2e+00]
+  Bounds range     [1e+00, 1e+03]
+  RHS range        [1e+00, 2e+03]
+  GenCon rhs range [1e-02, 1e+03]
+  GenCon coe range [1e+00, 1e+00]
+
+Presolve removed 301 rows and 135 columns (presolve time = 5s)...
+Presolve removed 432842 rows and 432676 columns (presolve time = 10s)...
+Presolve added 432240 rows and 0 columns
+Presolve removed 0 rows and 35 columns
+Presolve time: 10.18s
+Presolved: 432553 rows, 45138 columns, 916574 nonzeros
+Variable types: 1104 continuous, 44034 integer (44034 binary)
+Performing another presolve...
+Presolve removed 386807 rows and 0 columns
+Presolve time: 3.09s
+Performing another presolve...
+Presolve removed 43834 rows and 0 columns
+Presolve time: 1.04s
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing primal log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    3.3243500e+01   4.636993e+02   2.621909e+09     19s
+Concurrent spin time: 0.10s (can be avoided by choosing Method=3)
+
+Solved with dual simplex
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+    3114    4.8062000e+01   0.000000e+00   0.000000e+00     19s
+
+Root relaxation: objective 4.806200e+01, 3114 iterations, 0.78 seconds (0.80 work units)
+Total elapsed time = 19.12s (DegenMoves)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   48.06200    0  327          -   48.06200      -     -   19s
+H    0     0                      68.4124839   48.06200  29.7%     -   21s
+     0     0   48.06200    0  333   68.41248   48.06200  29.7%     -   21s
+H    0     0                      66.5588535   48.06200  27.8%     -   22s
+     0     0   48.06200    0  337   66.55885   48.06200  27.8%     -   22s
+     0     0   48.06200    0  335   66.55885   48.06200  27.8%     -   24s
+     0     0   48.06200    0  318   66.55885   48.06200  27.8%     -   25s
+H    0     0                      62.4863352   48.06200  23.1%     -   29s
+H    0     0                      62.4327108   48.06200  23.0%     -   31s
+H    0     0                      62.0989081   48.06200  22.6%     -   32s
+H    0     0                      62.0968713   48.06200  22.6%     -   32s
+H    0     0                      61.9452126   48.06200  22.4%     -   32s
+H    0     0                      61.6937871   48.06200  22.1%     -   32s
+H    0     0                      61.6714036   48.06200  22.1%     -   33s
+H    0     0                      61.6682500   48.06200  22.1%     -   33s
+H    0     0                      61.6210267   48.06200  22.0%     -   33s
+H    0     0                      61.5192788   48.06200  21.9%     -   34s
+H    0     0                      60.7330585   48.06200  20.9%     -   34s
+H    0     0                      60.7320468   48.06200  20.9%     -   34s
+H    0     0                      60.7048300   48.06200  20.8%     -   36s
+H    0     0                      50.5241230   48.06200  4.87%     -   36s
+H    0     0                      49.9701327   48.06200  3.82%     -   36s
+H    0     0                      49.6449008   48.06200  3.19%     -   36s
+H    0     0                      49.6032703   48.06200  3.11%     -   36s
+H    0     0                      49.5083793   48.06200  2.92%     -   36s
+H    0     0                      49.4631211   48.06200  2.83%     -   36s
+     0     0   48.06200    0  335   49.46312   48.06200  2.83%     -   37s
+     0     0   48.06200    0  336   49.46312   48.06200  2.83%     -   40s
+     0     0   48.06200    0  318   49.46312   48.06200  2.83%     -   42s
+H    0     0                      49.2775836   48.06200  2.47%     -   42s
+     0     0   48.06200    0  337   49.27758   48.06200  2.47%     -   44s
+     0     0   48.06200    0  363   49.27758   48.06200  2.47%     -   44s
+     0     0   48.06200    0  361   49.27758   48.06200  2.47%     -   45s
+     0     0   48.06200    0  368   49.27758   48.06200  2.47%     -   46s
+     0     0   48.06200    0  367   49.27758   48.06200  2.47%     -   46s
+     0     0   48.06200    0  332   49.27758   48.06200  2.47%     -   47s
+H    0     0                      49.2774075   48.06200  2.47%     -   49s
+H    0     0                      49.2094093   48.06200  2.33%     -   49s
+H    0     0                      49.1807168   48.06200  2.27%     -   49s
+H    0     0                      49.1031879   48.06200  2.12%     -   49s
+H    0     0                      49.1029821   48.06200  2.12%     -   49s
+H    0     0                      49.1012277   48.06200  2.12%     -   49s
+H    0     0                      49.0975523   48.06200  2.11%     -   49s
+H    0     0                      49.0956461   48.06200  2.11%     -   49s
+H    0     0                      49.0547868   48.06200  2.02%     -   49s
+H    0     0                      49.0452325   48.06200  2.00%     -   49s
+     0     0   48.06200    0  373   49.04523   48.06200  2.00%     -   51s
+     0     0   48.06200    0  373   49.04523   48.06200  2.00%     -   52s
+     0     0   48.06200    0  371   49.04523   48.06200  2.00%     -   52s
+     0     0   48.06200    0  333   49.04523   48.06200  2.00%     -   52s
+     0     0   48.06200    0  380   49.04523   48.06200  2.00%     -   53s
+     0     0   48.06200    0  373   49.04523   48.06200  2.00%     -   53s
+     0     0   48.06200    0  360   49.04523   48.06200  2.00%     -   54s
+     0     0   48.06200    0  360   49.04523   48.06200  2.00%     -   54s
+     0     0   48.06200    0  360   49.04523   48.06200  2.00%     -   54s
+     0     0   48.06200    0  360   49.04523   48.06200  2.00%     -   54s
+     0     0   48.06200    0  333   49.04523   48.06200  2.00%     -   56s
+     0     0   48.06200    0  345   49.04523   48.06200  2.00%     -   57s
+     0     0   48.06200    0  384   49.04523   48.06200  2.00%     -   58s
+     0     0   48.06200    0  381   49.04523   48.06200  2.00%     -   59s
+     0     0   48.06200    0  364   49.04523   48.06200  2.00%     -   60s
+H    0     0                      49.0309672   48.06200  1.98%     -   61s
+     0     0   48.06200    0  391   49.03097   48.06200  1.98%     -   61s
+     0     0   48.06200    0  396   49.03097   48.06200  1.98%     -   62s
+     0     0   48.06200    0  363   49.03097   48.06200  1.98%     -   62s
+     0     0   48.06200    0  341   49.03097   48.06200  1.98%     -   63s
+     0     0   48.06200    0  341   49.03097   48.06200  1.98%     -   63s
+     0     0   48.06200    0  341   49.03097   48.06200  1.98%     -   63s
+     0     2   48.06200    0  341   49.03097   48.06200  1.98%     -   63s
+    20     6   48.06200    9  363   49.03097   48.06200  1.98%   218   65s
+   189    14 infeasible   26        49.03097   48.07317  1.95%   125   70s
+   731    96     cutoff   47        49.03097   48.08972  1.92%  87.8   75s
+  1561   394   48.78315   54  187   49.03097   48.09373  1.91%  79.5   80s
+  3247  1083 infeasible  150        49.03097   48.10093  1.90%  68.9   85s
+  3671  1242   48.52839  128  767   49.03097   48.10284  1.89%  66.1  106s
+  3675  1245   48.46288   69  437   49.03097   48.10284  1.89%  66.1  110s
+  3688  1253   48.59002  103  574   49.03097   48.16200  1.77%  65.8  116s
+  3700  1261   48.43508   80  584   49.03097   48.21064  1.67%  65.6  121s
+
+Cutting planes:
+  Gomory: 117
+  Cover: 76
+  Implied bound: 1
+  Clique: 128
+  MIR: 34
+  StrongCG: 6
+  Flow cover: 10
+  GUB cover: 94
+  Relax-and-lift: 54
+
+Explored 3703 nodes (286192 simplex iterations) in 126.16 seconds (166.41 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 10: 49.031 49.0452 49.0548 ... 49.2094
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.903096721031e+01, best bound 4.903096721031e+01, gap 0.0000%
+
+======================================================================
+GLOBAL CONCRETE RF FULL-HULL BASELINE
+======================================================================
+chosen degree/max_depth = 19
+train_size = 721 test_size = 309
+train_mse = 4.657840694489458
+test_mse = 24.031000657418485
+train_rmse = 2.1582031170604536
+test_rmse = 4.902142455847084
+train_rel_rmse = 0.06766959850384768
+test_rel_rmse = 0.1458170890392049
+Gurobi status = OPTIMAL
+solution count = 10
+objective/model ObjVal = 49.030967210306684
+material cost = 49.030967210306684
+component weight = 2232.2972608172026
+embedded Gurobi strength = 45.61307078264
+sklearn RF strength = 45.613070782639994
+embedded strength margin = 0.6130707826400013
+sklearn strength margin = 0.6130707826399941
+strength mismatch embedded - sklearn = 7.105427357601002e-15
+manual predictor error = 7.105427357601002e-15
+gurobi_ml predictor error = 7.105427357601002e-15
+predictor error used = 7.105427357601002e-15
+predictor error tolerance = 0.0001
+embedding valid = True
+valid point-estimation solution = True
+hull_eq_violation_inf = 1.1368683772161603e-13
+manual predictor error = 7.105427357601002e-15
+gurobi_ml predictor error = 7.105427357601002e-15
+predictor error used = 7.105427357601002e-15
+predictor error tolerance = 0.0001
+embedding valid = True
+valid point-estimation solution = True
+lambda_sum_violation = 1.1102230246251565e-16
+mip_gap = 0.0
+obj_bound = 49.030967210306684
+runtime = 126.19599294662476
+nodes = 3703.0
+mip_cols = 45173 mip_rows = 313
+num_bin = 44034 num_int = 44034
+num_genconstrs = 388607
+
+mixture:
+  cement: 164.600098 kg
+  blast_furnace_slag: 167.985687 kg
+  fly_ash: 0.000000 kg
+  water: 217.371928 kg
+  superplasticizer: 0.000000 kg
+  coarse_aggregate: 934.689553 kg
+  fine_aggregate: 747.649994 kg
+  age: 225.000100 days
+======================================================================
+train_mse : 184.06692351648684 test_mse : 165.07457027735816
+train_rmse : 13.567126575531269 test_rmse : 12.84813489489265
+train_rel_rmse : 0.32269689089514103 test_rel_rmse : 0.3163994589124074
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  1
+train_mse : 108.82759503801128 test_mse : 103.13181772947665
+train_rmse : 10.432046541211905 test_rmse : 10.155383682041592
+train_rel_rmse : 0.2718705976702288 test_rel_rmse : 0.26822989178624923
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  2
+train_mse : 73.08073509911132 test_mse : 76.5398297438967
+train_rmse : 8.548727104026149 test_rmse : 8.74870446088429
+train_rel_rmse : 0.2305152592727049 test_rel_rmse : 0.23185275241736686
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  3
+train_mse : 48.696485554603306 test_mse : 57.05845094396959
+train_rmse : 6.978286720578577 test_rmse : 7.55370445172232
+train_rel_rmse : 0.19765403586831432 test_rel_rmse : 0.20819265547744897
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  4
+train_mse : 30.79703400429745 test_mse : 42.479037132797856
+train_rmse : 5.549507546106902 test_rmse : 6.517594428375999
+train_rel_rmse : 0.16489178891044728 test_rel_rmse : 0.18683372578634586
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  5
+train_mse : 20.12283005338894 test_mse : 35.07682455411274
+train_rmse : 4.48584775191813 test_rmse : 5.922569083945981
+train_rel_rmse : 0.13705304612770833 test_rel_rmse : 0.17388685401890677
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  6
+train_mse : 13.89058386380802 test_mse : 30.398704375729075
+train_rmse : 3.7270073603104166 test_rmse : 5.513502006504494
+train_rel_rmse : 0.11539877804589506 test_rel_rmse : 0.16493299480641255
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  7
+train_mse : 9.886995973516301 test_mse : 28.008816631826587
+train_rmse : 3.144359390005586 test_rmse : 5.292335649958965
+train_rel_rmse : 0.09809256342725592 test_rel_rmse : 0.16025272716108674
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  8
+train_mse : 7.3692142719374765 test_mse : 26.278839678902028
+train_rmse : 2.7146296749165395 test_rmse : 5.126289074847616
+train_rel_rmse : 0.08477219800908288 test_rel_rmse : 0.1572170159434399
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  9
+train_mse : 5.939497166693252 test_mse : 24.858922860637062
+train_rmse : 2.4371083617051688 test_rmse : 4.9858723269491225
+train_rel_rmse : 0.07594391549889488 test_rel_rmse : 0.15340230509654673
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  10
+train_mse : 5.273475872959757 test_mse : 24.043517202630564
+train_rmse : 2.2964049888814815 test_rmse : 4.903418929953932
+train_rel_rmse : 0.07073620796133973 test_rel_rmse : 0.15135913662532224
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  11
+train_mse : 4.856022451843862 test_mse : 24.00173516794733
+train_rmse : 2.203638457606842 test_rmse : 4.899156577202583
+train_rel_rmse : 0.06792764294620196 test_rel_rmse : 0.1514677339632244
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  12
+train_mse : 4.697484565908646 test_mse : 23.75992258691137
+train_rmse : 2.167368119611582 test_rmse : 4.8744151020313575
+train_rel_rmse : 0.06673268168998993 test_rel_rmse : 0.1511772917108177
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  13
+train_mse : 4.634923812608069 test_mse : 23.786263255159458
+train_rmse : 2.1528873199979763 test_rmse : 4.877116284769049
+train_rel_rmse : 0.06630545127194612 test_rel_rmse : 0.15075205655218832
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  14
+train_mse : 4.58383892009409 test_mse : 23.667426405174268
+train_rmse : 2.1409901728158607 test_rmse : 4.864917923785998
+train_rel_rmse : 0.06628839456431412 test_rel_rmse : 0.1507970464809365
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  15
+train_mse : 4.595917259458739 test_mse : 23.552988418115014
+train_rmse : 2.143809053870876 test_rmse : 4.853142118062793
+train_rel_rmse : 0.06606757598034 test_rel_rmse : 0.15025102742646745
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  16
+train_mse : 4.585941734646107 test_mse : 23.631474337895142
+train_rmse : 2.141481201095659 test_rmse : 4.861221486200268
+train_rel_rmse : 0.06616155077862133 test_rel_rmse : 0.1506566378865205
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  17
+train_mse : 4.613340620977774 test_mse : 23.61123716967291
+train_rmse : 2.147868855628242 test_rmse : 4.8591395503394335
+train_rel_rmse : 0.06624623411523922 test_rel_rmse : 0.1503733722533157
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  18
+train_mse : 4.641710577588552 test_mse : 23.6411947102028
+train_rmse : 2.1544629441205414 test_rmse : 4.8622211704325835
+train_rel_rmse : 0.06633142383348781 test_rel_rmse : 0.15051835493647747
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  19
+train_mse : 4.626081861144886 test_mse : 23.658100301053278
+train_rmse : 2.150832829660382 test_rmse : 4.863959323540163
+train_rel_rmse : 0.06627942471713527 test_rel_rmse : 0.15049558581700262
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  20
+Accepted model with degree  16  trained with  1030 data points.
+Set parameter FeasibilityTol to value 1e-09
+Set parameter IntFeasTol to value 1e-09
+Embedding predictor with gurobi_ml kwargs: {'epsilon': 0.0001}
+Gurobi Optimizer version 13.0.1 build v13.0.1rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Core(TM) Ultra 9 285H, instruction set [SSE2|AVX|AVX2]
+Thread count: 16 physical cores, 16 logical processors, using up to 16 threads
+
+Non-default parameters:
+FeasibilityTol  1e-09
+IntFeasTol  1e-09
+
+Optimize a model with 313 rows, 45051 columns and 52095 nonzeros (Min)
+Model fingerprint: 0xbecf6d38
+Model has 7 linear objective coefficients
+Model has 388276 simple general constraints
+  388276 INDICATOR
+Variable types: 1139 continuous, 43912 integer (43912 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 1e+03]
+  Objective range  [2e-03, 2e+00]
+  Bounds range     [1e+00, 1e+03]
+  RHS range        [1e+00, 2e+03]
+  GenCon rhs range [1e-02, 1e+03]
+  GenCon coe range [1e+00, 1e+00]
+
+Presolve removed 301 rows and 135 columns (presolve time = 5s)...
+Presolve added 431787 rows and 0 columns
+Presolve removed 0 rows and 35 columns
+Presolve time: 9.66s
+Presolved: 432100 rows, 45016 columns, 915546 nonzeros
+Variable types: 1104 continuous, 43912 integer (43912 binary)
+Performing another presolve...
+Presolve removed 386476 rows and 0 columns
+Presolve time: 2.96s
+Performing another presolve...
+Presolve removed 43712 rows and 0 columns
+Presolve time: 1.40s
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing primal log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    3.3243500e+01   4.692261e+02   2.791191e+09     20s
+Concurrent spin time: 0.03s
+
+Solved with dual simplex
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+    2868    4.8062000e+01   0.000000e+00   0.000000e+00     21s
+
+Root relaxation: objective 4.806200e+01, 2868 iterations, 0.44 seconds (0.79 work units)
+Total elapsed time = 20.56s (DegenMoves)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   48.06200    0  291          -   48.06200      -     -   21s
+H    0     0                      72.1868503   48.06200  33.4%     -   22s
+     0     0   48.06200    0  325   72.18685   48.06200  33.4%     -   23s
+H    0     0                      71.2801217   48.06200  32.6%     -   23s
+     0     0   48.06200    0  321   71.28012   48.06200  32.6%     -   24s
+     0     0   48.06200    0  326   71.28012   48.06200  32.6%     -   26s
+     0     0   48.06200    0  243   71.28012   48.06200  32.6%     -   27s
+H    0     0                      54.9978818   48.06200  12.6%     -   33s
+H    0     0                      50.5707192   48.06200  4.96%     -   37s
+H    0     0                      50.5447668   48.06200  4.91%     -   37s
+H    0     0                      50.4578876   48.06200  4.75%     -   38s
+     0     0   48.06200    0  276   50.45789   48.06200  4.75%     -   42s
+     0     0   48.06200    0  291   50.45789   48.06200  4.75%     -   44s
+     0     0   48.06200    0  280   50.45789   48.06200  4.75%     -   45s
+H    0     0                      50.4228608   48.06200  4.68%     -   47s
+     0     0   48.06200    0  298   50.42286   48.06200  4.68%     -   48s
+     0     0   48.06200    0  334   50.42286   48.06200  4.68%     -   49s
+     0     0   48.06200    0  334   50.42286   48.06200  4.68%     -   50s
+     0     0   48.06200    0  277   50.42286   48.06200  4.68%     -   50s
+H    0     0                      50.3475955   48.06200  4.54%     -   52s
+H    0     0                      50.2746216   48.06200  4.40%     -   52s
+H    0     0                      50.1856156   48.06200  4.23%     -   52s
+H    0     0                      49.2183677   48.06200  2.35%     -   52s
+H    0     0                      49.1396184   48.06200  2.19%     -   52s
+H    0     0                      49.1310706   48.06200  2.18%     -   52s
+H    0     0                      49.1194755   48.06200  2.15%     -   52s
+H    0     0                      49.1027755   48.06200  2.12%     -   52s
+     0     0   48.06200    0  326   49.10278   48.06200  2.12%     -   53s
+     0     0   48.06200    0  330   49.10278   48.06200  2.12%     -   54s
+     0     0   48.06200    0  319   49.10278   48.06200  2.12%     -   54s
+     0     0   48.06200    0  359   49.10278   48.06200  2.12%     -   55s
+     0     0   48.06200    0  357   49.10278   48.06200  2.12%     -   55s
+     0     0   48.06200    0  354   49.10278   48.06200  2.12%     -   56s
+     0     0   48.06200    0  321   49.10278   48.06200  2.12%     -   56s
+     0     0   48.06200    0  349   49.10278   48.06200  2.12%     -   57s
+     0     0   48.06200    0  342   49.10278   48.06200  2.12%     -   58s
+     0     0   48.06200    0  267   49.10278   48.06200  2.12%     -   59s
+     0     0   48.06200    0  272   49.10278   48.06200  2.12%     -   59s
+     0     0   48.06200    0  272   49.10278   48.06200  2.12%     -   59s
+     0     0   48.06200    0  272   49.10278   48.06200  2.12%     -   59s
+     0     0   48.06200    0  243   49.10278   48.06200  2.12%     -   59s
+     0     0   48.06200    0  307   49.10278   48.06200  2.12%     -   60s
+     0     0   48.06200    0  304   49.10278   48.06200  2.12%     -   61s
+H    0     0                      49.0972010   48.06200  2.11%     -   61s
+     0     0   48.06200    0  338   49.09720   48.06200  2.11%     -   63s
+     0     0   48.06200    0  336   49.09720   48.06200  2.11%     -   63s
+H    0     0                      49.0970460   48.06200  2.11%     -   63s
+     0     0   48.06200    0  362   49.09705   48.06200  2.11%     -   63s
+H    0     0                      49.0954702   48.06200  2.11%     -   64s
+H    0     0                      49.0507451   48.06200  2.02%     -   64s
+     0     0   48.06200    0  362   49.05075   48.06200  2.02%     -   64s
+     0     0   48.06200    0  323   49.05075   48.06200  2.02%     -   64s
+     0     0   48.06200    0  342   49.05075   48.06200  2.02%     -   65s
+     0     0   48.06200    0  348   49.05075   48.06200  2.02%     -   66s
+     0     0   48.06200    0  324   49.05075   48.06200  2.02%     -   66s
+     0     0   48.06200    0  358   49.05075   48.06200  2.02%     -   67s
+     0     0   48.06200    0  353   49.05075   48.06200  2.02%     -   68s
+     0     0   48.06200    0  297   49.05075   48.06200  2.02%     -   68s
+     0     0   48.06200    0  293   49.05075   48.06200  2.02%     -   68s
+     0     0   48.06200    0  288   49.05075   48.06200  2.02%     -   68s
+     0     0   48.06200    0  288   49.05075   48.06200  2.02%     -   69s
+     0     0   48.06200    0  288   49.05075   48.06200  2.02%     -   69s
+     0     0   48.06200    0  250   49.05075   48.06200  2.02%     -   69s
+     0     2   48.06200    0  255   49.05075   48.06200  2.02%     -   72s
+   134    10   48.89584   21  190   49.05075   48.06200  2.02%  57.4   75s
+   341    28   48.89584   35  189   49.05075   48.06200  2.02%  56.4   80s
+   838   165   48.89584   45  191   49.05075   48.06200  2.02%  53.6   85s
+  2111   727     cutoff   73        49.05075   48.06200  2.02%  42.0   90s
+  3007  1018   48.89584  101  213   49.05075   48.06200  2.02%  40.2   95s
+  3166  1104   48.84091  187  736   49.05075   48.06200  2.02%  39.7  109s
+  3168  1105   48.84091  154  277   49.05075   48.06200  2.02%  39.7  110s
+
+Cutting planes:
+  Cover: 53
+  Clique: 39
+  MIR: 1
+  StrongCG: 1
+  Flow cover: 3
+  GUB cover: 121
+
+Explored 3168 nodes (162442 simplex iterations) in 110.97 seconds (164.38 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 10: 49.0507 49.0955 49.097 ... 50.1856
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.905074511578e+01, best bound 4.905074511578e+01, gap 0.0000%
+iter 0: step = 2.810e+02, obj = 49.050745115782206, output = 45.15670661824
+final x = [166.44509969 164.60667644   0.         216.79777943   0.
+ 937.13138183 748.3999939  272.5001    ]
+final objective = 49.050745115782206
+return code = -1
+
+===== DCL ITERATION LOG =====
+iter=0, obj=49.050745115782206, relaxed_obj=49.050745115782206, data_size=1030, degree=16, test_mse=23.552988418115014, test_rmse=4.853142118062793, train_rmse=2.143809053870876, status=2, success=True
+start_x = [281.16563107  73.89548544  54.18713592 181.56635922   6.20311165
+ 972.91859223 773.5788835   45.66213592]
+solution_x = [166.44509969 164.60667644   0.         216.79777943   0.
+ 937.13138183 748.3999939  272.5001    ]
+solution_y/local_output = 45.15670661824
+sklearn_output = 44.44953866408
+manual_predictor_error = 0.7071679541599991
+gurobi_ml_predictor_error = 0.7071679541600062
+predictor_error = 0.7071679541600062
+relaxation_slack = 0.0
+relaxed_constraint_residual = 45.15670661824
+local_g_start/local_output_start = 43.08341080816058
+local_g_solution/local_output_solution = 44.44953866408001
+solver_message = OPTIMAL
+------------------------------------------------------------
+
+======================================================================
+CONCRETE DCL POINT-ESTIMATION REPORT
+======================================================================
+methodology = point estimation
+model       = rf
+trust region= convex_hull
+constraint  = predicted compressive strength >= 45.0 MPa
+weight      = 2230.0 <= sum(material components) <= 2450.0
+material cost = 49.050745115782206
+component weight = 2233.380931295567
+predicted compressive strength = 44.449538664079995
+strength margin = -0.550461335920005
+
+mixture:
+  cement: 166.445100 kg
+  blast_furnace_slag: 164.606676 kg
+  fly_ash: 0.000000 kg
+  water: 216.797779 kg
+  superplasticizer: 0.000000 kg
+  coarse_aggregate: 937.131382 kg
+  fine_aggregate: 748.399994 kg
+  age: 272.500100 days
+
+article point-estimation RF reference:
+  article point cost = 47.33
+  DCL cost gap       = 1.7207451157822078
+======================================================================
+
+CONCRETE DCL ITERATION ROWS
+Iter & Data Size & Degree/max_depth & Train MSE & Test MSE & Train RMSE & Test RMSE & Cost & Sklearn Strength & Embedded Strength & Weight \\
+Iter & Data Size & Degree/max_depth & Train rel. RMSE & Test rel. RMSE & Gurobi rows & Gurobi cols & Objective \\
+0 & 1030 & 16 & 4.595917e+00 & 2.355299e+01 & 2.143809e+00 & 4.853142e+00 & 49.050745 & 44.449539 & 45.156707 & 2233.380931 \\
+0 & 1030 & 16 & 0.066068 & 0.150251 & 313 & 45051 & 49.050745 \\
+
+==============================================================================================================================
+CONCRETE GLOBAL vs LOCAL DIAGNOSTIC COMPARISON
+==============================================================================================================================
+Method | Iter | Deg | Train RMSE | Test RMSE | Train rel RMSE | Test rel RMSE | Cost | Embedded Strength | Sklearn Strength | Embedded Margin | Sklearn Margin | Weight | Feas Embed | Feas Sklearn | Feas Weight
+------------------------------------------------------------------------------------------------------------------------------
+Global RF full hull | - | 19 | 2.158203 | 4.902142 | 0.067670 | 0.145817 | 49.030967 | 45.613071 | 45.613071 | 0.613071 | 0.613071 | 2232.297261 | True | True | True
+Local DCL final | 0 | 16 | 2.143809 | 4.853142 | 0.066068 | 0.150251 | 49.050745 | 45.156707 | 44.449539 | 0.156707 | -0.550461 | 2233.380931 | True | False | True
+Local DCL lowest cost | 0 | 16 | 2.143809 | 4.853142 | 0.066068 | 0.150251 | 49.050745 | 45.156707 | 44.449539 | 0.156707 | -0.550461 | 2233.380931 | True | False | True
+Local DCL best test RMSE | 0 | 16 | 2.143809 | 4.853142 | 0.066068 | 0.150251 | 49.050745 | 45.156707 | 44.449539 | 0.156707 | -0.550461 | 2233.380931 | True | False | True
+==============================================================================================================================
+Concrete selection rule: first require sklearn strength >= 45 and weight in [2230, 2450]; among feasible rows, lower cost is better.

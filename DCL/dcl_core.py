@@ -5,6 +5,8 @@ import random
 
 import numpy as np
 
+import time
+
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import PolynomialFeatures
@@ -94,6 +96,11 @@ class dcl_local_model:
         self.solution_x = None
         self.solution_y = None
         self.solution_slack = None
+
+        # Objective/slack diagnostics for soft-constrained Gurobi models.
+        self.model_objective = None       # Gurobi ObjVal, including slack penalty.
+        self.slack_obj_coeff = None       # Objective coefficient of relaxation_slack.
+        self.slack_penalty_cost = None    # slack_obj_coeff * relaxation_slack.
 
         self.mip_cols = None
         self.mip_rows = None
@@ -226,6 +233,12 @@ def _compute_predictor_diagnostics(pred_constr, learned_model, x_sol, gurobi_out
 
     return sklearn_output, manual_error, gurobi_ml_error
 
+def _safe_model_float_attr(model, attr, default=np.nan):
+    try:
+        return float(getattr(model, attr))
+    except Exception:
+        return default
+
 
 # =========================================================
 # Solver
@@ -287,6 +300,9 @@ class dcl_solver:
             ndata_model_0 = min(options.max_ndata, ndata_model_0, ndata)
 
         for i in range(options.max_iterations):
+            
+            iter_start_time = time.perf_counter() #new
+            
             x_start = xit.copy()
             ndata_model = ndata_model_0
 
@@ -348,7 +364,10 @@ class dcl_solver:
                     break
 
                 ndata_model += 2 * learning_size
-
+            
+            fit_end_time = time.perf_counter()
+            fit_time = fit_end_time - iter_start_time
+            
             if local_model is None:
                 print("Stopping: could not fit a local model.")
                 self.return_code = -2
@@ -371,14 +390,19 @@ class dcl_solver:
             accepted_model.ndata_model = best_ndata_model
 
             self.local_models.append(accepted_model)
-            print("Accepted model with degree ",model_degree," trained with ",best_ndata_model,"data points.")
+            #print("Accepted model with degree ",model_degree," trained with ",best_ndata_model,"data points.")
+            #print(f"--- Iteration {i} completed in {elapsed_time:.4f} seconds ---") #new
+            print("Accepted model with degree ", model_degree, " trained with ", best_ndata_model, "data points.")
+            print(f"--- Iteration {i} local model fitting completed in {fit_time:.4f} seconds ---")
 
             if best_test_rel_rmse > self.options.rmse_thresh:
                 print("Stopping: local model not accurate enough (rmse =", best_test_rel_rmse, ")")
                 self.return_code = -2
                 self.xit = xit.copy()
                 return
-
+            
+            solve_start_time = time.perf_counter()
+            
             if self.problem_model_type == "gurobi":
                 x_trial, res_loc = dcl_solve_subproblem(
                     self.problem_model,
@@ -404,6 +428,10 @@ class dcl_solver:
                     f"Unknown problem_model_type='{self.problem_model_type}'."
                 )
 
+            solve_end_time = time.perf_counter()
+            subproblem_wall_time = solve_end_time - solve_start_time
+            total_iteration_time = solve_end_time - iter_start_time
+            
             if x_trial is None:
                 print(f"Stopping: subproblem not solved (status={res_loc.get('status')})")
                 if res_loc.get("message") is not None:
@@ -415,7 +443,11 @@ class dcl_solver:
             accepted_model.solution_x = x_trial[:n].copy()
             accepted_model.solution_y = float(x_trial[n])
             accepted_model.solution_slack = float(res_loc.get("slack", 0.0))
-
+            
+            accepted_model.model_objective = res_loc.get("model_objective")
+            accepted_model.slack_obj_coeff = res_loc.get("slack_obj_coeff")
+            accepted_model.slack_penalty_cost = res_loc.get("slack_penalty_cost")
+            
             accepted_model.mip_cols = res_loc.get("mip_cols")
             accepted_model.mip_rows = res_loc.get("mip_rows")
             accepted_model.mip_work = res_loc.get("mip_work")
@@ -433,14 +465,18 @@ class dcl_solver:
             local_pred_solution = None
             true_g_start = None
             true_g_solution = None
-
-            try:
-                local_pred_start = dcl_predict_local_model(accepted_model, x_start)
-                local_pred_solution = dcl_predict_local_model(
-                    accepted_model,
-                    accepted_model.solution_x,
-                )
-            except Exception:
+            
+            if bool(getattr(self.options, "predictor_check_enabled", True)):
+                try:
+                    local_pred_start = dcl_predict_local_model(accepted_model, x_start)
+                    local_pred_solution = dcl_predict_local_model(
+                        accepted_model,
+                        accepted_model.solution_x,
+                    )
+                except Exception:
+                    local_pred_solution = res_loc.get("output")
+            else:
+                local_pred_start = None
                 local_pred_solution = res_loc.get("output")
 
             if callable(true_constraint):
@@ -453,6 +489,9 @@ class dcl_solver:
                 "objective": res_loc.get("obj"),
                 "original_objective": res_loc.get("original_objective"),
                 "relaxed_objective": res_loc.get("relaxed_objective"),
+                "model_objective": res_loc.get("model_objective"),
+                "slack_penalty_cost": res_loc.get("slack_penalty_cost"),
+                "slack_obj_coeff": res_loc.get("slack_obj_coeff"),
                 "data_size": accepted_model.ndata_model,
                 "degree": accepted_model.model_degree,
                 "test_mse": accepted_model.test_mse,
@@ -481,10 +520,22 @@ class dcl_solver:
                 "predictor_error": res_loc.get("predictor_error"),
                 "relaxation_slack": accepted_model.solution_slack,
                 "relaxed_constraint_residual": res_loc.get("relaxed_constraint_residual"),
+                "strength_req": res_loc.get("strength_req"),
+                "embedded_strength_margin": res_loc.get("embedded_strength_margin"),
+                "sklearn_strength_margin": res_loc.get("sklearn_strength_margin"),
+                "soft_strength_margin": res_loc.get("soft_strength_margin"),
                 "local_pred_start": local_pred_start,
                 "local_pred_solution": local_pred_solution,
                 "true_g_start": true_g_start,
                 "true_g_solution": true_g_solution,
+                "fit_time": fit_time,
+                "subproblem_wall_time": subproblem_wall_time,
+                "total_iteration_time": total_iteration_time,
+                "predictor_error_tol": res_loc.get("predictor_error_tol"),
+                "embedding_valid": res_loc.get("embedding_valid"),
+                
+                # Backward-compatible name. Now this means full iteration time.
+                "elapsed_time": total_iteration_time,
             })
 
             step = np.linalg.norm(x_trial[:n] - xit)
@@ -620,6 +671,7 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
 
     m.update()
 
+    # These are reported after the model is fully built and before optimize().
     mip_cols = int(m.NumVars)
     mip_rows = int(m.NumConstrs)
     num_bin = int(m.NumBinVars)
@@ -627,6 +679,11 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
     num_genconstrs = int(m.NumGenConstrs)
 
     m.optimize()
+
+    # These are only meaningful after optimize().
+    mip_work = _safe_model_float_attr(m, "Work")
+    mip_nodes = _safe_model_float_attr(m, "NodeCount")
+    mip_runtime = _safe_model_float_attr(m, "Runtime")
 
     if m.Status != GRB.OPTIMAL:
         return None, {
@@ -638,34 +695,96 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
             "num_bin": num_bin,
             "num_int": num_int,
             "num_genconstrs": num_genconstrs,
+            "mip_work": mip_work,
+            "mip_nodes": mip_nodes,
+            "mip_runtime": mip_runtime,
             "slack": 0.0,
+            "slack_obj_coeff": 0.0,
+            "slack_penalty_cost": 0.0,
         }
 
     z_sol = np.array([v.X for v in input_vars], dtype=float)
     y_sol = float(out0.X)
     x_trial = np.concatenate([z_sol, np.array([y_sol])])
 
-    sklearn_output, manual_error, gurobi_ml_error = _compute_predictor_diagnostics(
-        pred_constr,
-        accepted_model.learned_model,
-        z_sol,
-        y_sol,
-    )
+    # Concrete soft constraint variable, if present.
+    # Gurobi ObjVal includes its objective coefficient, so split it out.
+    slack_var = m.getVarByName("relaxation_slack")
 
-    predictor_error = manual_error
-    if np.isfinite(gurobi_ml_error):
-        predictor_error = max(predictor_error, gurobi_ml_error)
+    if slack_var is not None:
+        slack_sol = float(slack_var.X)
+        slack_obj_coeff = float(slack_var.Obj)
+        slack_penalty_cost = float(slack_obj_coeff * slack_sol)
+    else:
+        slack_sol = 0.0
+        slack_obj_coeff = 0.0
+        slack_penalty_cost = 0.0
 
+    model_objective = float(m.ObjVal)
+    original_objective = float(model_objective - slack_penalty_cost)
+
+    
+    
     predictor_error_tol = float(getattr(options, "predictor_error_tol", 1e-4))
-    embedding_valid = bool(predictor_error <= predictor_error_tol)
+    do_predictor_check = bool(getattr(options, "predictor_check_enabled", True))
+
+    if do_predictor_check:
+        sklearn_output, manual_error, gurobi_ml_error = _compute_predictor_diagnostics(
+            pred_constr,
+            accepted_model.learned_model,
+            z_sol,
+            y_sol,
+        )
+
+        predictor_error = manual_error
+        if np.isfinite(gurobi_ml_error):
+            predictor_error = max(predictor_error, gurobi_ml_error)
+
+        embedding_valid = bool(predictor_error <= predictor_error_tol)
+
+    else:
+        # No external sklearn validation. Treat embedded Gurobi output as the reported predictor.
+        sklearn_output = y_sol
+        manual_error = 0.0
+        gurobi_ml_error = np.nan
+        predictor_error = 0.0
+        embedding_valid = True
+
+    for constr_name in ("strength_lb_soft", "strength_lb"):
+        constr = m.getConstrByName(constr_name)
+        if constr is not None:
+            strength_req = float(constr.RHS)
+            break
+
+    if np.isfinite(strength_req):
+        embedded_strength_margin = float(y_sol - strength_req)
+        sklearn_strength_margin = float(sklearn_output - strength_req)
+        soft_strength_margin = float(sklearn_output + slack_sol - strength_req)
+
+        # Feasible soft constraint means this residual <= 0.
+        relaxed_constraint_residual = float(strength_req - (sklearn_output + slack_sol))
+    else:
+        embedded_strength_margin = np.nan
+        sklearn_strength_margin = np.nan
+        soft_strength_margin = np.nan
+        relaxed_constraint_residual = np.nan
 
     result = {
         "status": int(m.Status),
         "success": True,
         "message": "OPTIMAL",
-        "obj": float(m.ObjVal),
-        "original_objective": float(m.ObjVal),
-        "relaxed_objective": float(m.ObjVal),
+
+        # Objective split:
+        # obj/original_objective excludes the slack penalty.
+        # model_objective/relaxed_objective is the actual Gurobi ObjVal.
+        "obj": original_objective,
+        "original_objective": original_objective,
+        "relaxed_objective": model_objective,
+        "model_objective": model_objective,
+        "slack": slack_sol,
+        "slack_obj_coeff": slack_obj_coeff,
+        "slack_penalty_cost": slack_penalty_cost,
+
         "output": y_sol,
         "sklearn_output": sklearn_output,
         "manual_predictor_error": manual_error,
@@ -673,16 +792,21 @@ def dcl_solve_subproblem(problem_model, accepted_model, trust_region, X, *, opti
         "predictor_error": predictor_error,
         "predictor_error_tol": predictor_error_tol,
         "embedding_valid": embedding_valid,
-        "slack": 0.0,
-        "relaxed_constraint_residual": y_sol,
+
+        "relaxed_constraint_residual": relaxed_constraint_residual,
+        "strength_req": strength_req,
+        "embedded_strength_margin": embedded_strength_margin,
+        "sklearn_strength_margin": sklearn_strength_margin,
+        "soft_strength_margin": soft_strength_margin,
+
         "mip_cols": mip_cols,
         "mip_rows": mip_rows,
         "num_bin": num_bin,
         "num_int": num_int,
         "num_genconstrs": num_genconstrs,
-        "mip_work": float(m.Work),
-        "mip_nodes": float(m.NodeCount),
-        "mip_runtime": float(m.Runtime),
+        "mip_work": mip_work,
+        "mip_nodes": mip_nodes,
+        "mip_runtime": mip_runtime,
     }
 
     if (
@@ -1396,7 +1520,7 @@ def dcl_set_model_degree(
             "ndata_train : ", ndata_train,
             "model_degree : ", model_degree,
         )
-
+        
         candidate = (
             model_degree,
             test_rmse,
@@ -1430,8 +1554,15 @@ def dcl_print_iteration_log(solver):
     print("\n===== DCL ITERATION LOG =====")
 
     for row in solver.iteration_log:
+        material_obj = row.get("original_objective", row.get("objective"))
+        gurobi_obj = row.get("model_objective", row.get("relaxed_objective"))
+
         print(
             f"iter={row['iter']}, "
+            f"material_obj={material_obj}, "
+            f"gurobi_obj_incl_slack={gurobi_obj}, "
+            f"slack={row.get('relaxation_slack')}, "
+            f"slack_penalty={row.get('slack_penalty_cost')}, "
             f"obj={row['objective']}, "
             f"relaxed_obj={row.get('relaxed_objective')}, "
             f"data_size={row['data_size']}, "
@@ -1439,8 +1570,17 @@ def dcl_print_iteration_log(solver):
             f"test_mse={row.get('test_mse')}, "
             f"test_rmse={row['test_rmse']}, "
             f"train_rmse={row['train_rmse']}, "
+            f"mip_rows={row.get('mip_rows')}, "
+            f"mip_cols={row.get('mip_cols')}, "
+            f"num_bin={row.get('num_bin')}, "
+            f"num_int={row.get('num_int')}, "
+            f"num_genconstrs={row.get('num_genconstrs')}, "
+            f"mip_nodes={row.get('mip_nodes')}, "
+            f"mip_runtime={row.get('mip_runtime')}, "
+            f"mip_work={row.get('mip_work')}, "
             f"status={row['solver_status']}, "
-            f"success={row.get('solver_success')}"
+            f"success={row.get('solver_success')}, "
+            f"time={row.get('elapsed_time', 0.0):.4f}" #new
         )
 
         print("start_x =", row.get("start_x"))
@@ -1480,6 +1620,22 @@ def dcl_print_iteration_log(solver):
         if row.get("solver_message") is not None:
             print("solver_message =", row["solver_message"])
 
+        if row.get("model_objective") is not None:
+            print("model_objective / Gurobi ObjVal =", row.get("model_objective"))
+
+        if row.get("slack_penalty_cost") is not None:
+            print("slack_penalty_cost =", row.get("slack_penalty_cost"))
+
+        if row.get("mip_cols") is not None:
+            print("mip_cols =", row.get("mip_cols"))
+            print("mip_rows =", row.get("mip_rows"))
+            print("num_bin =", row.get("num_bin"))
+            print("num_int =", row.get("num_int"))
+            print("num_genconstrs =", row.get("num_genconstrs"))
+            print("mip_nodes =", row.get("mip_nodes"))
+            print("mip_runtime =", row.get("mip_runtime"))
+            print("mip_work =", row.get("mip_work"))
+            
         print("-" * 60)
 
 

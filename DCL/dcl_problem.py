@@ -327,6 +327,8 @@ def setup_problem_concrete(
     weight_lb: float = 2230.0,
     weight_ub: float = 2450.0,
     data_path: str | Path | None = None,
+    use_soft_constraints: bool = False,   # <-- NEW ARGUMENT
+    slack_penalty_weight: float = 1000.0, # <-- NEW ARGUMENT
 ):
     """
     Concrete point-estimation setup.
@@ -375,13 +377,52 @@ def setup_problem_concrete(
         name="output_vars",
     )
 
+    cost_expr = gp.quicksum(
+        float(CONCRETE_COST_VECTOR[i]) * input_vars[i]
+        for i in range(n)
+    )
+    
+    
+    # =================================================================
+    # NEW: Toggle between Hard Constraints and Soft Constraints (Slack)
+    # =================================================================
+    if use_soft_constraints:
+        # 1. Create the scalar slack variable
+        strength_slack = model.addVar(
+            lb=0.0, 
+            vtype=GRB.CONTINUOUS, 
+            name="relaxation_slack"
+        )
+        model.update() # Good practice to update before using new scalar in constr
+
+        # 2. Add the soft constraint: predicted + slack >= requirement
+        model.addConstr(
+            output_var[0] + strength_slack >= float(strength_req),
+            name="strength_lb_soft",
+        )
+        
+        # 3. Objective minimizes material cost + the heavy penalty for using slack
+        model.setObjective(cost_expr + (float(slack_penalty_weight) * strength_slack), GRB.MINIMIZE)
+
+    else:
+        # Original strictly enforced constraint
+        model.addConstr(
+            output_var[0] >= float(strength_req),
+            name="strength_lb",
+        )
+        
+        # Original objective (Minimize cost only)
+        model.setObjective(cost_expr, GRB.MINIMIZE)
+    # =================================================================
+    
+    
     # WFP-style learned-output constraint:
     # WFP:      predicted palatability >= pal_req
     # Concrete: predicted compressive strength >= 45 MPa
-    model.addConstr(
-        output_var[0] >= float(strength_req),
-        name="strength_lb",
-    )
+    #model.addConstr(
+    #    output_var[0] >= float(strength_req),
+    #    name="strength_lb",
+    #)
 
     # Article component-weight constraint. Age is excluded.
     component_weight = gp.quicksum(input_vars[i] for i in range(7))
@@ -396,12 +437,9 @@ def setup_problem_concrete(
         name="component_weight_ub",
     )
 
-    cost_expr = gp.quicksum(
-        float(CONCRETE_COST_VECTOR[i]) * input_vars[i]
-        for i in range(n)
-    )
 
-    model.setObjective(cost_expr, GRB.MINIMIZE)
+
+    #model.setObjective(cost_expr, GRB.MINIMIZE)
     model.update()
 
     return model, "gurobi", X, y
@@ -498,16 +536,19 @@ def dcl_setup_problem(
         )
 
     elif problem_name == "concrete":
-        if learning_model_type not in ("rf", "nn"):
+        if learning_model_type not in ("cart", "rf", "nn"):
             raise NotImplementedError(
                 "Concrete point-estimation setup currently supports "
-                "learning_model_type='rf' or learning_model_type='nn'."
+                "learning_model_type='cart', learning_model_type='rf', "
+                "or learning_model_type='nn'."
             )
 
         return setup_problem_concrete(
             "gurobi",
             shuffle_seed=seed,
             strength_req=float(adjustable_problem_parameters),
+            #use_soft_constraints=options.use_soft_constraints,   # <-- Add this
+            #slack_penalty_weight=options.slack_penalty_weight    # <-- Add this
         )
 
     else:

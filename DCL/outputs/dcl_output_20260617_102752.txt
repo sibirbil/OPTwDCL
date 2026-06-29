@@ -1,0 +1,175 @@
+
+======================================================================
+ROSENBROCK TRUE FULL-HULL REFERENCE
+======================================================================
+solution_x = [-6.92777992e-07  9.99996681e-01  9.99993360e-01]
+objective = -6.927779919585118e-07
+true g(x) = 6.927890070350083e-07
+hull violation = -3.0889309825170628
+solver success = False
+solver message = Positive directional derivative for linesearch
+======================================================================
+
+======================================================================
+ROSENBROCK GLOBAL FULL-HULL BASELINE
+======================================================================
+method = old_global_fixed_degree_all_data
+degree = 4
+train_size = 100 test_size = 0
+train_mse = 2815879.643634038
+test_mse = nan
+train_rmse = 1678.0582956602068
+test_rmse = nan
+train_rel_rmse = 0.7824029961649626
+test_rel_rmse = nan
+all_data_mse_after_refit = 2815879.643634038
+all_data_rmse_after_refit = 1678.0582956602068
+all_data_rel_rmse_after_refit = 0.7824029961649626
+solution_x = [-1.14395950e+04 -3.24682911e+00 -2.49070247e+00]
+objective = -11439.594977076187
+predicted g(x) = -1.932221493916586e-09
+true g(x) = 28442.50125618963
+prediction error = 28442.50125619156
+hull violation = 3.375077994860476e-14
+feasible by surrogate = True
+feasible by true constraint = False
+solver success = True
+solver message = Optimization terminated successfully
+======================================================================
+
+======================================================================
+NEW GLOBAL ROSENBROCK DEGREE SELECTION
+unscaled PolynomialFeatures(include_bias=True) + LinearRegression
+degree | train_mse | test_mse | train_rmse | test_rmse | train_rel_rmse | test_rel_rmse
+----------------------------------------------------------------------
+     1 | 7.087087e+07 | 6.793700e+07 | 8.418484e+03 | 8.242391e+03 | 9.422240e-01 | 1.034638e+00
+     2 | 6.464714e+06 | 5.332415e+07 | 2.542580e+03 | 7.302338e+03 | 9.398324e-01 | 9.817480e-01
+     3 | 5.067925e+05 | 1.585664e+07 | 7.118936e+02 | 3.982040e+03 | 7.819743e-01 | 9.496853e-01
+     4 | 7.582293e+05 | 1.909053e+11 | 8.707637e+02 | 4.369271e+05 | 7.202601e-01 | 8.741448e-01
+     5 | 2.335913e+06 | 3.369080e+12 | 1.528369e+03 | 1.835505e+06 | 6.684440e-01 | 8.506008e-01
+     6 | 3.704313e+06 | 1.257528e+14 | 1.924659e+03 | 1.121395e+07 | 6.878404e-01 | 8.577661e-01
+     7 | 4.314624e+06 | 1.028338e+15 | 2.077167e+03 | 3.206770e+07 | 7.026169e-01 | 8.613807e-01
+     8 | 4.510563e+06 | 1.473917e+17 | 2.123809e+03 | 3.839162e+08 | 7.082603e-01 | 8.721167e-01
+     9 | 1.060368e+07 | 3.402612e+17 | 3.256330e+03 | 5.833192e+08 | 7.475036e-01 | 8.681085e-01
+    10 | 1.199554e+07 | 3.552743e+18 | 3.463458e+03 | 1.884872e+09 | 7.927427e-01 | 8.793458e-01
+
+======================================================================
+ROSENBROCK GLOBAL FULL-HULL BASELINE
+======================================================================
+method = new_global_degree_selected_refit_all_data
+degree = 5
+train_size = 70 test_size = 30
+train_mse = 2335913.1602057335
+test_mse = 3369080070389.1704
+train_rmse = 1528.3694449333032
+test_rmse = 1835505.399171893
+train_rel_rmse = 0.6684439952152232
+test_rel_rmse = 0.85060082078056
+all_data_mse_after_refit = 7241007.724260663
+all_data_rmse_after_refit = 2690.912061785123
+all_data_rel_rmse_after_refit = 0.7396775545529369
+solution_x = [-7.74233002e+03 -2.57120441e-01 -2.14576435e+00]
+objective = -7742.330020607031
+predicted g(x) = 2.825468072842341e-07
+true g(x) = 8233.149593121263
+prediction error = 8233.149592838716
+hull violation = 5.506706202140776e-13
+feasible by surrogate = True
+feasible by true constraint = False
+solver success = False
+solver message = Positive directional derivative for linesearch
+======================================================================
+DCL initial point: [-1. -2.  1.]
+DCL initial objective: -1.0
+DCL initial true g(x): 910.0
+DCL local initial size: 100
+DCL local max data: 100000
+DCL local data schedule: 30, 42, 54, 66, ... until accuracy stops improving
+DCL local model: unscaled PolynomialFeatures(include_bias=True) + LinearRegression
+DCL local error metric: standard RMSE
+DCL slack active: True
+Slack penalty: 10000.0
+Slack upper bound: 10000.0
+SciPy initial point style: x=xit, lambda=0
+----------------------------------------------------------------------
+iteration 0:  trial_x:  [-1. -2.  1.] f(x):  -1.0 true_g(x):  910.0
+train_mse : 63436752.33681378 test_mse : 87773554.29936762
+train_rmse : 7964.719225234106 test_rmse : 9368.754148731176
+train_rel_rmse : 0.8288911660095555 test_rel_rmse : 0.9083639362355796
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  1
+train_mse : 8216066.77134855 test_mse : 44243845.70899715
+train_rmse : 2866.3682197771714 test_rmse : 6651.604746901093
+train_rel_rmse : 0.8493643567509924 test_rel_rmse : 0.999420972610499
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  2
+train_mse : 1628918.4520719906 test_mse : 16375434.020277133
+train_rmse : 1276.290896336721 test_rmse : 4046.657141428853
+train_rel_rmse : 0.8092523713349041 test_rel_rmse : 0.8543850114727385
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  3
+train_mse : 1344579.4230260558 test_mse : 53124811822.60129
+train_rmse : 1159.5600126884576 test_rmse : 230488.20321786814
+train_rel_rmse : 0.7698844226263187 test_rel_rmse : 0.9253127736917436
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  4
+train_mse : 5125376.523538044 test_mse : 400896264225.80774
+train_rmse : 2263.9294431448266 test_rmse : 633163.6946523448
+train_rel_rmse : 0.6755213030150029 test_rel_rmse : 0.8501160341121373
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  5
+train_mse : 7327616.957119882 test_mse : 2123474098759.9368
+train_rmse : 2706.957139874934 test_rmse : 1457214.4999141125
+train_rel_rmse : 0.7040890088283995 test_rel_rmse : 0.8661535392686922
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  6
+train_mse : 8283214.737582513 test_mse : 356621717781048.7
+train_rmse : 2878.0574590481187 test_rmse : 18884430.56544329
+train_rel_rmse : 0.7242976257110636 test_rel_rmse : 0.8876315521397347
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  7
+train_mse : 9348108.115710463 test_mse : 3627919603314922.0
+train_rmse : 3057.4675984727073 test_rmse : 60232213.999776915
+train_rel_rmse : 0.7413393208944653 test_rel_rmse : 0.8716864647119682
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  8
+train_mse : 14176482.213788334 test_mse : 3302428699297191.0
+train_rmse : 3765.1669569606515 test_rmse : 57466761.691408984
+train_rel_rmse : 0.763761369150736 test_rel_rmse : 0.902212380754511
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  9
+train_mse : 21727610.225783385 test_mse : 2219869200124873.0
+train_rmse : 4661.288472706166 test_rmse : 47115487.90074102
+train_rel_rmse : 0.7520463244503662 test_rel_rmse : 0.8949233927868828
+ndata_model :  100 ndata_test :  30 ndata_train :  70 model_degree :  10
+Accepted model with degree  5  trained with  100 data points.
+iter 0: step = 1.161e+04, obj = -11614.204506281681, true_g = 32292.672241468885, local_g = -0.07570579331422778, slack = 1.6532030161198157e-08
+final x = [-1.16142045e+04 -3.42547615e+00 -2.63931144e+00]
+final objective = -11614.204506281681
+return code = -1
+final true g(x) = 32292.672241468885
+objective gap vs hull-restricted true solution = -11614.204505588903
+
+===== DCL ITERATION LOG =====
+iter=0, obj=-11614.204506281681, relaxed_obj=-11614.20434096138, data_size=100, degree=5, test_mse=400896264225.80774, test_rmse=633163.6946523448, train_rmse=2263.9294431448266, status=1, success=True
+start_x = [-1. -2.  1.]
+solution_x = [-1.16142045e+04 -3.42547615e+00 -2.63931144e+00]
+solution_y/local_output = -0.07570579331422778
+relaxation_slack = 1.6532030161198157e-08
+relaxed_constraint_residual = -0.07570580984625794
+true_g_start = 910.0
+local_g_start/local_output_start = 965.5529906818002
+true_g_solution = 32292.672241468885
+local_g_solution/local_output_solution = -0.07570579331422778
+solver_message = `gtol` termination condition is satisfied.
+------------------------------------------------------------
+
+ROSENBROCK DCL ITERATION ROWS
+Iter & x0 & x1 & x2 & Obj & True g & Old Global ghat & New Global ghat & Local ghat & Err(Old Glob) & Err(New Glob) & Err(Local) & Slack & Relaxed Residual & Data Size & Degree & Train MSE & Test MSE & Train RMSE & Test RMSE \\
+0 & -11614.204506 & -3.425476 & -2.639311 & -1.161420e+04 & 3.229267e+04 & 2.300483e+04 & 3.647747e+04 & -7.570579e-02 & 9.287842e+03 & 4.184797e+03 & 3.229275e+04 & 1.653203e-08 & -7.570581e-02 & 100 & 5 & 5.125377e+06 & 4.008963e+11 & 2.263929e+03 & 6.331637e+05 \\
+
+====================================================================================================================================
+ROSENBROCK GLOBAL vs LOCAL DIAGNOSTIC COMPARISON
+====================================================================================================================================
+Method | Iter | Deg | Train RMSE | Test RMSE | Obj | Gap vs True | True g | Predicted/Local g | Slack | Relaxed Residual | True Feas | Model Feas
+------------------------------------------------------------------------------------------------------------------------------------
+True full-hull reference | - | - | nan | nan | -0.000001 | 0.000000 | 0.000001 | nan | 0.000000 | nan | True | True
+Old global fixed degree | - | 4 | 1678.058296 | nan | -11439.594977 | -11439.594976 | 28442.501256 | -0.000000 | 0.000000 | -0.000000 | False | True
+New global selected degree | - | 5 | 1528.369445 | 1835505.399172 | -7742.330021 | -7742.330020 | 8233.149593 | 0.000000 | 0.000000 | 0.000000 | False | True
+Local DCL final | 0 | 5 | 2263.929443 | 633163.694652 | -11614.204506 | -11614.204506 | 32292.672241 | -0.075706 | 0.000000 | -0.075706 | False | True
+Local DCL best test RMSE | 0 | 5 | 2263.929443 | 633163.694652 | -11614.204506 | -11614.204506 | 32292.672241 | -0.075706 | 0.000000 | -0.075706 | False | True
+Local DCL lowest objective | 0 | 5 | 2263.929443 | 633163.694652 | -11614.204506 | -11614.204506 | 32292.672241 | -0.075706 | 0.000000 | -0.075706 | False | True
+====================================================================================================================================
+Rosenbrock selection rule: first require true g(x) <= 0; among true-feasible rows, lower objective x0 is better.
+Slack only relaxes local learned ghat(x), not the convex hull and not the true constraint.

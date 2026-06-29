@@ -1,0 +1,1001 @@
+
+======================================================================
+ROSENBROCK TRUE FULL-HULL REFERENCE
+======================================================================
+solution_x = [-6.92777992e-07  9.99996681e-01  9.99993360e-01]
+objective = -6.927779919585118e-07
+true g(x) = 6.927890070350083e-07
+hull violation = -3.0889309825170628
+solver success = False
+solver message = Positive directional derivative for linesearch
+======================================================================
+
+======================================================================
+ROSENBROCK GLOBAL FULL-HULL BASELINE
+======================================================================
+method = old_global_fixed_degree_all_data
+degree = 4
+train_size = 100 test_size = 0
+train_mse = 2815879.643634038
+test_mse = nan
+train_rmse = 1678.0582956602068
+test_rmse = nan
+train_rel_rmse = 0.7824029961649626
+test_rel_rmse = nan
+all_data_mse_after_refit = 2815879.643634038
+all_data_rmse_after_refit = 1678.0582956602068
+all_data_rel_rmse_after_refit = 0.7824029961649626
+solution_x = [-1.14395950e+04 -3.24682911e+00 -2.49070247e+00]
+objective = -11439.594977076187
+predicted g(x) = -1.932221493916586e-09
+true g(x) = 28442.50125618963
+prediction error = 28442.50125619156
+hull violation = 3.375077994860476e-14
+feasible by surrogate = True
+feasible by true constraint = False
+solver success = True
+solver message = Optimization terminated successfully
+======================================================================
+
+======================================================================
+NEW GLOBAL ROSENBROCK DEGREE SELECTION
+unscaled PolynomialFeatures(include_bias=True) + LinearRegression
+degree | train_mse | test_mse | train_rmse | test_rmse | train_rel_rmse | test_rel_rmse
+----------------------------------------------------------------------
+     1 | 7.087087e+07 | 6.793700e+07 | 8.418484e+03 | 8.242391e+03 | 9.422240e-01 | 1.034638e+00
+     2 | 6.464714e+06 | 5.332415e+07 | 2.542580e+03 | 7.302338e+03 | 9.398324e-01 | 9.817480e-01
+     3 | 5.067925e+05 | 1.585664e+07 | 7.118936e+02 | 3.982040e+03 | 7.819743e-01 | 9.496853e-01
+     4 | 7.582293e+05 | 1.909053e+11 | 8.707637e+02 | 4.369271e+05 | 7.202601e-01 | 8.741448e-01
+     5 | 2.335913e+06 | 3.369080e+12 | 1.528369e+03 | 1.835505e+06 | 6.684440e-01 | 8.506008e-01
+     6 | 3.704313e+06 | 1.257528e+14 | 1.924659e+03 | 1.121395e+07 | 6.878404e-01 | 8.577661e-01
+     7 | 4.314624e+06 | 1.028338e+15 | 2.077167e+03 | 3.206770e+07 | 7.026169e-01 | 8.613807e-01
+     8 | 4.510563e+06 | 1.473917e+17 | 2.123809e+03 | 3.839162e+08 | 7.082603e-01 | 8.721167e-01
+     9 | 1.060368e+07 | 3.402612e+17 | 3.256330e+03 | 5.833192e+08 | 7.475036e-01 | 8.681085e-01
+    10 | 1.199554e+07 | 3.552743e+18 | 3.463458e+03 | 1.884872e+09 | 7.927427e-01 | 8.793458e-01
+
+======================================================================
+ROSENBROCK GLOBAL FULL-HULL BASELINE
+======================================================================
+method = new_global_degree_selected_refit_all_data
+degree = 5
+train_size = 70 test_size = 30
+train_mse = 2335913.1602057335
+test_mse = 3369080070389.1704
+train_rmse = 1528.3694449333032
+test_rmse = 1835505.399171893
+train_rel_rmse = 0.6684439952152232
+test_rel_rmse = 0.85060082078056
+all_data_mse_after_refit = 7241007.724260663
+all_data_rmse_after_refit = 2690.912061785123
+all_data_rel_rmse_after_refit = 0.7396775545529369
+solution_x = [-7.74233002e+03 -2.57120441e-01 -2.14576435e+00]
+objective = -7742.330020607031
+predicted g(x) = 2.825468072842341e-07
+true g(x) = 8233.149593121263
+prediction error = 8233.149592838716
+hull violation = 5.506706202140776e-13
+feasible by surrogate = True
+feasible by true constraint = False
+solver success = False
+solver message = Positive directional derivative for linesearch
+======================================================================
+DCL initial point: [-1. -2.  1.]
+DCL initial objective: -1.0
+DCL initial true g(x): 910.0
+DCL local initial size: 30
+DCL local max data: 100000
+DCL local data schedule: 30, 42, 54, 66, ... until accuracy stops improving
+DCL local model: unscaled PolynomialFeatures(include_bias=True) + LinearRegression
+DCL local error metric: standard RMSE
+DCL slack active: True
+Slack penalty: 10000.0
+Slack upper bound: 10000.0
+SciPy initial point style: x=xit, lambda=0
+----------------------------------------------------------------------
+iteration 0:  trial_x:  [-1. -2.  1.] f(x):  -1.0 true_g(x):  910.0
+train_mse : 45565.83917892903 test_mse : 102652.58328254175
+train_rmse : 213.46156370393484 test_rmse : 320.3944183074071
+train_rel_rmse : 0.77424470798534 test_rel_rmse : 1.0518503370149233
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  1
+train_mse : 8752.764824997055 test_mse : 119421.53713543307
+train_rmse : 93.55621211334422 test_rmse : 345.5742136436587
+train_rel_rmse : 0.8971130534312247 test_rel_rmse : 0.9771203997629863
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  2
+train_mse : 74.06064335571314 test_mse : 2530253.2067787778
+train_rmse : 8.605849368639515 test_rmse : 1590.676964936243
+train_rel_rmse : 0.3480582543442279 test_rel_rmse : 0.9870535974265324
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  3
+train_mse : 1.842591550152899e-21 test_mse : 4487389.183504342
+train_rmse : 4.2925418462175753e-11 test_rmse : 2118.3458602183787
+train_rel_rmse : 2.025596997908307e-12 test_rel_rmse : 1.0210338760621795
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  4
+train_mse : 1.398172535903349e-19 test_mse : 257730152.52527556
+train_rmse : 3.739214537711562e-10 test_rmse : 16053.976221649127
+train_rel_rmse : 2.4248559144229127e-11 test_rel_rmse : 1.1386614262699097
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  5
+train_mse : 2.2318793668346598e-17 test_mse : 10927843751.61237
+train_rmse : 4.724277052454333e-09 test_rmse : 104536.3274255049
+train_rel_rmse : 2.3590765390226278e-11 test_rel_rmse : 0.9285728623506744
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  6
+train_mse : 6.659982077380246e-17 test_mse : 3670911000527.67
+train_rmse : 8.160871324423788e-09 test_rmse : 1915962.1605156166
+train_rel_rmse : 1.4049203462617732e-10 test_rel_rmse : 1.015056326316081
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  7
+train_mse : 1.994444293354856e-15 test_mse : 182166170108116.1
+train_rmse : 4.4659201664996836e-08 test_rmse : 13496894.832075862
+train_rel_rmse : 7.650825933479256e-09 test_rel_rmse : 0.9253946047337829
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  8
+train_mse : 1.1720184241399741e-13 test_mse : 1.9113437843057667e+17
+train_rmse : 3.4234754623627347e-07 test_rmse : 437189179.224025
+train_rel_rmse : 2.633102358999914e-08 test_rel_rmse : 0.9808854344809038
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  9
+train_mse : 2.6548723304884514 test_mse : 7.939091311880819e+17
+train_rmse : 1.6293778967717867 test_rmse : 891015786.1609871
+train_rel_rmse : 0.09468360608797848 test_rel_rmse : 0.976969334159992
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  10
+train_mse : 48896.04478681358 test_mse : 216617.28554069172
+train_rmse : 221.12450064796886 test_rmse : 465.4216212647321
+train_rel_rmse : 0.6754680776425883 test_rel_rmse : 0.9959006263326815
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  1
+train_mse : 17504.170597718556 test_mse : 84896.77873280177
+train_rmse : 132.30332799184816 test_rmse : 291.3705179540335
+train_rel_rmse : 0.7840854431103168 test_rel_rmse : 0.804035899406132
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  2
+train_mse : 1327.0505101202173 test_mse : 36078207.406885736
+train_rmse : 36.42870448039866 test_rmse : 6006.513748164216
+train_rel_rmse : 0.4322437876018537 test_rel_rmse : 1.1983937812683352
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  3
+train_mse : 8.74237117538965e-16 test_mse : 912194494.157346
+train_rmse : 2.9567501036424518e-08 test_rmse : 30202.557741975197
+train_rel_rmse : 5.055750511632463e-10 test_rel_rmse : 0.9289766291011178
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  4
+train_mse : 8.455018283082385e-11 test_mse : 1055455245964.6827
+train_rmse : 9.19511733643589e-06 test_rmse : 1027353.5155751805
+train_rel_rmse : 1.244437659357068e-06 test_rel_rmse : 1.0774827198636574
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  5
+train_mse : 0.01492666083439526 test_mse : 3.2706535399673004e+16
+train_rmse : 0.12217471438229459 test_rmse : 180849482.71884274
+train_rel_rmse : 0.043941134011592234 test_rel_rmse : 1.1289499452678053
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  6
+train_mse : 1518.1800949354056 test_mse : 1.6197720889453627e+18
+train_rmse : 38.96383059884392 test_rmse : 1272702671.0686839
+train_rel_rmse : 0.46830919876179394 test_rel_rmse : 1.006508724390396
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  7
+train_mse : 1668.3585353601584 test_mse : 1.0920930139192652e+19
+train_rmse : 40.84554486550716 test_rmse : 3304683061.837043
+train_rel_rmse : 0.4850009884593203 test_rel_rmse : 0.9967252459416752
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  8
+train_mse : 1813.7356599686716 test_mse : 1.6786413561121954e+20
+train_rmse : 42.587975532639156 test_rmse : 12956239254.167065
+train_rel_rmse : 0.4863554959975931 test_rel_rmse : 1.0231038265378576
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  9
+train_mse : 2124.620073429759 test_mse : 2.760734094447001e+22
+train_rmse : 46.0936012200149 test_rmse : 166154569436.02246
+train_rel_rmse : 0.4968833797392892 test_rel_rmse : 0.9370769873540427
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  10
+train_mse : 83559.73886247733 test_mse : 314839.02653630957
+train_rmse : 289.06701448362685 test_rmse : 561.1051831308544
+train_rel_rmse : 0.7718660722058727 test_rel_rmse : 0.9335186779506829
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  1
+train_mse : 19256.469482800934 test_mse : 213083.52933390488
+train_rmse : 138.7676816942653 test_rmse : 461.60971538075853
+train_rel_rmse : 0.6970323537495396 test_rel_rmse : 0.7729800686479009
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  2
+train_mse : 1863.2561642685425 test_mse : 395700.5045367847
+train_rmse : 43.165451049057076 test_rmse : 629.0472991252603
+train_rel_rmse : 0.5446679204316973 test_rel_rmse : 0.7636291459677753
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  3
+train_mse : 0.004318419398906266 test_mse : 116904.95448262869
+train_rmse : 0.065714681760671 test_rmse : 341.913665246987
+train_rel_rmse : 0.013589746864465653 test_rel_rmse : 0.33758077774450235
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  4
+train_mse : 4.2183892199149696e-08 test_mse : 1409078771.4355814
+train_rmse : 0.00020538717632595686 test_rmse : 37537.69800394773
+train_rel_rmse : 7.378631503404532e-05 test_rel_rmse : 1.0531901593198507
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  5
+train_mse : 86.41124472812693 test_mse : 56364591221629.63
+train_rmse : 9.295764881284752 test_rmse : 7507635.528022763
+train_rel_rmse : 0.3252478224819938 test_rel_rmse : 0.9487934658150847
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  6
+train_mse : 2053.947711343017 test_mse : 627818375217355.1
+train_rmse : 45.3204999017334 test_rmse : 25056304.101310614
+train_rel_rmse : 0.5136240055622531 test_rel_rmse : 0.9769303340167185
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  7
+train_mse : 4140.093205534598 test_mse : 1.2131243685697072e+16
+train_rmse : 64.34355605291488 test_rmse : 110141925.19516386
+train_rel_rmse : 0.46685393807359077 test_rel_rmse : 0.860372540276794
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  8
+train_mse : 19523.552221711456 test_mse : 1339665534577039.2
+train_rmse : 139.72670547075623 test_rmse : 36601441.7007997
+train_rel_rmse : 0.5252916470947578 test_rel_rmse : 0.948863621705245
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  9
+train_mse : 25778.306015630566 test_mse : 5365592975130.103
+train_rmse : 160.5562394166934 test_rmse : 2316374.964277179
+train_rel_rmse : 0.5375325926890613 test_rel_rmse : 0.9222752999741378
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  10
+train_mse : 747918.6557523623 test_mse : 7483562.0554720685
+train_rmse : 864.8229042713672 test_rmse : 2735.6099969608367
+train_rel_rmse : 0.8926088607605326 test_rel_rmse : 0.8743110430683162
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  1
+train_mse : 109672.2792312697 test_mse : 4209353.647270924
+train_rmse : 331.1680528542415 test_rmse : 2051.670940299863
+train_rel_rmse : 0.8051450842269338 test_rel_rmse : 0.8127258940012163
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  2
+train_mse : 13233.094160039864 test_mse : 12099068.195039699
+train_rmse : 115.03518661713842 test_rmse : 3478.371486060639
+train_rel_rmse : 0.7488068583706303 test_rel_rmse : 0.8270443128184183
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  3
+train_mse : 0.5226254081960934 test_mse : 228.5805543993086
+train_rmse : 0.7229283561986577 test_rmse : 15.118880725745163
+train_rel_rmse : 0.027202856606595643 test_rel_rmse : 0.37431752149793446
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  4
+train_mse : 931.5297609808962 test_mse : 11998147549.88051
+train_rmse : 30.52097247764062 test_rmse : 109536.05593538829
+train_rel_rmse : 0.34894363526623234 test_rel_rmse : 0.9038445425847796
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  5
+train_mse : 17530.463380155055 test_mse : 35802697500.737366
+train_rmse : 132.40265624282262 test_rmse : 189216.00751716903
+train_rel_rmse : 0.45598705620792024 test_rel_rmse : 0.9485333406684526
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  6
+train_mse : 25234.387232711564 test_mse : 4009836839.795807
+train_rmse : 158.8533513423987 test_rmse : 63323.27249752501
+train_rel_rmse : 0.5184930016753698 test_rel_rmse : 0.8653320896339772
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  7
+train_mse : 27127.086534993876 test_mse : 15927370178.839828
+train_rmse : 164.70302527577894 test_rmse : 126203.68528232379
+train_rel_rmse : 0.5231080805599801 test_rel_rmse : 0.9077145430706659
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  8
+train_mse : 32927.63197715788 test_mse : 1980299400.502744
+train_rmse : 181.45972549620447 test_rmse : 44500.5550583669
+train_rel_rmse : 0.6272850635818537 test_rel_rmse : 0.8525178436888505
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  9
+train_mse : 30452.080647729286 test_mse : 217065253535.02362
+train_rmse : 174.50524533013123 test_rmse : 465902.6223740575
+train_rel_rmse : 0.594515241250256 test_rel_rmse : 0.9178904833788002
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  10
+Accepted model with degree  4  trained with  54 data points.
+--- Iteration 0 completed in 0.6785 seconds ---
+iter 0: step = 2.494e+00, obj = -1.6372737442904166, true_g = 2.2561002272761357, local_g = -5.5972172141594e-07, slack = 1.9178275854485093e-11
+train_mse : 31290.3402879865 test_mse : 120330.67280786361
+train_rmse : 176.89075806267127 test_rmse : 346.8871182501068
+train_rel_rmse : 0.727926585341136 test_rel_rmse : 1.0268161535598515
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  1
+train_mse : 5783.406103093026 test_mse : 52841.500130869135
+train_rmse : 76.0487087536207 test_rmse : 229.8727911930186
+train_rel_rmse : 0.7107128497087236 test_rel_rmse : 0.8294959086600684
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  2
+train_mse : 21.61395001973493 test_mse : 743172.0423384479
+train_rmse : 4.64908055638262 test_rmse : 862.0742672986173
+train_rel_rmse : 0.4653192801299976 test_rel_rmse : 1.0111002644384834
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  3
+train_mse : 3.2078687485621235e-20 test_mse : 356817.8581178666
+train_rmse : 1.7910524136836765e-10 test_rmse : 597.3423290859829
+train_rel_rmse : 1.1995884294413847e-11 test_rel_rmse : 1.2478350955815347
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  4
+train_mse : 1.355216260547331e-16 test_mse : 407933663.9272084
+train_rmse : 1.1641375608352008e-08 test_rmse : 20197.367747486514
+train_rel_rmse : 2.525456365428224e-10 test_rel_rmse : 0.9871420580013169
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  5
+train_mse : 4.786663744173369e-14 test_mse : 3766925278.785192
+train_rmse : 2.1878445429630892e-07 test_rmse : 61375.282311246374
+train_rel_rmse : 9.678144321476544e-10 test_rel_rmse : 1.0862380049017981
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  6
+train_mse : 8.206090360062615e-10 test_mse : 794947437712.3414
+train_rmse : 2.8646274382653347e-05 test_rmse : 891598.2490518594
+train_rel_rmse : 5.999782220938011e-07 test_rel_rmse : 0.9841054896666753
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  7
+train_mse : 6.999547481526507 test_mse : 9390320604371.748
+train_rmse : 2.645665791729278 test_rmse : 3064363.0014036763
+train_rel_rmse : 0.18509689680695254 test_rel_rmse : 0.9763585793241358
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  8
+train_mse : 7.002331105480793 test_mse : 261543123606795.84
+train_rmse : 2.6461918119215757 test_rmse : 16172294.939395456
+train_rel_rmse : 0.18511360688251077 test_rel_rmse : 0.9328012278659875
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  9
+train_mse : 115.36028193924867 test_mse : 158644644408644.22
+train_rmse : 10.740590390627913 test_rmse : 12595421.565340487
+train_rel_rmse : 0.33643317742173107 test_rel_rmse : 0.9261737877060309
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  10
+train_mse : 83298.40284490967 test_mse : 49040.74764248032
+train_rmse : 288.6146268727725 test_rmse : 221.45145662758762
+train_rel_rmse : 0.8711822153487727 test_rel_rmse : 0.6810168166655831
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  1
+train_mse : 18383.367449522804 test_mse : 42704.50840781857
+train_rmse : 135.58527740696186 test_rmse : 206.65069176709417
+train_rel_rmse : 0.9413401254743642 test_rel_rmse : 0.7999183841352925
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  2
+train_mse : 1721.6140719121481 test_mse : 326239.524075071
+train_rmse : 41.4923375084141 test_rmse : 571.1738124906209
+train_rel_rmse : 0.5281230366871581 test_rel_rmse : 0.9525288913640977
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  3
+train_mse : 3.0175835734558535e-15 test_mse : 10800559.74195546
+train_rmse : 5.493253656491618e-08 test_rmse : 3286.420505954078
+train_rel_rmse : 1.4739137535617604e-09 test_rel_rmse : 1.0959956727164404
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  4
+train_mse : 2.2015135276032022e-08 test_mse : 35767459892.51813
+train_rmse : 0.00014837498197483302 test_rmse : 189122.86982942632
+train_rel_rmse : 3.0922693287637914e-06 test_rel_rmse : 1.0257694492568075
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  5
+train_mse : 19.464810200354453 test_mse : 621830925983806.8
+train_rmse : 4.41189417374833 test_rmse : 24936537.97109388
+train_rel_rmse : 0.37106316886425583 test_rel_rmse : 0.8880907897726011
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  6
+train_mse : 1184.4703017796487 test_mse : 148759687174483.97
+train_rmse : 34.41613432359376 test_rmse : 12196708.046619955
+train_rel_rmse : 0.4851112299330042 test_rel_rmse : 0.9626376281289285
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  7
+train_mse : 1318.158249729748 test_mse : 6.737924389582216e+16
+train_rmse : 36.30644914790963 test_rmse : 259575121.8738463
+train_rel_rmse : 0.45654385129813924 test_rel_rmse : 0.8061319030056957
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  8
+train_mse : 1939.726879404053 test_mse : 2.2941182788097147e+18
+train_rmse : 44.04233054010713 test_rmse : 1514634701.4411478
+train_rel_rmse : 0.47308687375689734 test_rel_rmse : 0.948592722353258
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  9
+train_mse : 27853.39844852567 test_mse : 3.811494250799066e+19
+train_rmse : 166.8933744895994 test_rmse : 6173730031.997727
+train_rel_rmse : 0.636378421615366 test_rel_rmse : 0.9455518039329379
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  10
+train_mse : 153858.97311457503 test_mse : 117378.71204277546
+train_rmse : 392.24861136092636 test_rmse : 342.60576767295595
+train_rel_rmse : 0.7850966317017338 test_rel_rmse : 0.805270372140144
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  1
+train_mse : 45251.83230003714 test_mse : 106723.00247662363
+train_rmse : 212.72478064399817 test_rmse : 326.68486722929737
+train_rel_rmse : 0.7884111088809118 test_rel_rmse : 0.6945568390163374
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  2
+train_mse : 6160.39722872152 test_mse : 33819.16927168894
+train_rmse : 78.48819802187792 test_rmse : 183.8998892650263
+train_rel_rmse : 0.6888202298284309 test_rel_rmse : 0.7893320964673459
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  3
+train_mse : 0.01666503737142899 test_mse : 2502.446308225087
+train_rmse : 0.12909313448603293 test_rmse : 50.0244571007531
+train_rel_rmse : 0.04191465094119284 test_rel_rmse : 0.21166091970282921
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  4
+train_mse : 0.004840765212796428 test_mse : 2343568338.720599
+train_rmse : 0.0695756078866468 test_rmse : 48410.415601609944
+train_rel_rmse : 0.005528231787828263 test_rel_rmse : 1.1500483349327695
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  5
+train_mse : 664.5983649039572 test_mse : 124436860841.80267
+train_rmse : 25.779805369784256 test_rmse : 352756.09256510745
+train_rel_rmse : 0.5522547463614678 test_rel_rmse : 0.839427547333798
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  6
+train_mse : 4667.726473038074 test_mse : 9471058089986.61
+train_rmse : 68.32076165440542 test_rmse : 3077508.4224070953
+train_rel_rmse : 0.48593773781122274 test_rel_rmse : 0.8161898040452702
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  7
+train_mse : 5092.285820644341 test_mse : 2880604158214468.0
+train_rmse : 71.36025378769571 test_rmse : 53671260.07664128
+train_rel_rmse : 0.49531047851087323 test_rel_rmse : 0.9288690997867967
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  8
+train_mse : 21817.565580230417 test_mse : 495439713821975.94
+train_rmse : 147.70770318514337 test_rmse : 22258475.10100312
+train_rel_rmse : 0.5362665839199734 test_rel_rmse : 0.8544713509130569
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  9
+train_mse : 30900.312475439918 test_mse : 138840781514.52808
+train_rmse : 175.78484711555748 test_rmse : 372613.4478444492
+train_rel_rmse : 0.5597522836458867 test_rel_rmse : 0.8361404895146384
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  10
+train_mse : 2295996.1814782834 test_mse : 2103199.5781947477
+train_rmse : 1515.2544939640613 test_rmse : 1450.2412137967765
+train_rel_rmse : 0.8754180845328206 test_rel_rmse : 0.9588453915674008
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  1
+train_mse : 337030.4176415188 test_mse : 378834.06283950957
+train_rmse : 580.5432091080894 test_rmse : 615.4949738539784
+train_rel_rmse : 0.9340485986034561 test_rel_rmse : 0.726410264909117
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  2
+train_mse : 61985.41243144777 test_mse : 187097.72190835347
+train_rmse : 248.96869769400283 test_rmse : 432.5479417455983
+train_rel_rmse : 0.7075908801115174 test_rel_rmse : 0.7813442359971591
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  3
+train_mse : 0.17705419448309365 test_mse : 1216.5870862852223
+train_rmse : 0.4207780822275486 test_rmse : 34.87960845945984
+train_rel_rmse : 0.10132195808518211 test_rel_rmse : 0.10207404842084648
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  4
+train_mse : 86.65189850996691 test_mse : 711327594.3758483
+train_rmse : 9.308700151469425 test_rmse : 26670.725419002916
+train_rel_rmse : 0.40530321582583617 test_rel_rmse : 1.0008626889964156
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  5
+train_mse : 9576.469388584388 test_mse : 34790082327.00599
+train_rmse : 97.85943689079959 test_rmse : 186520.99701375712
+train_rel_rmse : 0.5446889671446457 test_rel_rmse : 0.8892488553459293
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  6
+train_mse : 28200.985125353367 test_mse : 72536518744.72665
+train_rmse : 167.93148937990566 test_rmse : 269326.0454258493
+train_rel_rmse : 0.5551042017579483 test_rel_rmse : 0.9400817451208293
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  7
+train_mse : 33555.61000942732 test_mse : 30622811348.792236
+train_rmse : 183.1819041538419 test_rmse : 174993.74659910632
+train_rel_rmse : 0.5773871923887448 test_rel_rmse : 0.9721080815142729
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  8
+train_mse : 37582.62692711853 test_mse : 3182295599121.4854
+train_rmse : 193.86239172959392 test_rmse : 1783898.9879254613
+train_rel_rmse : 0.5869859081527176 test_rel_rmse : 0.9640573322324609
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  9
+train_mse : 48189.70444787534 test_mse : 2159196238.666608
+train_rmse : 219.52153527131532 test_rmse : 46467.152254755274
+train_rel_rmse : 0.6045286173861015 test_rel_rmse : 0.8571507872082403
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  10
+train_mse : 5048972.324899743 test_mse : 6103010.803763945
+train_rmse : 2246.991839081696 test_rmse : 2470.4272512591715
+train_rel_rmse : 0.9761024916288272 test_rel_rmse : 0.929466199266185
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  1
+train_mse : 548469.1746335252 test_mse : 4553045.368826702
+train_rmse : 740.5870473033708 test_rmse : 2133.7866268272237
+train_rel_rmse : 0.8704245886126282 test_rel_rmse : 0.7643959538810946
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  2
+train_mse : 93696.46747078822 test_mse : 6929952.116486293
+train_rmse : 306.09878711093944 test_rmse : 2632.4802214805513
+train_rel_rmse : 0.8100664917132995 test_rel_rmse : 0.7744764505620488
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  3
+train_mse : 0.7550036484503865 test_mse : 747.5587761001207
+train_rmse : 0.8689094592938821 test_rmse : 27.34152110070178
+train_rel_rmse : 0.06120371907830627 test_rel_rmse : 0.24853978189955891
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  4
+train_mse : 2258.730772367398 test_mse : 5630715816.419677
+train_rmse : 47.526106219291705 test_rmse : 75038.09576754781
+train_rel_rmse : 0.5112253859410236 test_rel_rmse : 0.9258221433316934
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  5
+train_mse : 15963.991261929146 test_mse : 8455488544.9854355
+train_rmse : 126.34868919751065 test_rmse : 91953.73045714587
+train_rel_rmse : 0.5555307275569072 test_rel_rmse : 0.8112799646825436
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  6
+train_mse : 39992.24186707781 test_mse : 31724446631.77734
+train_rmse : 199.98060372715602 test_rmse : 178113.57789842229
+train_rel_rmse : 0.658125939728844 test_rel_rmse : 0.8651825519160538
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  7
+train_mse : 46083.7666190531 test_mse : 1513732470726.487
+train_rmse : 214.67129901096024 test_rmse : 1230338.356195761
+train_rel_rmse : 0.6820370118572946 test_rel_rmse : 0.8058090589835267
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  8
+train_mse : 45637.702142534625 test_mse : 2695671045919.902
+train_rmse : 213.62982503043582 test_rmse : 1641849.885318357
+train_rel_rmse : 0.6963150883555566 test_rel_rmse : 0.8532890362502282
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  9
+train_mse : 63026.6281842309 test_mse : 177233873048873.6
+train_rmse : 251.0510469689997 test_rmse : 13312921.281554759
+train_rel_rmse : 0.7357370035781036 test_rel_rmse : 0.847022618041671
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  10
+Accepted model with degree  4  trained with  66 data points.
+--- Iteration 1 completed in 1.0363 seconds ---
+iter 1: step = 1.671e+00, obj = -0.11528221462175711, true_g = 0.19552611185425067, local_g = -2.992528962408869e-07, slack = 3.156656109553247e-11
+train_mse : 40124.12423577597 test_mse : 93458.55681439319
+train_rmse : 200.3100702305702 test_rmse : 305.70992266263323
+train_rel_rmse : 0.7223204061161204 test_rel_rmse : 0.7158037450732623
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  1
+train_mse : 3345.126862536188 test_mse : 171231.56840031222
+train_rmse : 57.83707169745187 test_rmse : 413.80136345873996
+train_rel_rmse : 0.7171788802651343 test_rel_rmse : 0.9279303575168871
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  2
+train_mse : 19.83427625918484 test_mse : 705473.8006668098
+train_rmse : 4.453568935043538 test_rmse : 839.9248779901747
+train_rel_rmse : 0.3682476798306524 test_rel_rmse : 1.109587381248354
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  3
+train_mse : 5.886394123454316e-21 test_mse : 13025233.685302481
+train_rmse : 7.6722839646707e-11 test_rmse : 3609.0488615842373
+train_rel_rmse : 8.021793905895118e-12 test_rel_rmse : 0.9625261483048242
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  4
+train_mse : 4.8033533222897817e-17 test_mse : 1549632579.7619603
+train_rmse : 6.9306228596640444e-09 test_rmse : 39365.37285180925
+train_rel_rmse : 6.34505264322959e-10 test_rel_rmse : 1.1608884089499243
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  5
+train_mse : 3.1482949000467234e-13 test_mse : 259754663881.72153
+train_rmse : 5.610966850772444e-07 test_rmse : 509661.32272492634
+train_rel_rmse : 3.8885347838236135e-08 test_rel_rmse : 0.9724197582642293
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  6
+train_mse : 5.321641999929225e-10 test_mse : 358742628239250.25
+train_rmse : 2.3068684400999605e-05 test_rmse : 18940502.322780415
+train_rel_rmse : 1.6903717819435506e-06 test_rel_rmse : 1.0187592523566806
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  7
+train_mse : 7.001415232809888 test_mse : 45953782598672.08
+train_rmse : 2.6460187514093487 test_rmse : 6778921.934841268
+train_rel_rmse : 0.18510914697822098 test_rel_rmse : 0.89469833563713
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  8
+train_mse : 7.010724364636352 test_mse : 3616762825444305.5
+train_rmse : 2.6477772498147103 test_rmse : 60139527.97822997
+train_rel_rmse : 0.1854486835793809 test_rel_rmse : 1.067989731666957
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  9
+train_mse : 11.069396391213413 test_mse : 1.9464213572473312e+17
+train_rmse : 3.327070241400595 test_rmse : 441182655.73879164
+train_rel_rmse : 0.2783705058089854 test_rel_rmse : 0.9447887615583093
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  10
+train_mse : 73336.09262182485 test_mse : 82895.42793724957
+train_rmse : 270.80637478062596 test_rmse : 287.9156611531397
+train_rel_rmse : 0.7198911181289216 test_rel_rmse : 0.901815934712027
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  1
+train_mse : 21788.1443712787 test_mse : 30494.616938621206
+train_rmse : 147.6080769174868 test_rmse : 174.62707962575908
+train_rel_rmse : 0.7322331636251223 test_rel_rmse : 0.9716411946770229
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  2
+train_mse : 1081.3261254596416 test_mse : 76822.51841153586
+train_rmse : 32.883523616845586 test_rmse : 277.16875439258274
+train_rel_rmse : 0.6827259934230292 test_rel_rmse : 0.6973865179255248
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  3
+train_mse : 3.573828950599817e-15 test_mse : 9088596.392772997
+train_rmse : 5.978151010638504e-08 test_rmse : 3014.7299037845823
+train_rel_rmse : 1.507487420029734e-08 test_rel_rmse : 0.9246942757640615
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  4
+train_mse : 0.0002153971439785673 test_mse : 266858077822.0723
+train_rmse : 0.014676414547789502 test_rmse : 516583.0793029058
+train_rel_rmse : 0.00037196141635393394 test_rel_rmse : 1.115005846264329
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  5
+train_mse : 5.188354675729024 test_mse : 1549026385992.7808
+train_rmse : 2.2777960127564154 test_rmse : 1244598.885582331
+train_rel_rmse : 0.15848756873716124 test_rel_rmse : 0.7704573882653146
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  6
+train_mse : 351.43900685632246 test_mse : 1659850092277836.2
+train_rmse : 18.74670656025539 test_rmse : 40741257.863225535
+train_rel_rmse : 0.5340798454358474 test_rel_rmse : 0.7682942446466758
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  7
+train_mse : 582.6848853000988 test_mse : 1.1723872722587904e+16
+train_rmse : 24.1388666946089 test_rmse : 108276833.72997154
+train_rel_rmse : 0.44513633825823834 test_rel_rmse : 0.7939704369994716
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  8
+train_mse : 18388.591816669315 test_mse : 1.0860724218754548e+16
+train_rmse : 135.6045420207941 test_rmse : 104214798.46333988
+train_rel_rmse : 0.571678761550347 test_rel_rmse : 0.6970855603973141
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  9
+train_mse : 32387.781992925004 test_mse : 3129583127037777.0
+train_rmse : 179.96605789127295 test_rmse : 55942677.15293734
+train_rel_rmse : 0.6046041701615604 test_rel_rmse : 0.7276864517487076
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  10
+train_mse : 103357.70444625954 test_mse : 250265.59093604726
+train_rmse : 321.49293063185627 test_rmse : 500.26552043494587
+train_rel_rmse : 0.8101954126103839 test_rel_rmse : 0.8115402336673214
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  1
+train_mse : 28343.39560718876 test_mse : 131208.9402247137
+train_rmse : 168.35496905998576 test_rmse : 362.2277463485006
+train_rel_rmse : 0.7186607670639519 test_rel_rmse : 0.6648324572419417
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  2
+train_mse : 3376.1933039269607 test_mse : 68696.83823846659
+train_rmse : 58.105019610417145 test_rmse : 262.1008169359008
+train_rel_rmse : 0.8299400055154933 test_rel_rmse : 0.7154385980481716
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  3
+train_mse : 0.05017057031865882 test_mse : 717.2901018533552
+train_rmse : 0.2239878798476802 test_rmse : 26.78227215628568
+train_rel_rmse : 0.009695618762616522 test_rel_rmse : 0.43268024572099867
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  4
+train_mse : 0.00019872097877469798 test_mse : 603303000.1786832
+train_rmse : 0.014096842865503537 test_rmse : 24562.227101357956
+train_rel_rmse : 0.00018744767034501621 test_rel_rmse : 0.8966275768407527
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  5
+train_mse : 326.6759771598565 test_mse : 129233492730.21916
+train_rmse : 18.07417984750225 test_rmse : 359490.60172724846
+train_rel_rmse : 0.31755621969069875 test_rel_rmse : 1.015135234092086
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  6
+train_mse : 2612.7206095429847 test_mse : 29434026782217.156
+train_rmse : 51.11477877818689 test_rmse : 5425313.519255561
+train_rel_rmse : 0.45572792046366156 test_rel_rmse : 0.8930220402763138
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  7
+train_mse : 8651.52159834648 test_mse : 731700460846057.0
+train_rmse : 93.01355599237394 test_rmse : 27049962.307664257
+train_rel_rmse : 0.40707885163635993 test_rel_rmse : 0.8965717179387098
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  8
+train_mse : 20842.765679874843 test_mse : 29192592027429.81
+train_rmse : 144.37023820675384 test_rmse : 5403016.93754793
+train_rel_rmse : 0.4904820101966091 test_rel_rmse : 0.8484891162634565
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  9
+train_mse : 21194.370596370452 test_mse : 32719576777.662525
+train_rmse : 145.58286505070043 test_rmse : 180885.53501499927
+train_rel_rmse : 0.5143856305597799 test_rel_rmse : 0.8252070239997403
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  10
+train_mse : 1750971.986755842 test_mse : 3287218.825317473
+train_rmse : 1323.24298099625 test_rmse : 1813.0688970134238
+train_rel_rmse : 0.9566452215218505 test_rel_rmse : 0.9033069185226472
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  1
+train_mse : 220137.8297076785 test_mse : 1312386.2058960642
+train_rmse : 469.1884799392228 test_rmse : 1145.5942588438825
+train_rel_rmse : 0.8926983314046072 test_rel_rmse : 0.8277993048721286
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  2
+train_mse : 61288.591148760825 test_mse : 252452.8943617514
+train_rmse : 247.56532703260532 test_rmse : 502.44690700784633
+train_rel_rmse : 0.8336486690083676 test_rel_rmse : 0.7915883730576644
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  3
+train_mse : 0.20974881350162364 test_mse : 21314.63405626422
+train_rmse : 0.4579834205532157 test_rmse : 145.9953220355509
+train_rel_rmse : 0.025041992930180564 test_rel_rmse : 0.4326936372677463
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  4
+train_mse : 145.0454089045561 test_mse : 2024830588.1309326
+train_rmse : 12.0434799333314 test_rmse : 44998.11760652808
+train_rel_rmse : 0.3961182231061421 test_rel_rmse : 1.0208346581545067
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  5
+train_mse : 3405.3619295755493 test_mse : 3550964620962.7695
+train_rmse : 58.35547900219438 test_rmse : 1884400.334579351
+train_rel_rmse : 0.5188763758005 test_rel_rmse : 0.9076407482059936
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  6
+train_mse : 19787.640825208677 test_mse : 271771766274.06207
+train_rmse : 140.66854952408045 test_rmse : 521317.33740022697
+train_rel_rmse : 0.5045242004829481 test_rel_rmse : 0.915093978130033
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  7
+train_mse : 19802.122590198833 test_mse : 16287445408612.402
+train_rmse : 140.720014888426 test_rmse : 4035770.732909936
+train_rel_rmse : 0.5052666638758523 test_rel_rmse : 0.9659221074026648
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  8
+train_mse : 21434.824546817053 test_mse : 13377674820675.55
+train_rmse : 146.4063678492744 test_rmse : 3657550.385254529
+train_rel_rmse : 0.5219374408333746 test_rel_rmse : 0.8871065901388796
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  9
+train_mse : 35010.73404492661 test_mse : 226816818866988.84
+train_rmse : 187.1115550812579 test_rmse : 15060438.86701144
+train_rel_rmse : 0.6138829310942233 test_rel_rmse : 0.9199835935735845
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  10
+Accepted model with degree  4  trained with  54 data points.
+--- Iteration 2 completed in 0.6632 seconds ---
+iter 2: step = 5.012e+00, obj = -4.116976012284701, true_g = 4.798580693717936, local_g = -1.1578275689316797e-06, slack = 1.2585200938597527e-10
+train_mse : 46208.215488705944 test_mse : 92192.07848878004
+train_rmse : 214.96096270882754 test_rmse : 303.631484679669
+train_rel_rmse : 0.8709578780670876 test_rel_rmse : 0.8978662838414588
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  1
+train_mse : 9209.015100013272 test_mse : 59266.14823697259
+train_rmse : 95.96361341682207 test_rmse : 243.44639705071134
+train_rel_rmse : 0.7082198980939762 test_rel_rmse : 0.851676098785762
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  2
+train_mse : 48.30225885677515 test_mse : 184845.7468989348
+train_rmse : 6.949982651544905 test_rmse : 429.936910370504
+train_rel_rmse : 0.5177536977297605 test_rel_rmse : 1.0764822026791063
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  3
+train_mse : 3.235228890494226e-22 test_mse : 9437359.017008571
+train_rmse : 1.798674203543884e-11 test_rmse : 3072.028485709169
+train_rel_rmse : 4.1467286414722525e-13 test_rel_rmse : 1.2203023840526313
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  4
+train_mse : 6.867142159711618e-20 test_mse : 222635377.41564587
+train_rmse : 2.620523260669826e-10 test_rmse : 14920.971061417078
+train_rel_rmse : 1.338835805658614e-11 test_rel_rmse : 1.133335151332144
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  5
+train_mse : 7.557641928529905e-18 test_mse : 26778293417.669304
+train_rmse : 2.7491165723791898e-09 test_rmse : 163640.74498018305
+train_rel_rmse : 1.5835936100994423e-10 test_rel_rmse : 0.9484958541689381
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  6
+train_mse : 3.892299139760914e-15 test_mse : 701381937640.9536
+train_rmse : 6.238829329097659e-08 test_rmse : 837485.4850329966
+train_rel_rmse : 3.01605330146093e-09 test_rel_rmse : 1.0415556839556463
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  7
+train_mse : 8.299085109262744e-13 test_mse : 174749126028159.0
+train_rmse : 9.109931453783143e-07 test_rmse : 13219271.009709992
+train_rel_rmse : 3.165640105700518e-08 test_rel_rmse : 0.8450399494862192
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  8
+train_mse : 1.7689785374965944e-10 test_mse : 1234629828282177.2
+train_rmse : 1.3300295250469421e-05 test_rmse : 35137299.672601156
+train_rel_rmse : 6.384211475392693e-07 test_rel_rmse : 1.0017581962946511
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  9
+train_mse : 1036.431010611067 test_mse : 6.714372110324965e+16
+train_rmse : 32.19364860669053 test_rmse : 259121054.92076412
+train_rel_rmse : 0.42261232001839055 test_rel_rmse : 0.8501904904184303
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  10
+train_mse : 43095.21445879512 test_mse : 177363.50422738507
+train_rmse : 207.59386902988035 test_rmse : 421.14546682516374
+train_rel_rmse : 0.6680862683230856 test_rel_rmse : 0.9004970077729426
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  1
+train_mse : 20620.290405270047 test_mse : 80885.42453461078
+train_rmse : 143.5976685230998 test_rmse : 284.40362960871437
+train_rel_rmse : 0.6915938215160129 test_rel_rmse : 1.0179855296185485
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  2
+train_mse : 546.6385736440363 test_mse : 656822.825785684
+train_rmse : 23.38030311274934 test_rmse : 810.4460659326345
+train_rel_rmse : 0.47401082613820505 test_rel_rmse : 0.8020246452797714
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  3
+train_mse : 4.2968056616777426e-12 test_mse : 9837208387.345675
+train_rmse : 2.072873768872032e-06 test_rmse : 99182.70205709095
+train_rel_rmse : 4.3336441012493066e-07 test_rel_rmse : 0.9030709912538301
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  4
+train_mse : 9.613352780250192e-12 test_mse : 79799412134.3899
+train_rmse : 3.100540723849663e-06 test_rmse : 282487.89732374356
+train_rel_rmse : 1.309679938060312e-07 test_rel_rmse : 0.9715072729246198
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  5
+train_mse : 4.622332457233553 test_mse : 20751440504539.6
+train_rmse : 2.1499610362128783 test_rmse : 4555374.902742869
+train_rel_rmse : 0.3039654633334402 test_rel_rmse : 0.917633520904034
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  6
+train_mse : 950.3009363875901 test_mse : 4711461957483937.0
+train_rmse : 30.82695146114176 test_rmse : 68640090.01657805
+train_rel_rmse : 0.4159414581158558 test_rel_rmse : 0.8855394536599954
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  7
+train_mse : 1205.7739856941246 test_mse : 2.5723337381373948e+16
+train_rmse : 34.72425644551838 test_rmse : 160384966.19500828
+train_rel_rmse : 0.4487397043835346 test_rel_rmse : 0.8003161068491152
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  8
+train_mse : 2300.1455804447373 test_mse : 1.8360136027184082e+18
+train_rmse : 47.95983299016728 test_rmse : 1354995794.3545096
+train_rel_rmse : 0.4721718141134595 test_rel_rmse : 0.9635874245805508
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  9
+train_mse : 32269.48390930526 test_mse : 448145360925290.6
+train_rmse : 179.63708945901251 test_rmse : 21169444.03911663
+train_rel_rmse : 0.5969265039678766 test_rel_rmse : 0.7966330232091864
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  10
+train_mse : 148919.84452942337 test_mse : 126146.27542871182
+train_rmse : 385.9013404089488 test_rmse : 355.17076938947525
+train_rel_rmse : 0.8122468006896825 test_rel_rmse : 0.7418969351270216
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  1
+train_mse : 24767.98516054499 test_mse : 391632.40795739705
+train_rmse : 157.37847743749776 test_rmse : 625.8054074210265
+train_rel_rmse : 0.7357370326000799 test_rel_rmse : 0.7466942338108282
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  2
+train_mse : 6325.888216973514 test_mse : 610439.9273923975
+train_rmse : 79.53545257917072 test_rmse : 781.3065514843694
+train_rel_rmse : 0.7106969633401898 test_rel_rmse : 0.7805236886378832
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  3
+train_mse : 0.06013443691409368 test_mse : 5417.723589293376
+train_rmse : 0.2452232389356557 test_rmse : 73.60518724446923
+train_rel_rmse : 0.016170711753679474 test_rel_rmse : 0.46490256029386
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  4
+train_mse : 0.014418427679576153 test_mse : 4165257962.2054667
+train_rmse : 0.12007675744945877 test_rmse : 64538.80973651022
+train_rel_rmse : 0.006263819314854023 test_rel_rmse : 0.9010023851623451
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  5
+train_mse : 15.33095084267981 test_mse : 2753729728245.31
+train_rmse : 3.915475813062802 test_rmse : 1659436.5695154816
+train_rel_rmse : 0.19407842487172083 test_rel_rmse : 0.95214326360149
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  6
+train_mse : 2550.7319828830296 test_mse : 89840893516982.3
+train_rmse : 50.504771882298705 test_rmse : 9478443.623136781
+train_rel_rmse : 0.4940433902463609 test_rel_rmse : 0.8451223377774583
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  7
+train_mse : 30018.74586731371 test_mse : 253808062916982.53
+train_rmse : 173.25918696367506 test_rmse : 15931354.710663576
+train_rel_rmse : 0.5779315685657402 test_rel_rmse : 0.8791282972382484
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  8
+train_mse : 34426.22794793785 test_mse : 94402578747434.19
+train_rmse : 185.54306224684836 test_rmse : 9716098.946976312
+train_rel_rmse : 0.510110856394023 test_rel_rmse : 0.8724618587234099
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  9
+train_mse : 40486.45351988248 test_mse : 17131937249401.393
+train_rmse : 201.2124586597025 test_rmse : 4139074.44356844
+train_rel_rmse : 0.5284869481584991 test_rel_rmse : 0.8940279686085727
+ndata_model :  54 ndata_test :  17 ndata_train :  37 model_degree :  10
+train_mse : 2187464.0291725276 test_mse : 2066835.6927259136
+train_rmse : 1479.0077853657592 test_rmse : 1437.6493636231032
+train_rel_rmse : 0.9432082124865886 test_rel_rmse : 0.7961175252147396
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  1
+train_mse : 304452.6263254197 test_mse : 1771355.4069562007
+train_rmse : 551.7722594743412 test_rmse : 1330.9227652107393
+train_rel_rmse : 0.8045658694137574 test_rel_rmse : 0.9846370088524101
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  2
+train_mse : 45907.13961317379 test_mse : 579530.3311905329
+train_rmse : 214.25951463861247 test_rmse : 761.2688954571393
+train_rel_rmse : 0.7168515363643463 test_rel_rmse : 1.01158818629043
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  3
+train_mse : 0.3491143999178116 test_mse : 4261.29155450402
+train_rmse : 0.5908590355726242 test_rmse : 65.27856887604094
+train_rel_rmse : 0.04866863591126456 test_rel_rmse : 0.2322484000716701
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  4
+train_mse : 25.91274035554159 test_mse : 3032709006.88207
+train_rmse : 5.090455810194367 test_rmse : 55070.03728782168
+train_rel_rmse : 0.3030888032606302 test_rel_rmse : 0.845531116761628
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  5
+train_mse : 8303.036518458273 test_mse : 1145405300.1666677
+train_rmse : 91.1209993275879 test_rmse : 33843.83695987598
+train_rel_rmse : 0.4420897792460214 test_rel_rmse : 0.7891869727336175
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  6
+train_mse : 9002.925109730124 test_mse : 1819050581615.8477
+train_rmse : 94.88374523452435 test_rmse : 1348721.832556976
+train_rel_rmse : 0.510611520738972 test_rel_rmse : 0.8423283752957144
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  7
+train_mse : 10100.733129248345 test_mse : 19470510823788.46
+train_rmse : 100.50240359935849 test_rmse : 4412540.1781500485
+train_rel_rmse : 0.5190273904288281 test_rel_rmse : 0.8279276698626883
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  8
+train_mse : 13719.066668048681 test_mse : 1214710744463293.5
+train_rmse : 117.12841955754666 test_rmse : 34852700.676752344
+train_rel_rmse : 0.6007644098759096 test_rel_rmse : 0.8768156646591558
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  9
+train_mse : 24440.856048471782 test_mse : 33942333515302.855
+train_rmse : 156.33571584405075 test_rmse : 5826004.936086379
+train_rel_rmse : 0.5889687026527708 test_rel_rmse : 0.8078172573333824
+ndata_model :  66 ndata_test :  20 ndata_train :  46 model_degree :  10
+train_mse : 4642817.251620303 test_mse : 7129664.868591152
+train_rmse : 2154.719761737081 test_rmse : 2670.14322997684
+train_rel_rmse : 0.9752127114591976 test_rel_rmse : 0.9826575385927804
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  1
+train_mse : 1081746.0324672612 test_mse : 614937.4636675243
+train_rmse : 1040.070205547328 test_rmse : 784.179484344958
+train_rel_rmse : 0.839854100357462 test_rel_rmse : 0.9057172589765887
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  2
+train_mse : 144190.35164719832 test_mse : 3490609.8498114194
+train_rmse : 379.7240467065502 test_rmse : 1868.3173846569591
+train_rel_rmse : 0.6963219621511442 test_rel_rmse : 0.8318396127780078
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  3
+train_mse : 0.3940815980415287 test_mse : 97.55998296649256
+train_rmse : 0.6277591879387578 test_rmse : 9.877245717632652
+train_rel_rmse : 0.053504891732556015 test_rel_rmse : 0.04468252870980643
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  4
+train_mse : 16752.199778696293 test_mse : 1858852587.2114508
+train_rmse : 129.4302892629708 test_rmse : 43114.41275503414
+train_rel_rmse : 0.4722053065100854 test_rel_rmse : 0.7154894222008692
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  5
+train_mse : 31412.249735178295 test_mse : 1652340079.9247415
+train_rmse : 177.23501272372312 test_rmse : 40648.98621029486
+train_rel_rmse : 0.5871185779090388 test_rel_rmse : 0.8081050457091582
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  6
+train_mse : 55893.89238388341 test_mse : 13152922476.521872
+train_rmse : 236.41889176604184 test_rmse : 114686.19130707005
+train_rel_rmse : 0.6322867160543929 test_rel_rmse : 0.8644867152428749
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  7
+train_mse : 97622.66321956553 test_mse : 345912832904.16925
+train_rmse : 312.4462565299279 test_rmse : 588143.5478725999
+train_rel_rmse : 0.6738704405320098 test_rel_rmse : 0.9273720920580952
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  8
+train_mse : 114546.0956844671 test_mse : 6256141809675.94
+train_rmse : 338.44659207099 test_rmse : 2501228.0603087638
+train_rel_rmse : 0.661917378293656 test_rel_rmse : 0.8956155454510586
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  9
+train_mse : 262439.8214705128 test_mse : 12409247247244.873
+train_rmse : 512.2888067003931 test_rmse : 3522676.148504837
+train_rel_rmse : 0.7428181057166949 test_rel_rmse : 0.9439183528198236
+ndata_model :  78 ndata_test :  24 ndata_train :  54 model_degree :  10
+Accepted model with degree  4  trained with  78 data points.
+--- Iteration 3 completed in 1.0001 seconds ---
+iter 3: step = 4.978e+00, obj = 0.0471183995376411, true_g = -0.03089334962477179, local_g = -2.4837929046839236e-06, slack = 6.3504192473236e-11
+train_mse : 60929.75300287252 test_mse : 45502.312610031026
+train_rmse : 246.83952884996464 test_rmse : 213.31271084966087
+train_rel_rmse : 0.6989164296015836 test_rel_rmse : 0.86777359717062
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  1
+train_mse : 12523.586846169084 test_mse : 65010.674906085216
+train_rmse : 111.9088327441989 test_rmse : 254.97191003340978
+train_rel_rmse : 0.7399090589500548 test_rel_rmse : 1.0780340823538763
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  2
+train_mse : 591.2999215027884 test_mse : 14657.462238397995
+train_rmse : 24.316659340928975 test_rmse : 121.06800666731898
+train_rel_rmse : 0.528918480328443 test_rel_rmse : 0.7394498600017408
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  3
+train_mse : 6.138183657779458e-22 test_mse : 949954.6776304649
+train_rmse : 2.4775358035312947e-11 test_rmse : 974.6561843185857
+train_rel_rmse : 4.833964017627219e-13 test_rel_rmse : 1.161159497567607
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  4
+train_mse : 1.2793048213192306e-18 test_mse : 306660481.5219333
+train_rmse : 1.1310635796979896e-09 test_rmse : 17511.72411620093
+train_rel_rmse : 1.5969828330860224e-11 test_rel_rmse : 1.1525508767688366
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  5
+train_mse : 2.0217554775330834e-20 test_mse : 7072637936.473451
+train_rmse : 1.4218844810789249e-10 test_rmse : 84098.97702394157
+train_rel_rmse : 1.3709692552716686e-12 test_rel_rmse : 0.959970369293008
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  6
+train_mse : 3.3975858238120636e-18 test_mse : 1903587241697.9053
+train_rmse : 1.843254139778903e-09 test_rmse : 1379705.490928374
+train_rel_rmse : 3.1941777221283674e-11 test_rel_rmse : 0.8778924827504847
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  7
+train_mse : 5.384945576030949e-17 test_mse : 16092617124452.041
+train_rmse : 7.3382188411296025e-09 test_rmse : 4011560.4350990453
+train_rel_rmse : 1.287635780098002e-10 test_rel_rmse : 0.8462118515336103
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  8
+train_mse : 3.546710865672067e-14 test_mse : 1.5590712838525824e+16
+train_rmse : 1.8832713202489085e-07 test_rmse : 124862776.0324342
+train_rel_rmse : 2.1372244227951786e-09 test_rel_rmse : 0.9013040082450142
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  9
+train_mse : 960.8260138439937 test_mse : 2113051270808499.5
+train_rmse : 30.99719364465102 test_rmse : 45967937.421734504
+train_rel_rmse : 0.3619805122013166 test_rel_rmse : 0.9651839837085301
+ndata_model :  30 ndata_test :  9 ndata_train :  21 model_degree :  10
+train_mse : 63245.532470231956 test_mse : 97923.44211388215
+train_rmse : 251.486644715444 test_rmse : 312.92721536146735
+train_rel_rmse : 0.7128695477899571 test_rel_rmse : 0.8788586235294553
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  1
+train_mse : 10508.63907195862 test_mse : 103044.71969285287
+train_rmse : 102.51165334711278 test_rmse : 321.0057938618131
+train_rel_rmse : 0.44683609223158194 test_rel_rmse : 0.9366587785790466
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  2
+train_mse : 433.78238701578306 test_mse : 1996742.2636512371
+train_rmse : 20.827443122375417 test_rmse : 1413.0613092329847
+train_rel_rmse : 0.2847085755214572 test_rel_rmse : 0.9710843693484549
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  3
+train_mse : 1.9438307442928025e-15 test_mse : 468318206.58117104
+train_rmse : 4.4088895929619316e-08 test_rmse : 21640.660955275165
+train_rel_rmse : 7.736351450569574e-10 test_rel_rmse : 1.0306960018243914
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  4
+train_mse : 4.419101167763312e-13 test_mse : 15747046841.922646
+train_rmse : 6.647632035366663e-07 test_rmse : 125487.2377651315
+train_rel_rmse : 1.5039640888557866e-08 test_rel_rmse : 0.9884668536696166
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  5
+train_mse : 1.1908340550930476 test_mse : 181149449720840.62
+train_rmse : 1.0912534330269241 test_rmse : 13459177.156157825
+train_rel_rmse : 0.06551287460649212 test_rel_rmse : 0.880331914183743
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  6
+train_mse : 1035.5609849416226 test_mse : 3.1087947248846852e+16
+train_rmse : 32.18013338912104 test_rmse : 176317745.13317385
+train_rel_rmse : 0.3656876387835239 test_rel_rmse : 0.8685931205955771
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  7
+train_mse : 1144.0028524963618 test_mse : 3.764258223306425e+16
+train_rmse : 33.823111218460696 test_rmse : 194016963.7765323
+train_rel_rmse : 0.3819835971085773 test_rel_rmse : 0.8694026081153542
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  8
+train_mse : 18262.384645297214 test_mse : 1.4093621140748168e+16
+train_rmse : 135.1383907159517 test_rmse : 118716557.9889687
+train_rel_rmse : 0.5093597289550561 test_rel_rmse : 0.9012810448452805
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  9
+train_mse : 27884.63684942768 test_mse : 2.1475013799012295e+19
+train_rmse : 166.98693616396366 test_rmse : 4634114133.144791
+train_rel_rmse : 0.6903068519496438 test_rel_rmse : 0.9178632724576246
+ndata_model :  42 ndata_test :  13 ndata_train :  29 model_degree :  10
+Accepted model with degree  3  trained with  30 data points.
+--- Iteration 4 completed in 0.3598 seconds ---
+iter 4: step = 7.089e+01, obj = -70.82544502136885, true_g = 92.6930563521702, local_g = -0.007546111027096458, slack = 1.7079571631449043e-08
+final x = [-70.82544502   0.09739272  -0.44934918]
+final objective = -70.82544502136885
+return code = -1
+final true g(x) = 92.6930563521702
+objective gap vs hull-restricted true solution = -70.82544432859086
+
+===== DCL ITERATION LOG =====
+iter=0, obj=-1.6372737442904166, relaxed_obj=-1.637273552507658, data_size=54, degree=4, test_mse=116904.95448262869, test_rmse=341.913665246987, train_rmse=0.065714681760671, status=1, success=True
+start_x = [-1. -2.  1.]
+solution_x = [-1.63727374  0.21370777  0.04328143]
+solution_y/local_output = -5.5972172141594e-07
+relaxation_slack = 1.9178275854485093e-11
+relaxed_constraint_residual = -5.597408996917945e-07
+true_g_start = 910.0
+local_g_start/local_output_start = 907.4180445773222
+true_g_solution = 2.2561002272761357
+local_g_solution/local_output_solution = -5.5972172141594e-07
+solver_message = `gtol` termination condition is satisfied.
+------------------------------------------------------------
+iter=1, obj=-0.11528221462175711, relaxed_obj=-0.11528189895614616, data_size=66, degree=4, test_mse=1216.5870862852223, test_rmse=34.87960845945984, train_rmse=0.4207780822275486, status=1, success=True
+start_x = [-1.63727374  0.21370777  0.04328143]
+solution_x = [-0.11528221  0.71747946  0.5127127 ]
+solution_y/local_output = -2.992528962408869e-07
+relaxation_slack = 3.156656109553247e-11
+relaxed_constraint_residual = -2.9928446280198244e-07
+true_g_start = 2.2561002272761357
+local_g_start/local_output_start = 1.7959453152089375
+true_g_solution = 0.19552611185425067
+local_g_solution/local_output_solution = -2.992528962408869e-07
+solver_message = `gtol` termination condition is satisfied.
+------------------------------------------------------------
+iter=2, obj=-4.116976012284701, relaxed_obj=-4.116974753764607, data_size=54, degree=4, test_mse=717.2901018533552, test_rmse=26.78227215628568, train_rmse=0.2239878798476802, status=2, success=True
+start_x = [-0.11528221  0.71747946  0.5127127 ]
+solution_x = [-4.11697601  1.8237742   3.32067443]
+solution_y/local_output = -1.1578275689316797e-06
+relaxation_slack = 1.2585200938597527e-10
+relaxed_constraint_residual = -1.1579534209410657e-06
+true_g_start = 0.19552611185425067
+local_g_start/local_output_start = 0.031775273981718755
+true_g_solution = 4.798580693717936
+local_g_solution/local_output_solution = -1.1578275689316797e-06
+solver_message = `xtol` termination condition is satisfied.
+------------------------------------------------------------
+iter=3, obj=0.0471183995376411, relaxed_obj=0.04711903457956583, data_size=78, degree=4, test_mse=97.55998296649256, test_rmse=9.877245717632652, train_rmse=0.6277591879387578, status=2, success=True
+start_x = [-4.11697601  1.8237742   3.32067443]
+solution_x = [0.0471184  0.87305543 0.76327518]
+solution_y/local_output = -2.4837929046839236e-06
+relaxation_slack = 6.3504192473236e-11
+relaxed_constraint_residual = -2.483856408876397e-06
+true_g_start = 4.798580693717936
+local_g_start/local_output_start = 5.3125793595138475
+true_g_solution = -0.03089334962477179
+local_g_solution/local_output_solution = -2.4837929046839236e-06
+solver_message = `xtol` termination condition is satisfied.
+------------------------------------------------------------
+iter=4, obj=-70.82544502136885, relaxed_obj=-70.82527422565254, data_size=30, degree=3, test_mse=14657.462238397995, test_rmse=121.06800666731898, train_rmse=24.316659340928975, status=1, success=True
+start_x = [0.0471184  0.87305543 0.76327518]
+solution_x = [-70.82544502   0.09739272  -0.44934918]
+solution_y/local_output = -0.007546111027096458
+relaxation_slack = 1.7079571631449043e-08
+relaxed_constraint_residual = -0.007546128106668089
+true_g_start = -0.03089334962477179
+local_g_start/local_output_start = -43.76297907808525
+true_g_solution = 92.6930563521702
+local_g_solution/local_output_solution = -0.007546111027096458
+solver_message = `gtol` termination condition is satisfied.
+------------------------------------------------------------
+
+ROSENBROCK DCL ITERATION ROWS
+Iter & x0 & x1 & x2 & Obj & True g & Old Global ghat & New Global ghat & Local ghat & Err(Old Glob) & Err(New Glob) & Err(Local) & Slack & Relaxed Residual & Data Size & Degree & Train MSE & Test MSE & Train RMSE & Test RMSE \\
+0 & -1.637274 & 0.213708 & 0.043281 & -1.637274e+00 & 2.256100e+00 & 9.886418e+02 & 1.474705e+03 & -5.597217e-07 & 9.863857e+02 & 1.472449e+03 & 2.256101e+00 & 1.917828e-11 & -5.597409e-07 & 54 & 4 & 4.318419e-03 & 1.169050e+05 & 6.571468e-02 & 3.419137e+02 \\
+1 & -0.115282 & 0.717479 & 0.512713 & -1.152822e-01 & 1.955261e-01 & 9.881830e+02 & 1.474705e+03 & -2.992529e-07 & 9.879875e+02 & 1.474509e+03 & 1.955264e-01 & 3.156656e-11 & -2.992845e-07 & 66 & 4 & 1.770542e-01 & 1.216587e+03 & 4.207781e-01 & 3.487961e+01 \\
+2 & -4.116976 & 1.823774 & 3.320674 & -4.116976e+00 & 4.798581e+00 & 9.950165e+02 & 1.474693e+03 & -1.157828e-06 & 9.902179e+02 & 1.469894e+03 & 4.798582e+00 & 1.258520e-10 & -1.157953e-06 & 54 & 4 & 5.017057e-02 & 7.172901e+02 & 2.239879e-01 & 2.678227e+01 \\
+3 & 0.047118 & 0.873055 & 0.763275 & 4.711840e-02 & -3.089335e-02 & 9.880920e+02 & 1.474705e+03 & -2.483793e-06 & 9.881229e+02 & 1.474736e+03 & 3.089087e-02 & 6.350419e-11 & -2.483856e-06 & 78 & 4 & 3.940816e-01 & 9.755998e+01 & 6.277592e-01 & 9.877246e+00 \\
+4 & -70.825445 & 0.097393 & -0.449349 & -7.082545e+01 & 9.269306e+01 & 1.019291e+03 & 1.474727e+03 & -7.546111e-03 & 9.265977e+02 & 1.382034e+03 & 9.270060e+01 & 1.707957e-08 & -7.546128e-03 & 30 & 3 & 5.912999e+02 & 1.465746e+04 & 2.431666e+01 & 1.210680e+02 \\
+
+====================================================================================================================================
+ROSENBROCK GLOBAL vs LOCAL DIAGNOSTIC COMPARISON
+====================================================================================================================================
+Method | Iter | Deg | Train RMSE | Test RMSE | Obj | Gap vs True | True g | Predicted/Local g | Slack | Relaxed Residual | True Feas | Model Feas
+------------------------------------------------------------------------------------------------------------------------------------
+True full-hull reference | - | - | nan | nan | -0.000001 | 0.000000 | 0.000001 | nan | 0.000000 | nan | True | True
+Old global fixed degree | - | 4 | 1678.058296 | nan | -11439.594977 | -11439.594976 | 28442.501256 | -0.000000 | 0.000000 | -0.000000 | False | True
+New global selected degree | - | 5 | 1528.369445 | 1835505.399172 | -7742.330021 | -7742.330020 | 8233.149593 | 0.000000 | 0.000000 | 0.000000 | False | True
+Local DCL final | 4 | 3 | 24.316659 | 121.068007 | -70.825445 | -70.825444 | 92.693056 | -0.007546 | 0.000000 | -0.007546 | False | True
+Local DCL best true-feasible | 3 | 4 | 0.627759 | 9.877246 | 0.047118 | 0.047119 | -0.030893 | -0.000002 | 0.000000 | -0.000002 | True | True
+Local DCL best test RMSE | 3 | 4 | 0.627759 | 9.877246 | 0.047118 | 0.047119 | -0.030893 | -0.000002 | 0.000000 | -0.000002 | True | True
+Local DCL lowest objective | 4 | 3 | 24.316659 | 121.068007 | -70.825445 | -70.825444 | 92.693056 | -0.007546 | 0.000000 | -0.007546 | False | True
+====================================================================================================================================
+Rosenbrock selection rule: first require true g(x) <= 0; among true-feasible rows, lower objective x0 is better.
+Slack only relaxes local learned ghat(x), not the convex hull and not the true constraint.

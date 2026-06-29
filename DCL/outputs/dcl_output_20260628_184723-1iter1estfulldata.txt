@@ -1,0 +1,217 @@
+train_mse : 222.10595822981307 test_mse : 211.37787892703918
+train_rmse : 14.903219726952061 test_rmse : 14.538840357024323
+train_rel_rmse : 0.3416947038189212 test_rel_rmse : 0.34055886777387695
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  1
+train_mse : 159.23185330251144 test_mse : 164.9578734272245
+train_rmse : 12.618710445307453 test_rmse : 12.843592699366658
+train_rel_rmse : 0.31138279739332775 test_rel_rmse : 0.31477157350499296
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  2
+train_mse : 107.46473862975957 test_mse : 105.03305411359977
+train_rmse : 10.366520082928483 test_rmse : 10.248563514639493
+train_rel_rmse : 0.26033558806143975 test_rel_rmse : 0.25898348716020675
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  3
+train_mse : 76.95183412961485 test_mse : 88.21516676765614
+train_rmse : 8.772219452887327 test_rmse : 9.392292945157543
+train_rel_rmse : 0.234360113164823 test_rel_rmse : 0.24357058062418485
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  4
+train_mse : 60.99454843660401 test_mse : 71.06300289880035
+train_rmse : 7.80990066752478 test_rmse : 8.429887478418697
+train_rel_rmse : 0.21017539580994668 test_rel_rmse : 0.22968668734978004
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  5
+train_mse : 48.642343079744414 test_mse : 71.23721858860064
+train_rmse : 6.974406288691849 test_rmse : 8.44021436864021
+train_rel_rmse : 0.18873342291559056 test_rel_rmse : 0.22458006650934131
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  6
+train_mse : 38.172783851074904 test_mse : 72.6382622136735
+train_rmse : 6.178412729097571 test_rmse : 8.522808352513477
+train_rel_rmse : 0.1677286377835081 test_rel_rmse : 0.22225083422821573
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  7
+train_mse : 32.33013622341811 test_mse : 71.55150260512748
+train_rmse : 5.685959569273959 test_rmse : 8.458812127310045
+train_rel_rmse : 0.1560288098048955 test_rel_rmse : 0.215510987289685
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  8
+train_mse : 27.270508925421264 test_mse : 66.61470090717326
+train_rmse : 5.22211728376731 test_rmse : 8.161782949035906
+train_rel_rmse : 0.14379563583698785 test_rel_rmse : 0.2134537391524106
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  9
+train_mse : 27.74570409507809 test_mse : 73.40954655117226
+train_rmse : 5.267419111393937 test_rmse : 8.567937123437138
+train_rel_rmse : 0.13225009477468436 test_rel_rmse : 0.2137179188193779
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  10
+train_mse : 24.979374750926276 test_mse : 73.75725764307956
+train_rmse : 4.997937049516158 test_rmse : 8.588204564580396
+train_rel_rmse : 0.1299094965630855 test_rel_rmse : 0.2158005783509068
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  11
+train_mse : 22.935618993645654 test_mse : 69.29611834379713
+train_rmse : 4.789114635675957 test_rmse : 8.324429010076134
+train_rel_rmse : 0.12091138735082928 test_rel_rmse : 0.20804429217547066
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  12
+train_mse : 22.927642602871373 test_mse : 65.39561474826843
+train_rmse : 4.7882818006954615 test_rmse : 8.086755514312797
+train_rel_rmse : 0.12133391141774214 test_rel_rmse : 0.21067961508661362
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  13
+train_mse : 22.50345465535674 test_mse : 71.82002081386729
+train_rmse : 4.7437806289242275 test_rmse : 8.474669363100091
+train_rel_rmse : 0.11872035547838257 test_rel_rmse : 0.21089948898822977
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  14
+train_mse : 25.609463142571958 test_mse : 72.10033345552915
+train_rmse : 5.060579328750015 test_rmse : 8.49119152154332
+train_rel_rmse : 0.12329669939517038 test_rel_rmse : 0.21473730776881428
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  15
+train_mse : 22.4889187317097 test_mse : 74.28469882354793
+train_rmse : 4.742248278159812 test_rmse : 8.618857164586725
+train_rel_rmse : 0.1204203683892556 test_rel_rmse : 0.21307348864690207
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  16
+train_mse : 23.068472164585337 test_mse : 74.17906902451331
+train_rmse : 4.80296493476533 test_rmse : 8.61272715372508
+train_rel_rmse : 0.12181395198160588 test_rel_rmse : 0.2141823564987391
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  17
+train_mse : 25.857639377462114 test_mse : 73.60937186248057
+train_rmse : 5.085040744916614 test_rmse : 8.579590425100756
+train_rel_rmse : 0.12381551920640817 test_rel_rmse : 0.20979103402967142
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  18
+train_mse : 25.857639377462114 test_mse : 73.60937186248057
+train_rmse : 5.085040744916614 test_rmse : 8.579590425100756
+train_rel_rmse : 0.12381551920640817 test_rel_rmse : 0.20979103402967142
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  19
+train_mse : 25.857639377462114 test_mse : 73.60937186248057
+train_rmse : 5.085040744916614 test_rmse : 8.579590425100756
+train_rel_rmse : 0.12381551920640817 test_rel_rmse : 0.20979103402967142
+ndata_model :  1030 ndata_test :  309 ndata_train :  721 model_degree :  20
+Accepted model with degree  12  trained with  1030 data points.
+--- Iteration 0 local model fitting completed in 0.7795 seconds ---
+Set parameter FeasibilityTol to value 1e-09
+Set parameter IntFeasTol to value 1e-09
+Embedding predictor with gurobi_ml kwargs: {'epsilon': 0.0001}
+Gurobi Optimizer version 13.0.1 build v13.0.1rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Core(TM) Ultra 9 285H, instruction set [SSE2|AVX|AVX2]
+Thread count: 16 physical cores, 16 logical processors, using up to 16 threads
+
+Non-default parameters:
+FeasibilityTol  1e-09
+IntFeasTol  1e-09
+
+Optimize a model with 16 rows, 1419 columns and 8265 nonzeros (Min)
+Model fingerprint: 0x57916315
+Model has 8 linear objective coefficients
+Model has 3220 simple general constraints
+  3220 INDICATOR
+Variable types: 1041 continuous, 378 integer (378 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 1e+03]
+  Objective range  [2e-03, 1e+03]
+  Bounds range     [1e+00, 1e+03]
+  RHS range        [1e+00, 2e+03]
+  GenCon rhs range [9e-01, 1e+03]
+  GenCon coe range [1e+00, 1e+00]
+
+Presolve added 15 rows and 0 columns
+Presolve removed 0 rows and 35 columns
+Presolve time: 0.07s
+Presolved: 31 rows, 1384 columns, 11594 nonzeros
+Variable types: 1006 continuous, 378 integer (378 binary)
+Found heuristic solution: objective 40221.061206
+Found heuristic solution: objective 38240.309810
+Found heuristic solution: objective 34693.915971
+Found heuristic solution: objective 69.9441461
+
+Root relaxation: objective 4.806200e+01, 35 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   48.06200    0    4   69.94415   48.06200  31.3%     -    0s
+H    0     0                      49.1745062   48.06200  2.26%     -    0s
+H    0     0                      48.4979382   48.06200  0.90%     -    0s
+
+Cutting planes:
+  MIR: 8
+  Relax-and-lift: 2
+
+Explored 1 nodes (35 simplex iterations) in 0.13 seconds (0.17 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 6: 48.4979 49.1745 69.9441 ... 40221.1
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.849793824714e+01, best bound 4.849793824714e+01, gap 0.0000%
+iter 0: step = 2.118e+02, obj = 48.49793824713699, output = 49.99390476
+final x = [113.13989814 148.53928288  12.25510011 200.1120713    0.
+ 943.95324753 853.43017132  87.09776831]
+final objective = 48.49793824713699
+return code = -1
+
+===== DCL ITERATION LOG =====
+iter=0, obj=48.49793824713699, relaxed_obj=48.49793824713699, data_size=1030, degree=12, test_mse=69.29611834379713, test_rmse=8.324429010076134, train_rmse=4.789114635675957, mip_rows=16, mip_cols=1419, num_bin=378, num_int=378, num_genconstrs=3220, mip_nodes=1.0, mip_runtime=0.1305990219116211, mip_work=0.17312700130103287, status=2, success=True, time=1.9980
+start_x = [281.16563107  73.89548544  54.18713592 181.56635922   6.20311165
+ 972.91859223 773.5788835   45.66213592]
+solution_x = [113.13989814 148.53928288  12.25510011 200.1120713    0.
+ 943.95324753 853.43017132  87.09776831]
+solution_y/local_output = 49.99390476
+sklearn_output = 49.99390476
+manual_predictor_error = 0.0
+gurobi_ml_predictor_error = 0.0
+predictor_error = 0.0
+relaxation_slack = 0.0
+relaxed_constraint_residual = -4.9939047599999995
+local_g_start/local_output_start = 50.77301264
+local_g_solution/local_output_solution = 49.99390476
+solver_message = OPTIMAL
+model_objective / Gurobi ObjVal = 48.49793824713699
+slack_penalty_cost = 0.0
+mip_cols = 1419
+mip_rows = 16
+num_bin = 378
+num_int = 378
+num_genconstrs = 3220
+mip_nodes = 1.0
+mip_runtime = 0.1305990219116211
+mip_work = 0.17312700130103287
+------------------------------------------------------------
+
+======================================================================
+CONCRETE DCL POINT-ESTIMATION REPORT
+======================================================================
+methodology = point estimation
+model       = rf
+trust region= convex_hull
+constraint  = predicted compressive strength >= 45.0 MPa
+weight      = 2230.0 <= sum(material components) <= 2450.0
+material cost = 48.49793824713699
+component weight = 2271.4297712854136
+predicted compressive strength = 49.99390476
+strength margin = 4.9939047599999995
+
+mixture:
+  cement: 113.139898 kg
+  blast_furnace_slag: 148.539283 kg
+  fly_ash: 12.255100 kg
+  water: 200.112071 kg
+  superplasticizer: 0.000000 kg
+  coarse_aggregate: 943.953248 kg
+  fine_aggregate: 853.430171 kg
+  age: 87.097768 days
+
+article point-estimation RF reference:
+  article point cost = 47.33
+  DCL cost gap       = 1.1679382471369948
+======================================================================
+
+CONCRETE DCL ITERATION ROWS
+Iter & Data Size & Degree/max_depth & Train rel. RMSE & Test rel. RMSE & Material Cost & Model Obj & Slack & Slack Penalty & Sklearn Strength & Embedded Strength & Weight & MIP rows & MIP cols & Bin & Int & GenConstr & Nodes & MIP Runtime & MIP Work & Fit Time & Total Time \\
+0 & 1030 & 12 & 0.120911 & 0.208044 & 48.497938 & 48.497938 & 0.000000 & 0.000000 & 49.993905 & 49.993905 & 2271.429771 & 16 & 1419 & 378 & 378 & 3220 & 1 & 0.130599 & 0.173127 & 0.779467 & 1.997977 \\
+
+======================================================================================================================================================
+CONCRETE GLOBAL vs LOCAL DIAGNOSTIC COMPARISON
+======================================================================================================================================================
+Method | Iter | Deg | Train rel RMSE | Test rel RMSE | Cost | Model Obj | Slack | Slack Cost | Sklearn Strength | Weight | Hard Sklearn Feas | Soft Sklearn Feas | Weight Feas | Valid Hard | Valid Soft | Rows | Cols | Bin | Int | GenConstr | Nodes | Runtime | Work
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Local DCL final | 0 | 12 | 0.120911 | 0.208044 | 48.497938 | 48.497938 | 0.000000 | 0.000000 | 49.993905 | 2271.429771 | True | True | True | True | True | 16 | 1419 | 378 | 378 | 3220 | 1 | 0.130599 | 0.173127
+Local DCL best hard-feasible | 0 | 12 | 0.120911 | 0.208044 | 48.497938 | 48.497938 | 0.000000 | 0.000000 | 49.993905 | 2271.429771 | True | True | True | True | True | 16 | 1419 | 378 | 378 | 3220 | 1 | 0.130599 | 0.173127
+Local DCL best soft-feasible | 0 | 12 | 0.120911 | 0.208044 | 48.497938 | 48.497938 | 0.000000 | 0.000000 | 49.993905 | 2271.429771 | True | True | True | True | True | 16 | 1419 | 378 | 378 | 3220 | 1 | 0.130599 | 0.173127
+Local DCL lowest material cost | 0 | 12 | 0.120911 | 0.208044 | 48.497938 | 48.497938 | 0.000000 | 0.000000 | 49.993905 | 2271.429771 | True | True | True | True | True | 16 | 1419 | 378 | 378 | 3220 | 1 | 0.130599 | 0.173127
+Local DCL best test RMSE | 0 | 12 | 0.120911 | 0.208044 | 48.497938 | 48.497938 | 0.000000 | 0.000000 | 49.993905 | 2271.429771 | True | True | True | True | True | 16 | 1419 | 378 | 378 | 3220 | 1 | 0.130599 | 0.173127
+======================================================================================================================================================
+Concrete hard selection rule: sklearn strength >= 45 and weight in [2230, 2450]; among hard-feasible rows, lower material cost is better.
+Soft feasibility only means sklearn strength + slack >= 45; use it for debugging, not as a final point-estimation solution unless you explicitly allow relaxation.

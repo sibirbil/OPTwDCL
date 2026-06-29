@@ -1,0 +1,74 @@
+
+======================================================================
+ROSENBROCK TRUE FULL-HULL REFERENCE
+======================================================================
+solution_x = [-6.92777992e-07  9.99996681e-01  9.99993360e-01]
+objective = -6.927779919585118e-07
+true g(x) = 6.927890070350083e-07
+hull violation = -3.0889309825170628
+solver success = False
+solver message = Positive directional derivative for linesearch
+======================================================================
+
+======================================================================
+ROSENBROCK GLOBAL FULL-HULL BASELINE
+======================================================================
+method = old_global_fixed_degree_all_data
+degree = 4
+train_size = 100 test_size = 0
+train_mse = 2815879.643634038
+test_mse = nan
+train_rmse = 1678.0582956602068
+test_rmse = nan
+train_rel_rmse = 0.7824029961649626
+test_rel_rmse = nan
+all_data_mse_after_refit = 2815879.643634038
+all_data_rmse_after_refit = 1678.0582956602068
+all_data_rel_rmse_after_refit = 0.7824029961649626
+solution_x = [-1.14395950e+04 -3.24682911e+00 -2.49070247e+00]
+objective = -11439.594977076187
+predicted g(x) = -1.932221493916586e-09
+true g(x) = 28442.50125618963
+prediction error = 28442.50125619156
+hull violation = 3.375077994860476e-14
+feasible by surrogate = True
+feasible by true constraint = False
+solver success = True
+solver message = Optimization terminated successfully
+======================================================================
+Traceback (most recent call last):
+  File "/home/ezgi/NLPwDCL/DCL/dcl_main.py", line 1521, in <module>
+    main()
+    ~~~~^^
+  File "/home/ezgi/NLPwDCL/DCL/dcl_main.py", line 1398, in main
+    _, _, _, new_global_pred, _, new_global_diag = solve_new_global_rosenbrock(
+                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        problem,
+        ^^^^^^^^
+    ...<5 lines>...
+        x_init=x_init,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/ezgi/NLPwDCL/DCL/dcl_main.py", line 408, in solve_new_global_rosenbrock
+    X_train, X_test, y_train, y_test = train_test_split(
+                                       ~~~~~~~~~~~~~~~~^
+        Xnp,
+        ^^^^
+    ...<3 lines>...
+        shuffle=True,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/ezgi/anaconda3/lib/python3.13/site-packages/sklearn/utils/_param_validation.py", line 208, in wrapper
+    validate_parameter_constraints(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        parameter_constraints, params, caller_name=func.__qualname__
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/ezgi/anaconda3/lib/python3.13/site-packages/sklearn/utils/_param_validation.py", line 98, in validate_parameter_constraints
+    raise InvalidParameterError(
+    ...<2 lines>...
+    )
+sklearn.utils._param_validation.InvalidParameterError: The 'train_size' parameter of train_test_split must be a float in the range (0.0, 1.0), an int in the range [1, inf) or None. Got 1.0 instead.

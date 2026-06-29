@@ -1,0 +1,681 @@
+
+======================================================================
+GLOBAL CONCRETE RF DEGREE SELECTION  (degree = max_depth)
+depth | train_mse | test_mse | train_rmse | test_rmse | train_rel_rmse | test_rel_rmse
+----------------------------------------------------------------------
+    1 | 2.129193e+02 | 2.020506e+02 | 1.459175e+01 | 1.421445e+01 | 3.306060e-01 | 3.361786e-01
+    2 | 1.451795e+02 | 1.481042e+02 | 1.204905e+01 | 1.216981e+01 | 2.903164e-01 | 2.994596e-01
+    3 | 1.084769e+02 | 1.187987e+02 | 1.041523e+01 | 1.089948e+01 | 2.574469e-01 | 2.734437e-01
+    4 | 8.167477e+01 | 9.496296e+01 | 9.037410e+00 | 9.744894e+00 | 2.242563e-01 | 2.480446e-01
+    5 | 6.164074e+01 | 8.641443e+01 | 7.851162e+00 | 9.295936e+00 | 2.038971e-01 | 2.343852e-01
+    6 | 4.783157e+01 | 7.169626e+01 | 6.916037e+00 | 8.467364e+00 | 1.849561e-01 | 2.160077e-01
+    7 | 3.893426e+01 | 7.168009e+01 | 6.239733e+00 | 8.466410e+00 | 1.674818e-01 | 2.168534e-01
+    8 | 3.374205e+01 | 7.014397e+01 | 5.808790e+00 | 8.375200e+00 | 1.530843e-01 | 2.083927e-01
+    9 | 2.573116e+01 | 5.097189e+01 | 5.072589e+00 | 7.139460e+00 | 1.454021e-01 | 2.008430e-01
+   10 | 2.520896e+01 | 5.726276e+01 | 5.020853e+00 | 7.567216e+00 | 1.376703e-01 | 2.035250e-01
+   11 | 2.211954e+01 | 6.090317e+01 | 4.703141e+00 | 7.804048e+00 | 1.352378e-01 | 2.065088e-01
+   12 | 2.379078e+01 | 6.109684e+01 | 4.877579e+00 | 7.816447e+00 | 1.343012e-01 | 2.083724e-01
+   13 | 2.219982e+01 | 5.921892e+01 | 4.711668e+00 | 7.695383e+00 | 1.320334e-01 | 2.079105e-01
+   14 | 2.199307e+01 | 5.676391e+01 | 4.689677e+00 | 7.534183e+00 | 1.317092e-01 | 2.044950e-01
+   15 | 2.266228e+01 | 6.040939e+01 | 4.760492e+00 | 7.772348e+00 | 1.330505e-01 | 2.109260e-01
+   16 | 2.197079e+01 | 5.827565e+01 | 4.687301e+00 | 7.633849e+00 | 1.293488e-01 | 2.064032e-01
+   17 | 2.089239e+01 | 5.427361e+01 | 4.570819e+00 | 7.367063e+00 | 1.275996e-01 | 2.004856e-01
+   18 | 2.089239e+01 | 5.427361e+01 | 4.570819e+00 | 7.367063e+00 | 1.275996e-01 | 2.004856e-01
+   19 | 2.089239e+01 | 5.427361e+01 | 4.570819e+00 | 7.367063e+00 | 1.275996e-01 | 2.004856e-01
+   20 | 2.089239e+01 | 5.427361e+01 | 4.570819e+00 | 7.367063e+00 | 1.275996e-01 | 2.004856e-01
+Set parameter FeasibilityTol to value 1e-09
+Set parameter IntFeasTol to value 1e-09
+Embedding predictor with gurobi_ml kwargs: {'epsilon': 0.0001}
+Gurobi Optimizer version 13.0.1 build v13.0.1rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Core(TM) Ultra 9 285H, instruction set [SSE2|AVX|AVX2]
+Thread count: 16 physical cores, 16 logical processors, using up to 16 threads
+
+Non-default parameters:
+FeasibilityTol  1e-09
+IntFeasTol  1e-09
+
+Optimize a model with 16 rows, 1492 columns and 8338 nonzeros (Min)
+Model fingerprint: 0x929e8d00
+Model has 7 linear objective coefficients
+Model has 4000 simple general constraints
+  4000 INDICATOR
+Variable types: 1040 continuous, 452 integer (452 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 1e+03]
+  Objective range  [2e-03, 2e+00]
+  Bounds range     [1e+00, 1e+03]
+  RHS range        [1e+00, 2e+03]
+  GenCon rhs range [2e+00, 1e+03]
+  GenCon coe range [1e+00, 1e+00]
+
+Presolve added 12 rows and 0 columns
+Presolve removed 0 rows and 376 columns
+Presolve time: 0.10s
+Presolved: 28 rows, 1116 columns, 8525 nonzeros
+Variable types: 1004 continuous, 112 integer (112 binary)
+Found heuristic solution: objective 65.8520508
+
+Root relaxation: objective 4.874848e+01, 48 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0      48.7484843   48.74848  0.00%     -    0s
+
+Explored 1 nodes (48 simplex iterations) in 0.13 seconds (0.12 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 2: 48.7485 65.8521 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.874848434218e+01, best bound 4.874848434218e+01, gap 0.0000%
+
+======================================================================
+GLOBAL CONCRETE RF FULL-HULL BASELINE
+======================================================================
+chosen degree/max_depth = 17
+train_size = 721 test_size = 309
+train_mse = 20.89238538057843
+test_mse = 54.273611003440045
+train_rmse = 4.5708188960599205
+test_rmse = 7.367062576321722
+train_rel_rmse = 0.1275995591387647
+test_rel_rmse = 0.2004855883117847
+Gurobi status = OPTIMAL
+solution count = 2
+objective/model ObjVal = 48.74848434217604
+material cost = 48.74848434217604
+component weight = 2248.891710198259
+embedded Gurobi strength = 46.931941843999994
+sklearn RF strength = 46.931941843999994
+embedded strength margin = 1.9319418439999936
+sklearn strength margin = 1.9319418439999936
+strength mismatch embedded - sklearn = 0.0
+manual predictor error = 0.0
+gurobi_ml predictor error = 0.0
+predictor error used = 0.0
+predictor error tolerance = 0.0001
+embedding valid = True
+valid point-estimation solution = True
+hull_eq_violation_inf = 2.842170943040401e-14
+manual predictor error = 0.0
+gurobi_ml predictor error = 0.0
+predictor error used = 0.0
+predictor error tolerance = 0.0001
+embedding valid = True
+valid point-estimation solution = True
+lambda_sum_violation = 0.0
+mip_gap = 0.0
+obj_bound = 48.74848434217604
+runtime = 0.13956594467163086
+nodes = 1.0
+mip_cols = 1492 mip_rows = 16
+num_bin = 452 num_int = 452
+num_genconstrs = 4000
+
+mixture:
+  cement: 159.500100 kg
+  blast_furnace_slag: 137.798267 kg
+  fly_ash: 0.000000 kg
+  water: 209.462123 kg
+  superplasticizer: 0.000000 kg
+  coarse_aggregate: 936.691218 kg
+  fine_aggregate: 805.440002 kg
+  age: 95.000100 days
+======================================================================
+train_mse : 103.08791930948931 test_mse : 86.93253980938228
+train_rmse : 10.15322211465352 test_rmse : 9.323762106005402
+train_rel_rmse : 0.2318568631525491 test_rel_rmse : 0.19425420917751038
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  1
+train_mse : 59.36222686776221 test_mse : 91.01024086964097
+train_rmse : 7.704688628865037 test_rmse : 9.539928766486726
+train_rel_rmse : 0.2043615767368195 test_rel_rmse : 0.19209176924080176
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  2
+train_mse : 50.19724955074696 test_mse : 105.47759777804369
+train_rmse : 7.085001732586024 test_rmse : 10.270228711087388
+train_rel_rmse : 0.19368479246152118 test_rel_rmse : 0.21511759384012072
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  3
+train_mse : 40.53157732152195 test_mse : 90.94669149204184
+train_rmse : 6.366441495963184 test_rmse : 9.53659747981647
+train_rel_rmse : 0.17897994083168545 test_rel_rmse : 0.20834443241823597
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  4
+train_mse : 22.20642509044648 test_mse : 83.30982196844188
+train_rmse : 4.712369371181177 test_rmse : 9.127421430417348
+train_rel_rmse : 0.15020075849562292 test_rel_rmse : 0.20141559348161842
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  5
+train_mse : 17.56612492840545 test_mse : 59.80834937424177
+train_rmse : 4.191196121443788 test_rmse : 7.733585803121458
+train_rel_rmse : 0.1430448550872483 test_rel_rmse : 0.1786249725628592
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  6
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  7
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  8
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  9
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  10
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  11
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  12
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  13
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  14
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  15
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  16
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  17
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  18
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  19
+train_mse : 17.279094844211222 test_mse : 58.72938489574631
+train_rmse : 4.156813063419045 test_rmse : 7.663509959264508
+train_rel_rmse : 0.14233004934064056 test_rel_rmse : 0.17697531119906748
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  20
+train_mse : 79.25876807382846 test_mse : 113.9741041900867
+train_rmse : 8.902739357850956 test_rmse : 10.675865500749188
+train_rel_rmse : 0.22282563095148913 test_rel_rmse : 0.2479424199176381
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  1
+train_mse : 63.548501319598465 test_mse : 75.49376171922356
+train_rmse : 7.971731387822753 test_rmse : 8.688714618355442
+train_rel_rmse : 0.18288955437567003 test_rel_rmse : 0.20856473720979177
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  2
+train_mse : 53.3452737860385 test_mse : 53.56299364882161
+train_rmse : 7.303784894562441 test_rmse : 7.31867430951956
+train_rel_rmse : 0.15985717135058677 test_rel_rmse : 0.15060001645274912
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  3
+train_mse : 41.14194140238391 test_mse : 47.09673194033992
+train_rmse : 6.414198422436268 test_rmse : 6.862705875989435
+train_rel_rmse : 0.14299197879791478 test_rel_rmse : 0.15502112548656827
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  4
+train_mse : 38.02533898363957 test_mse : 45.97124926722164
+train_rmse : 6.166468923430942 test_rmse : 6.780210119695528
+train_rel_rmse : 0.13696430931461662 test_rel_rmse : 0.1540023646059108
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  5
+train_mse : 37.99380647238703 test_mse : 47.88346666181502
+train_rmse : 6.163911621072047 test_rmse : 6.919788050353495
+train_rel_rmse : 0.13551772692579742 test_rel_rmse : 0.1562556360956051
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  6
+train_mse : 36.95605347275022 test_mse : 46.640687069901176
+train_rmse : 6.079149074726677 test_rmse : 6.82939873414206
+train_rel_rmse : 0.13368940821275316 test_rel_rmse : 0.1545047818172202
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  7
+train_mse : 37.5714500490211 test_mse : 49.51636243987472
+train_rmse : 6.129555452805783 test_rmse : 7.036786371624104
+train_rel_rmse : 0.13502036594068068 test_rel_rmse : 0.15629840488975572
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  8
+train_mse : 36.80457081486259 test_mse : 49.536711703841874
+train_rmse : 6.066677081802079 test_rmse : 7.038232143361135
+train_rel_rmse : 0.13310423824565243 test_rel_rmse : 0.1563801709540542
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  9
+train_mse : 38.322533848907106 test_mse : 49.29672594703376
+train_rmse : 6.190519675189402 test_rmse : 7.02116272044978
+train_rel_rmse : 0.13617256091043384 test_rel_rmse : 0.15573487083823315
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  10
+train_mse : 36.80655339731764 test_mse : 49.32352223105106
+train_rmse : 6.066840478974014 test_rmse : 7.023070712377248
+train_rel_rmse : 0.13310276120423709 test_rel_rmse : 0.15578189080911076
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  11
+train_mse : 38.347192183161845 test_mse : 49.32289544513184
+train_rmse : 6.1925109756190055 test_rmse : 7.023026088883042
+train_rel_rmse : 0.13624095845570441 test_rel_rmse : 0.1557799742343018
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  12
+train_mse : 36.806232959088454 test_mse : 49.32289544513184
+train_rmse : 6.0668140699289985 test_rmse : 7.023026088883042
+train_rel_rmse : 0.13310161367741735 test_rel_rmse : 0.1557799742343018
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  13
+train_mse : 36.806232959088454 test_mse : 49.32289544513184
+train_rmse : 6.0668140699289985 test_rmse : 7.023026088883042
+train_rel_rmse : 0.13310161367741735 test_rel_rmse : 0.1557799742343018
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  14
+train_mse : 36.806232959088454 test_mse : 49.32289544513184
+train_rmse : 6.0668140699289985 test_rmse : 7.023026088883042
+train_rel_rmse : 0.13310161367741735 test_rel_rmse : 0.1557799742343018
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  15
+train_mse : 36.806232959088454 test_mse : 49.32289544513184
+train_rmse : 6.0668140699289985 test_rmse : 7.023026088883042
+train_rel_rmse : 0.13310161367741735 test_rel_rmse : 0.1557799742343018
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  16
+train_mse : 36.806232959088454 test_mse : 49.32289544513184
+train_rmse : 6.0668140699289985 test_rmse : 7.023026088883042
+train_rel_rmse : 0.13310161367741735 test_rel_rmse : 0.1557799742343018
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  17
+train_mse : 36.806232959088454 test_mse : 49.32289544513184
+train_rmse : 6.0668140699289985 test_rmse : 7.023026088883042
+train_rel_rmse : 0.13310161367741735 test_rel_rmse : 0.1557799742343018
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  18
+train_mse : 36.806232959088454 test_mse : 49.32289544513184
+train_rmse : 6.0668140699289985 test_rmse : 7.023026088883042
+train_rel_rmse : 0.13310161367741735 test_rel_rmse : 0.1557799742343018
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  19
+train_mse : 36.806232959088454 test_mse : 49.32289544513184
+train_rmse : 6.0668140699289985 test_rmse : 7.023026088883042
+train_rel_rmse : 0.13310161367741735 test_rel_rmse : 0.1557799742343018
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  20
+train_mse : 97.96974243512823 test_mse : 85.0840402123141
+train_rmse : 9.897966580824985 test_rmse : 9.224101051718486
+train_rel_rmse : 0.24150839977123942 test_rel_rmse : 0.22576714029972889
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  1
+train_mse : 52.746601321132346 test_mse : 62.292875168873174
+train_rmse : 7.262685544695732 test_rmse : 7.892583554760328
+train_rel_rmse : 0.18699192415793825 test_rel_rmse : 0.19691659442744538
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  2
+train_mse : 36.80638609241225 test_mse : 51.76735753095582
+train_rmse : 6.06682669048756 test_rmse : 7.194953615622259
+train_rel_rmse : 0.1626196718895469 test_rel_rmse : 0.1866669652288927
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  3
+train_mse : 28.19302200741938 test_mse : 51.84498409989056
+train_rmse : 5.3097101622799885 test_rmse : 7.200346109729071
+train_rel_rmse : 0.15259067803162596 test_rel_rmse : 0.19570828255866585
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  4
+train_mse : 42.654463736728964 test_mse : 66.5295676234618
+train_rmse : 6.531038488382148 test_rmse : 8.15656592099039
+train_rel_rmse : 0.17473137161326985 test_rel_rmse : 0.21083715533447123
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  5
+train_mse : 46.684878201870475 test_mse : 60.11216223764141
+train_rmse : 6.8326333285103535 test_rmse : 7.753203353301228
+train_rel_rmse : 0.17526441610036717 test_rel_rmse : 0.199761694279925
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  6
+train_mse : 44.73263403980818 test_mse : 59.570371732367754
+train_rmse : 6.6882459613719485 test_rmse : 7.71818448421439
+train_rel_rmse : 0.17592751052445252 test_rel_rmse : 0.2012714053313583
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  7
+train_mse : 44.566939281901625 test_mse : 58.50245777989743
+train_rmse : 6.675847457956302 test_rmse : 7.6486899387998095
+train_rel_rmse : 0.1757623410633129 test_rel_rmse : 0.20053391826652056
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  8
+train_mse : 46.48720933392777 test_mse : 65.86296856823883
+train_rmse : 6.818152926851067 test_rmse : 8.11560032087823
+train_rel_rmse : 0.181809755197351 test_rel_rmse : 0.21060014545974834
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  9
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  10
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  11
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  12
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  13
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  14
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  15
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  16
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  17
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  18
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  19
+train_mse : 38.35216953303948 test_mse : 58.6663843159377
+train_rmse : 6.192912847201992 test_rmse : 7.659398430421132
+train_rel_rmse : 0.1683067820773757 test_rel_rmse : 0.2012553367243393
+ndata_model :  114 ndata_test :  35 ndata_train :  79 model_degree :  20
+Accepted model with degree  3  trained with  82 data points.
+Set parameter FeasibilityTol to value 1e-09
+Set parameter IntFeasTol to value 1e-09
+Embedding predictor with gurobi_ml kwargs: {'epsilon': 0.0001}
+Gurobi Optimizer version 13.0.1 build v13.0.1rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Core(TM) Ultra 9 285H, instruction set [SSE2|AVX|AVX2]
+Thread count: 16 physical cores, 16 logical processors, using up to 16 threads
+
+Non-default parameters:
+FeasibilityTol  1e-09
+IntFeasTol  1e-09
+
+Optimize a model with 16 rows, 100 columns and 672 nonzeros (Min)
+Model fingerprint: 0x8f96b3ef
+Model has 7 linear objective coefficients
+Model has 30 simple general constraints
+  30 INDICATOR
+Variable types: 92 continuous, 8 integer (8 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [2e-03, 2e+00]
+  Bounds range     [1e+00, 1e+03]
+  RHS range        [1e+00, 2e+03]
+  GenCon rhs range [5e+00, 1e+03]
+  GenCon coe range [1e+00, 1e+00]
+
+Presolve removed 4 rows and 39 columns
+Presolve time: 0.00s
+Presolved: 12 rows, 61 columns, 389 nonzeros
+Variable types: 60 continuous, 1 integer (1 binary)
+Found heuristic solution: objective 54.6452701
+
+Root relaxation: cutoff, 14 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0     cutoff    0        54.64527   54.64527  0.00%     -    0s
+
+Explored 1 nodes (14 simplex iterations) in 0.02 seconds (0.00 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 1: 54.6453 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.464527010949e+01, best bound 5.464527010949e+01, gap 0.0000%
+iter 0: step = 1.047e+02, obj = 54.64527010949206, output = 47.13257936
+train_mse : 20.234955606220716 test_mse : 38.714275054636644
+train_rmse : 4.498328090104224 test_rmse : 6.222079640653649
+train_rel_rmse : 0.17626813875270697 test_rel_rmse : 0.2179124719102785
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  1
+train_mse : 16.391999926060556 test_mse : 29.52224982168117
+train_rmse : 4.048703487051201 test_rmse : 5.433438121639113
+train_rel_rmse : 0.16844393699973173 test_rel_rmse : 0.19803888055537222
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  2
+train_mse : 10.987226485597624 test_mse : 33.187561132169044
+train_rmse : 3.3146985512407645 test_rmse : 5.760864616719355
+train_rel_rmse : 0.15693895831591217 test_rel_rmse : 0.21956024243932035
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  3
+train_mse : 9.093803102249598 test_mse : 29.77840886397017
+train_rmse : 3.0155933250771065 test_rmse : 5.456959672195697
+train_rel_rmse : 0.15164277203369875 test_rel_rmse : 0.20994092736111888
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  4
+train_mse : 9.396318726190762 test_mse : 23.711160055601308
+train_rmse : 3.06534153499912 test_rmse : 4.869410647665825
+train_rel_rmse : 0.1516393894498963 test_rel_rmse : 0.19319576204549876
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  5
+train_mse : 9.400310018907462 test_mse : 26.667930600981755
+train_rmse : 3.0659925014434495 test_rmse : 5.164100173406956
+train_rel_rmse : 0.15065666439671987 test_rel_rmse : 0.2023878809134511
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  6
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  7
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  8
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  9
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  10
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  11
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  12
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  13
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  14
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  15
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  16
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  17
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  18
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  19
+train_mse : 10.323128660539862 test_mse : 24.50917322006946
+train_rmse : 3.2129625986836294 test_rmse : 4.950674016744534
+train_rel_rmse : 0.1527754599171445 test_rel_rmse : 0.1949952267626379
+ndata_model :  50 ndata_test :  15 ndata_train :  35 model_degree :  20
+train_mse : 26.964280278326022 test_mse : 41.643060166138554
+train_rmse : 5.192714153342742 test_rmse : 6.453143432943247
+train_rel_rmse : 0.18931568668774654 test_rel_rmse : 0.2526801769445092
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  1
+train_mse : 17.29450442519082 test_mse : 55.17141899030866
+train_rmse : 4.1586661834283865 test_rmse : 7.427746562067708
+train_rel_rmse : 0.15526897120648706 test_rel_rmse : 0.28288578848992846
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  2
+train_mse : 13.292433907471237 test_mse : 41.30205941276843
+train_rmse : 3.6458790308334748 test_rmse : 6.426667831214589
+train_rel_rmse : 0.140299222567632 test_rel_rmse : 0.26154291892934284
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  3
+train_mse : 11.690391286678484 test_mse : 29.629090918309554
+train_rmse : 3.4191214202889144 test_rmse : 5.443261055498767
+train_rel_rmse : 0.13362269344955746 test_rel_rmse : 0.22264406657673028
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  4
+train_mse : 8.283043860146144 test_mse : 28.546658762173468
+train_rmse : 2.8780277726502472 test_rmse : 5.342907332358804
+train_rel_rmse : 0.1278692269183404 test_rel_rmse : 0.2187858355520634
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  5
+train_mse : 5.668653067906752 test_mse : 24.9021866001502
+train_rmse : 2.3808933340044347 test_rmse : 4.9902090737914175
+train_rel_rmse : 0.11786075159698436 test_rel_rmse : 0.21054331502949733
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  6
+train_mse : 5.998941429914106 test_mse : 22.859451591447414
+train_rmse : 2.4492736535377393 test_rmse : 4.781155884453822
+train_rel_rmse : 0.11784188788601511 test_rel_rmse : 0.2056180907170747
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  7
+train_mse : 5.356363118559638 test_mse : 24.74433339937788
+train_rmse : 2.3143818005159904 test_rmse : 4.974367638140338
+train_rel_rmse : 0.11582272047705527 test_rel_rmse : 0.20983817158951243
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  8
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  9
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  10
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  11
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  12
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  13
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  14
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  15
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  16
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  17
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  18
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  19
+train_mse : 5.250327853445771 test_mse : 24.136330297069566
+train_rmse : 2.291359389848256 test_rmse : 4.912873934579389
+train_rel_rmse : 0.11554064002854235 test_rel_rmse : 0.20847965842037958
+ndata_model :  82 ndata_test :  25 ndata_train :  57 model_degree :  20
+Accepted model with degree  5  trained with  50 data points.
+Set parameter FeasibilityTol to value 1e-09
+Set parameter IntFeasTol to value 1e-09
+Embedding predictor with gurobi_ml kwargs: {'epsilon': 0.0001}
+Gurobi Optimizer version 13.0.1 build v13.0.1rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Core(TM) Ultra 9 285H, instruction set [SSE2|AVX|AVX2]
+Thread count: 16 physical cores, 16 logical processors, using up to 16 threads
+
+Non-default parameters:
+FeasibilityTol  1e-09
+IntFeasTol  1e-09
+
+Optimize a model with 16 rows, 76 columns and 347 nonzeros (Min)
+Model fingerprint: 0x6d919062
+Model has 7 linear objective coefficients
+Model has 79 simple general constraints
+  79 INDICATOR
+Variable types: 60 continuous, 16 integer (16 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+03]
+  Objective range  [2e-03, 2e+00]
+  Bounds range     [1e+00, 1e+03]
+  RHS range        [1e+00, 2e+03]
+  GenCon rhs range [4e+00, 8e+02]
+  GenCon coe range [1e+00, 1e+00]
+
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds (0.00 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+Stopping: subproblem not solved (status=3)
+message: Gurobi status 3
+final x = [2.98356866e+02 7.85317405e+00 1.24001272e+01 1.88300003e+02
+ 9.77645606e-01 1.01140009e+03 8.24546507e+02 2.54566972e+01]
+final objective = 54.64527010949206
+return code = -3
+
+===== DCL ITERATION LOG =====
+iter=0, obj=54.64527010949206, relaxed_obj=54.64527010949206, data_size=82, degree=3, test_mse=53.56299364882161, test_rmse=7.31867430951956, train_rmse=7.303784894562441, status=2, success=True
+start_x = [281.16563107  73.89548544  54.18713592 181.56635922   6.20311165
+ 972.91859223 773.5788835   45.66213592]
+solution_x = [2.98356866e+02 7.85317405e+00 1.24001272e+01 1.88300003e+02
+ 9.77645606e-01 1.01140009e+03 8.24546507e+02 2.54566972e+01]
+solution_y/local_output = 47.13257936
+sklearn_output = 47.13257936
+manual_predictor_error = 0.0
+gurobi_ml_predictor_error = 0.0
+predictor_error = 0.0
+relaxation_slack = 0.0
+relaxed_constraint_residual = 47.13257936
+local_g_start/local_output_start = 42.49359331088888
+local_g_solution/local_output_solution = 47.13257936
+solver_message = OPTIMAL
+------------------------------------------------------------
+
+======================================================================
+CONCRETE DCL POINT-ESTIMATION REPORT
+======================================================================
+methodology = point estimation
+model       = rf
+trust region= convex_hull
+constraint  = predicted compressive strength >= 45.0 MPa
+weight      = 2230.0 <= sum(material components) <= 2450.0
+material cost = 54.64527010949206
+component weight = 2343.8344168070994
+predicted compressive strength = 47.13257936
+strength margin = 2.132579360000001
+
+mixture:
+  cement: 298.356866 kg
+  blast_furnace_slag: 7.853174 kg
+  fly_ash: 12.400127 kg
+  water: 188.300003 kg
+  superplasticizer: 0.977646 kg
+  coarse_aggregate: 1011.400094 kg
+  fine_aggregate: 824.546507 kg
+  age: 25.456697 days
+
+article point-estimation RF reference:
+  article point cost = 47.33
+  DCL cost gap       = 7.315270109492062
+======================================================================
+
+CONCRETE DCL ITERATION ROWS
+Iter & Data Size & Degree/max_depth & Train MSE & Test MSE & Train RMSE & Test RMSE & Cost & Sklearn Strength & Embedded Strength & Weight \\
+Iter & Data Size & Degree/max_depth & Train rel. RMSE & Test rel. RMSE & Gurobi rows & Gurobi cols & Objective \\
+0 & 82 & 3 & 5.334527e+01 & 5.356299e+01 & 7.303785e+00 & 7.318674e+00 & 54.645270 & 47.132579 & 47.132579 & 2343.834417 \\
+0 & 82 & 3 & 0.159857 & 0.150600 & 16 & 100 & 54.645270 \\
+
+==============================================================================================================================
+CONCRETE GLOBAL vs LOCAL DIAGNOSTIC COMPARISON
+==============================================================================================================================
+Method | Iter | Deg | Train RMSE | Test RMSE | Train rel RMSE | Test rel RMSE | Cost | Embedded Strength | Sklearn Strength | Embedded Margin | Sklearn Margin | Weight | Feas Embed | Feas Sklearn | Feas Weight
+------------------------------------------------------------------------------------------------------------------------------
+Global RF full hull | - | 17 | 4.570819 | 7.367063 | 0.127600 | 0.200486 | 48.748484 | 46.931942 | 46.931942 | 1.931942 | 1.931942 | 2248.891710 | True | True | True
+Local DCL final | 0 | 3 | 7.303785 | 7.318674 | 0.159857 | 0.150600 | 54.645270 | 47.132579 | 47.132579 | 2.132579 | 2.132579 | 2343.834417 | True | True | True
+Local DCL best feasible | 0 | 3 | 7.303785 | 7.318674 | 0.159857 | 0.150600 | 54.645270 | 47.132579 | 47.132579 | 2.132579 | 2.132579 | 2343.834417 | True | True | True
+Local DCL lowest cost | 0 | 3 | 7.303785 | 7.318674 | 0.159857 | 0.150600 | 54.645270 | 47.132579 | 47.132579 | 2.132579 | 2.132579 | 2343.834417 | True | True | True
+Local DCL best test RMSE | 0 | 3 | 7.303785 | 7.318674 | 0.159857 | 0.150600 | 54.645270 | 47.132579 | 47.132579 | 2.132579 | 2.132579 | 2343.834417 | True | True | True
+==============================================================================================================================
+Concrete selection rule: first require sklearn strength >= 45 and weight in [2230, 2450]; among feasible rows, lower cost is better.

@@ -34,8 +34,16 @@ CONCRETE_DATA_PATH = None          # Example: "Concrete_Data.xlsx"
 CONCRETE_STRENGTH_REQ = 45.0
 CONCRETE_WEIGHT_LB = 2230.0
 CONCRETE_WEIGHT_UB = 2450.0
-CONCRETE_DCL_ITERATIONS = 30
-RUN_CONCRETE_GLOBAL_BASELINE = True
+CONCRETE_DCL_ITERATIONS = 50
+# Local concrete surrogate model.
+# Use "cart" for one decision tree, "rf" for random forest, or "nn" for neural network.
+CONCRETE_LEARNING_MODEL_TYPE = "rf" #or rf, cart
+# The current global baseline function is RF-specific.
+# Keep this False for clean CART local-DCL runs.
+RUN_CONCRETE_GLOBAL_BASELINE = False
+# Just define them as normal variables
+USE_SOFT_CONSTRAINTS = True
+SLACK_PENALTY_WEIGHT = 1000.0
 
 # Rosenbrock global controls. Used only when problem_name = "rosenbrock".
 RUN_ROSENBROCK_OLD_GLOBAL = True
@@ -229,6 +237,7 @@ def _fit_unscaled_polynomial_model(X_train, y_train, degree):
     X_poly = poly.fit_transform(np.asarray(X_train, dtype=float))
     model = LinearRegression().fit(X_poly, np.asarray(y_train, dtype=float).ravel())
     return model, poly
+
 
 
 def _predict_unscaled_polynomial(model, poly, X):
@@ -1042,36 +1051,62 @@ def solve_global_concrete_full_hull(problem, X, y, options, strength_req):
     print("=" * 70)
     return diagnostics
 
-
 def print_concrete_dcl_report_rows(dcls):
     print("\nCONCRETE DCL ITERATION ROWS")
     print(
-        "Iter & Data Size & Degree/max_depth & Train MSE & Test MSE & Train RMSE & Test RMSE & "
-        "Cost & Sklearn Strength & Embedded Strength & Weight \\\\"
+        "Iter & Data Size & Degree/max_depth & Train rel. RMSE & Test rel. RMSE & "
+        "Material Obj & Gurobi Obj incl. Slack & Slack & Slack Penalty & "
+        "Sklearn Strength & Embedded Strength & Weight & MIP rows & MIP cols & "
+        "Bin & Int & GenConstr & Nodes & MIP Runtime & MIP Work & Fit Time & Total Time \\\\"
     )
 
     for row in dcls.iteration_log:
         x = np.asarray(row["solution_x"], dtype=float)
+
         sklearn_strength = row.get("local_pred_solution", row.get("solution_y"))
         embedded_strength = row.get("solution_y")
+
+        material_obj = _safe_float(row.get("original_objective", row.get("objective")))
+        if not np.isfinite(material_obj):
+            material_obj = float(dclp.concrete_material_cost(x))
+
+        gurobi_obj = _safe_float(
+            row.get("model_objective", row.get("relaxed_objective", material_obj))
+        )
+
+        slack = _safe_float(row.get("relaxation_slack", 0.0), 0.0)
+        slack_cost = _safe_float(row.get("slack_penalty_cost", 0.0), 0.0)
 
         print(
             f"{row.get('iter')} & "
             f"{row.get('data_size')} & "
             f"{row.get('degree')} & "
-            f"{_safe_float(row.get('train_mse')):.6e} & "
-            f"{_safe_float(row.get('test_mse')):.6e} & "
-            f"{_safe_float(row.get('train_rmse')):.6e} & "
-            f"{_safe_float(row.get('test_rmse')):.6e} & "
-            f"{dclp.concrete_material_cost(x):.6f} & "
+            f"{_safe_float(row.get('train_rel_rmse')):.6f} & "
+            f"{_safe_float(row.get('test_rel_rmse')):.6f} & "
+            f"{material_obj:.6f} & "
+            f"{gurobi_obj:.6f} & "
+            f"{slack:.6f} & "
+            f"{slack_cost:.6f} & "
             f"{float(sklearn_strength):.6f} & "
             f"{float(embedded_strength):.6f} & "
-            f"{dclp.concrete_component_weight(x):.6f} \\\\"
+            f"{dclp.concrete_component_weight(x):.6f} & "
+            f"{row.get('mip_rows')} & "
+            f"{row.get('mip_cols')} & "
+            f"{row.get('num_bin')} & "
+            f"{row.get('num_int')} & "
+            f"{row.get('num_genconstrs')} & "
+            f"{_safe_float(row.get('mip_nodes')):.0f} & "
+            f"{_safe_float(row.get('mip_runtime')):.6f} & "
+            f"{_safe_float(row.get('mip_work')):.6f} & "
+            f"{_safe_float(row.get('fit_time')):.6f} & "
+            f"{_safe_float(row.get('total_iteration_time', row.get('elapsed_time'))):.6f} \\\\"
         )
+        
 
 
 def _concrete_local_row(row, label, strength_req=45.0):
     x = np.asarray(row["solution_x"], dtype=float).ravel()
+
     sklearn_pred = row.get("local_pred_solution")
     embedded_pred = row.get("solution_y")
 
@@ -1080,8 +1115,27 @@ def _concrete_local_row(row, label, strength_req=45.0):
 
     sklearn_pred = _safe_float(sklearn_pred)
     embedded_pred = _safe_float(embedded_pred)
+
     cost = float(dclp.concrete_material_cost(x))
     weight = float(dclp.concrete_component_weight(x))
+
+    slack = _safe_float(row.get("relaxation_slack", 0.0), 0.0)
+    slack_penalty_cost = _safe_float(row.get("slack_penalty_cost", 0.0), 0.0)
+    model_objective = _safe_float(
+        row.get("model_objective", row.get("relaxed_objective", row.get("objective")))
+    )
+
+    predictor_error = _safe_float(row.get("predictor_error", 0.0), 0.0)
+    predictor_error_tol = _safe_float(row.get("predictor_error_tol", 1e-4), 1e-4)
+    #embedding_valid = bool(predictor_error <= predictor_error_tol)
+    embedding_valid = bool(
+        row.get("embedding_valid", predictor_error <= predictor_error_tol)
+    )
+    
+    feasible_embedded_hard = bool(embedded_pred >= float(strength_req) - 1e-6)
+    feasible_sklearn_hard = bool(sklearn_pred >= float(strength_req) - 1e-6)
+    feasible_sklearn_soft = bool(sklearn_pred + slack >= float(strength_req) - 1e-6)
+    feasible_weight = bool(CONCRETE_WEIGHT_LB - 1e-6 <= weight <= CONCRETE_WEIGHT_UB + 1e-6)
 
     return {
         "method": label,
@@ -1089,16 +1143,37 @@ def _concrete_local_row(row, label, strength_req=45.0):
         "degree": row.get("degree"),
         "train_rmse": _safe_float(row.get("train_rmse")),
         "test_rmse": _safe_float(row.get("test_rmse")),
+        "train_rel_rmse": _safe_float(row.get("train_rel_rmse")),
+        "test_rel_rmse": _safe_float(row.get("test_rel_rmse")),
         "cost": cost,
+        "model_objective": model_objective,
+        "slack": slack,
+        "slack_penalty_cost": slack_penalty_cost,
         "embedded_strength": embedded_pred,
         "sklearn_strength": sklearn_pred,
         "embedded_margin": embedded_pred - float(strength_req),
         "sklearn_margin": sklearn_pred - float(strength_req),
         "weight": weight,
-        "feasible_embedded": bool(embedded_pred >= float(strength_req) - 1e-6),
-        "feasible_sklearn": bool(sklearn_pred >= float(strength_req) - 1e-6),
-        "feasible_weight": bool(CONCRETE_WEIGHT_LB <= weight <= CONCRETE_WEIGHT_UB),
+        "feasible_embedded_hard": feasible_embedded_hard,
+        "feasible_sklearn_hard": feasible_sklearn_hard,
+        "feasible_sklearn_soft": feasible_sklearn_soft,
+        "feasible_weight": feasible_weight,
+        "valid_hard_point_solution": bool(
+            embedding_valid and feasible_sklearn_hard and feasible_weight
+        ),
+        "valid_soft_solution": bool(
+            embedding_valid and feasible_sklearn_soft and feasible_weight
+        ),
+        "mip_cols": row.get("mip_cols"),
+        "mip_rows": row.get("mip_rows"),
+        "num_bin": row.get("num_bin"),
+        "num_int": row.get("num_int"),
+        "num_genconstrs": row.get("num_genconstrs"),
+        "mip_nodes": _safe_float(row.get("mip_nodes")),
+        "mip_runtime": _safe_float(row.get("mip_runtime")),
+        "mip_work": _safe_float(row.get("mip_work")),
     }
+
 
 
 def print_concrete_global_local_comparison(global_diag, dcls, strength_req=45.0):
@@ -1106,94 +1181,119 @@ def print_concrete_global_local_comparison(global_diag, dcls, strength_req=45.0)
 
     if global_diag is not None and global_diag.get("has_solution", False):
         rows.append({
-            "method": "Global RF full hull",
+            "method": global_diag.get("method", "Global model full hull"),
             "iter": "-",
             "degree": global_diag.get("degree"),
             "train_rmse": global_diag.get("train_rmse"),
             "test_rmse": global_diag.get("test_rmse"),
+            "train_rel_rmse": global_diag.get("train_rel_rmse"),
+            "test_rel_rmse": global_diag.get("test_rel_rmse"),
             "cost": global_diag.get("material_cost"),
+            "model_objective": global_diag.get("objective"),
+            "slack": global_diag.get("slack", 0.0),
+            "slack_penalty_cost": global_diag.get("slack_penalty_cost", 0.0),
             "embedded_strength": global_diag.get("embedded_strength"),
             "sklearn_strength": global_diag.get("sklearn_strength"),
             "embedded_margin": global_diag.get("embedded_strength_margin"),
             "sklearn_margin": global_diag.get("sklearn_strength_margin"),
             "weight": global_diag.get("component_weight"),
-            "feasible_embedded": global_diag.get("feasible_by_embedded_strength"),
-            "feasible_sklearn": global_diag.get("feasible_by_sklearn_strength"),
+            "feasible_sklearn_hard": global_diag.get("feasible_by_sklearn_strength"),
+            "feasible_sklearn_soft": global_diag.get("feasible_by_sklearn_strength"),
             "feasible_weight": global_diag.get("feasible_by_weight"),
-        })
-
-    elif global_diag is not None:
-        rows.append({
-            "method": "Global RF full hull",
-            "iter": "-",
-            "degree": global_diag.get("degree"),
-            "train_rmse": global_diag.get("train_rmse"),
-            "test_rmse": global_diag.get("test_rmse"),
-            "cost": np.nan,
-            "embedded_strength": np.nan,
-            "sklearn_strength": np.nan,
-            "embedded_margin": np.nan,
-            "sklearn_margin": np.nan,
-            "weight": np.nan,
-            "feasible_embedded": False,
-            "feasible_sklearn": False,
-            "feasible_weight": False,
+            "valid_hard_point_solution": global_diag.get("valid_point_estimation_solution"),
+            "valid_soft_solution": global_diag.get("valid_point_estimation_solution"),
+            "mip_cols": global_diag.get("mip_cols"),
+            "mip_rows": global_diag.get("mip_rows"),
+            "num_bin": global_diag.get("num_bin"),
+            "num_int": global_diag.get("num_int"),
+            "num_genconstrs": global_diag.get("num_genconstrs"),
+            "mip_nodes": global_diag.get("nodes"),
+            "mip_runtime": global_diag.get("runtime"),
+            "mip_work": global_diag.get("work"),
         })
 
     if len(dcls.iteration_log) > 0:
-        locals_ = [_concrete_local_row(row, "Local DCL", strength_req) for row in dcls.iteration_log]
+        locals_ = [
+            _concrete_local_row(row, "Local DCL", strength_req)
+            for row in dcls.iteration_log
+        ]
 
         final = locals_[-1].copy()
         final["method"] = "Local DCL final"
         rows.append(final)
 
-        feasible = [r for r in locals_ if r["feasible_sklearn"] and r["feasible_weight"]]
-        if feasible:
-            best_feasible = min(feasible, key=lambda r: r["cost"]).copy()
-            best_feasible["method"] = "Local DCL best feasible"
-            rows.append(best_feasible)
+        hard_feasible = [r for r in locals_ if r["valid_hard_point_solution"]]
+
+        if hard_feasible:
+            best_hard = min(hard_feasible, key=lambda r: r["cost"]).copy()
+            best_hard["method"] = "Local DCL best hard-feasible"
+            rows.append(best_hard)
+
+        soft_feasible = [r for r in locals_ if r["valid_soft_solution"]]
+
+        if soft_feasible:
+            best_soft = min(soft_feasible, key=lambda r: r["model_objective"]).copy()
+            best_soft["method"] = "Local DCL best soft-feasible"
+            rows.append(best_soft)
 
         lowest_cost = min(locals_, key=lambda r: r["cost"]).copy()
-        lowest_cost["method"] = "Local DCL lowest cost"
+        lowest_cost["method"] = "Local DCL lowest material cost"
         rows.append(lowest_cost)
 
         best_test = min(locals_, key=lambda r: r["test_rmse"]).copy()
         best_test["method"] = "Local DCL best test RMSE"
         rows.append(best_test)
 
-    print("\n" + "=" * 126)
+    print("\n" + "=" * 150)
     print("CONCRETE GLOBAL vs LOCAL DIAGNOSTIC COMPARISON")
-    print("=" * 126)
+    print("=" * 150)
     print(
-        "Method | Iter | Deg | Train RMSE | Test RMSE - Train_rel_rmse - Test_rel_rmse | Cost | Embedded Strength | Sklearn Strength | "
-        "Embedded Margin | Sklearn Margin | Weight | Feas Embed | Feas Sklearn | Feas Weight"
+        "Method | Iter | Deg | Train rel RMSE | Test rel RMSE | "
+        "Cost | Model Obj | Slack | Slack Cost | Sklearn Strength | Weight | "
+        "Hard Sklearn Feas | Soft Sklearn Feas | Weight Feas | "
+        "Valid Hard | Valid Soft | Rows | Cols | Bin | Int | GenConstr | Nodes | Runtime | Work"
     )
-    print("-" * 126)
+    print("-" * 150)
 
     for r in rows:
         print(
             f"{r['method']} | "
             f"{r['iter']} | "
             f"{r['degree']} | "
-            f"{_fmt(r.get('train_rmse'))} | "
-            f"{_fmt(r.get('test_rmse'))} | "
             f"{_fmt(r.get('train_rel_rmse'))} | "
             f"{_fmt(r.get('test_rel_rmse'))} | "
             f"{_fmt(r.get('cost'))} | "
-            f"{_fmt(r.get('embedded_strength'))} | "
+            f"{_fmt(r.get('model_objective'))} | "
+            f"{_fmt(r.get('slack'))} | "
+            f"{_fmt(r.get('slack_penalty_cost'))} | "
             f"{_fmt(r.get('sklearn_strength'))} | "
-            f"{_fmt(r.get('embedded_margin'))} | "
-            f"{_fmt(r.get('sklearn_margin'))} | "
             f"{_fmt(r.get('weight'))} | "
-            f"{r.get('feasible_embedded')} | "
-            f"{r.get('feasible_sklearn')} | "
-            f"{r.get('feasible_weight')}"
+            f"{r.get('feasible_sklearn_hard')} | "
+            f"{r.get('feasible_sklearn_soft')} | "
+            f"{r.get('feasible_weight')} | "
+            f"{r.get('valid_hard_point_solution')} | "
+            f"{r.get('valid_soft_solution')} | "
+            f"{r.get('mip_rows')} | "
+            f"{r.get('mip_cols')} | "
+            f"{r.get('num_bin')} | "
+            f"{r.get('num_int')} | "
+            f"{r.get('num_genconstrs')} | "
+            f"{_fmt(r.get('mip_nodes'), digits=0)} | "
+            f"{_fmt(r.get('mip_runtime'))} | "
+            f"{_fmt(r.get('mip_work'))}"
         )
 
-    print("=" * 126)
-    print("Concrete selection rule: first require sklearn strength >= 45 and weight in [2230, 2450]; among feasible rows, lower cost is better.")
-
-
+    print("=" * 150)
+    print(
+        "Concrete hard selection rule: sklearn strength >= 45 and weight in [2230, 2450]; "
+        "among hard-feasible rows, lower material cost is better."
+    )
+    print(
+        "Soft feasibility only means sklearn strength + slack >= 45; use it for debugging, "
+        "not as a final point-estimation solution unless you explicitly allow relaxation."
+    )
+    
+    
 # =========================================================
 # Main
 # =========================================================
@@ -1224,11 +1324,13 @@ def main():
 
     elif problem_name == "concrete":
         adjustable_problem_parameters = CONCRETE_STRENGTH_REQ
-        learning_model_type = "rf"
+        learning_model_type = CONCRETE_LEARNING_MODEL_TYPE
         x_init = None
-
+    
     else:
         raise ValueError(f"Unknown problem_name='{problem_name}'")
+    
+    options = dcl.dcl_options()
 
     if problem_name == "concrete":
         problem, problem_model_type, X, y = dclp.setup_problem_concrete(
@@ -1238,6 +1340,8 @@ def main():
             weight_lb=CONCRETE_WEIGHT_LB,
             weight_ub=CONCRETE_WEIGHT_UB,
             data_path=CONCRETE_DATA_PATH,
+            use_soft_constraints=USE_SOFT_CONSTRAINTS,   # Use the standalone variable
+            slack_penalty_weight=SLACK_PENALTY_WEIGHT    # Use the standalone variable
         )
     else:
         problem, problem_model_type, X, y = dclp.dcl_setup_problem(
@@ -1264,7 +1368,7 @@ def main():
 
     elif problem_name == "rosenbrock":
         # Old local Rosenbrock options, with standard RMSE and slack retained.
-        options.max_iterations = 10
+        options.max_iterations = 5
         options.max_model_degree = 10
         # Old x_new local data schedule:
         # len(x_init)=3 -> learning_size=2*n=6 -> initial local size = 5*6 = 30.
@@ -1301,10 +1405,10 @@ def main():
         options.max_iterations = CONCRETE_DCL_ITERATIONS
         options.delta_min = 0.0
         options.init_ndata_model = 50
-        options.train_data_ratio = 0.70
+        options.train_data_ratio = 0.7
         options.rmse_thresh = np.inf
         options.rmse_target = 0.01 #rel for now
- #       options.max_ndata = len(y)
+ #      options.max_ndata = len(y)
 
         options.predictor_check_enabled = True
 
@@ -1315,8 +1419,23 @@ def main():
         options.predictor_error_tol = 1e-4
         options.gurobi_feasibility_tol = 1e-9
         options.gurobi_int_feas_tol = 1e-9
+        
+        # ========================================================
+        # NEW: Manual Slack Variable Configuration
+        # ========================================================
+        #options.use_soft_constraints = True      # Toggle relaxation on/off
+        #options.slack_penalty_weight = 1000.0    # 'Big M' penalty for the objective function
+        options.use_soft_constraints = USE_SOFT_CONSTRAINTS
+        options.slack_penalty_weight = SLACK_PENALTY_WEIGHT
+        # ========================================================
 
-        if learning_model_type == "rf":
+        if learning_model_type == "cart":
+            # CART = one DecisionTreeRegressor.
+            # Here, "degree" means max_depth.
+            options.max_model_degree = 20
+            options.tree_epsilon = 1e-4
+        
+        elif learning_model_type == "rf":
             options.max_model_degree = 20
             options.rf_n_estimators = 100
             options.rf_min_samples_leaf = 1
@@ -1325,6 +1444,12 @@ def main():
         elif learning_model_type == "nn":
             options.max_model_degree = 4
             options.tree_epsilon = None
+        
+        else:
+            raise NotImplementedError(
+                f"Unknown concrete learning_model_type='{learning_model_type}'. "
+                "Use 'cart', 'rf', or 'nn'."
+            )
 
     _set_seeds(options, SEED)
 
