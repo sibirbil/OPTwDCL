@@ -2,6 +2,8 @@
 
 import random
 import warnings
+import csv
+from pathlib import Path
 
 import numpy as np
 from scipy.optimize import Bounds, LinearConstraint, NonlinearConstraint, minimize
@@ -34,10 +36,10 @@ CONCRETE_DATA_PATH = None          # Example: "Concrete_Data.xlsx"
 CONCRETE_STRENGTH_REQ = 45.0
 CONCRETE_WEIGHT_LB = 2230.0
 CONCRETE_WEIGHT_UB = 2450.0
-CONCRETE_DCL_ITERATIONS = 50
+CONCRETE_DCL_ITERATIONS = 1
 # Local concrete surrogate model.
 # Use "cart" for one decision tree, "rf" for random forest, or "nn" for neural network.
-CONCRETE_LEARNING_MODEL_TYPE = "rf" #or rf, cart
+CONCRETE_LEARNING_MODEL_TYPE = "cart" #or rf, cart
 # The current global baseline function is RF-specific.
 # Keep this False for clean CART local-DCL runs.
 RUN_CONCRETE_GLOBAL_BASELINE = False
@@ -245,6 +247,166 @@ def _predict_unscaled_polynomial(model, poly, X):
     if X.ndim == 1:
         X = X.reshape(1, -1)
     return model.predict(poly.transform(X))
+
+# =========================================================
+# Print polynomial from the accepted 1-iteration DCL model
+# =========================================================
+def _sklearn_feature_to_python(term):
+    """
+    Convert sklearn PolynomialFeatures names to Python expressions.
+
+    Examples:
+        'x0'       -> 'x0'
+        'x1^2'     -> '(x1**2)'
+        'x0 x1'    -> 'x0*x1'
+        'x0^2 x2'  -> '(x0**2)*x2'
+    """
+    if term == "1":
+        return "1.0"
+
+    pieces = []
+
+    for part in term.split(" "):
+        if "^" in part:
+            var, power = part.split("^")
+            pieces.append(f"({var}**{power})")
+        else:
+            pieces.append(part)
+
+    return "*".join(pieces)
+
+
+def print_one_iteration_dcl_polynomial(
+    dcls,
+    feature_names=("x0", "x1", "x2"),
+    output_dir="outputs",
+    tol=None,
+):
+    """
+    Print the polynomial learned by the accepted DCL model.
+
+    Use this after your 1-iteration/full-data DCL run.
+
+    It prints and saves:
+        1. a coefficient table
+        2. a copy-paste Python function
+
+    This does NOT refit anything.
+    It uses exactly dcls.local_models[0].
+    """
+    if len(dcls.local_models) == 0:
+        raise RuntimeError("No local model found in dcls.local_models.")
+
+    accepted_model = dcls.local_models[0]
+
+    if accepted_model.learned_model is None:
+        raise RuntimeError("accepted_model.learned_model is None.")
+
+    if accepted_model.poly_features is None:
+        raise RuntimeError(
+            "accepted_model.poly_features is None. "
+            "This printer is for the Rosenbrock polynomial model."
+        )
+
+    model = accepted_model.learned_model
+    poly = accepted_model.poly_features
+
+    names = poly.get_feature_names_out(feature_names)
+    coefs = np.asarray(model.coef_, dtype=float).ravel()
+    intercept = float(np.asarray(model.intercept_, dtype=float).ravel()[0])
+
+    # PolynomialFeatures(include_bias=True) creates a feature called '1'.
+    # LinearRegression also has an intercept.
+    # Therefore the actual constant is:
+    #     intercept + coefficient_of_feature_1
+    constant = intercept
+    terms = []
+
+    for name, coef in zip(names, coefs):
+        coef = float(coef)
+
+        if name == "1":
+            constant += coef
+        else:
+            if tol is None or abs(coef) > float(tol):
+                terms.append((name, coef, _sklearn_feature_to_python(name)))
+
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    coeff_csv_path = output_dir / "one_iter_full_data_dcl_polynomial_coefficients.csv"
+    function_py_path = output_dir / "one_iter_full_data_dcl_polynomial_function.py"
+    txt_path = output_dir / "one_iter_full_data_dcl_polynomial.txt"
+
+    # Save coefficient table.
+    with coeff_csv_path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["term", "coefficient", "python_term"])
+        writer.writerow(["1", f"{constant:.17e}", "1.0"])
+
+        for name, coef, py_term in terms:
+            writer.writerow([name, f"{coef:.17e}", py_term])
+
+    # Build copy-paste Python function.
+    lines = []
+    lines.append("# Polynomial from accepted 1-iteration/full-data DCL model")
+    lines.append("# Copy this function and evaluate it at any (x0, x1, x2).")
+    lines.append("")
+    lines.append("def alt_dcl_global_ghat(x0, x1, x2):")
+    lines.append("    return (")
+    lines.append(f"        {constant:+.17e}")
+
+    for name, coef, py_term in terms:
+        lines.append(f"        {coef:+.17e} * ({py_term})")
+
+    lines.append("    )")
+    lines.append("")
+
+    function_text = "\n".join(lines)
+
+    with function_py_path.open("w", encoding="utf-8") as f:
+        f.write(function_text)
+
+    with txt_path.open("w", encoding="utf-8") as f:
+        f.write("ONE-ITERATION FULL-DATA DCL POLYNOMIAL\n")
+        f.write(f"degree = {accepted_model.model_degree}\n")
+        f.write(f"ndata_model = {accepted_model.ndata_model}\n")
+        f.write(f"train_rmse = {accepted_model.train_rmse}\n")
+        f.write(f"test_rmse = {accepted_model.test_rmse}\n")
+        f.write(f"train_rel_rmse = {accepted_model.train_rel_rmse}\n")
+        f.write(f"test_rel_rmse = {accepted_model.test_rel_rmse}\n")
+        f.write("\n")
+        f.write(function_text)
+
+    print("\n" + "=" * 80)
+    print("ONE-ITERATION FULL-DATA DCL POLYNOMIAL")
+    print("=" * 80)
+    print("degree =", accepted_model.model_degree)
+    print("ndata_model =", accepted_model.ndata_model)
+    print("train_rmse =", accepted_model.train_rmse)
+    print("test_rmse =", accepted_model.test_rmse)
+    print("train_rel_rmse =", accepted_model.train_rel_rmse)
+    print("test_rel_rmse =", accepted_model.test_rel_rmse)
+
+    if accepted_model.solution_x is not None:
+        print("DCL solution_x =", np.asarray(accepted_model.solution_x, dtype=float))
+        print("DCL local ghat(solution_x) =", accepted_model.solution_y)
+        print("DCL slack =", accepted_model.solution_slack)
+
+    print("\nCoefficient CSV saved to:")
+    print(coeff_csv_path)
+
+    print("\nCopy-paste Python function saved to:")
+    print(function_py_path)
+
+    print("\nPolynomial text saved to:")
+    print(txt_path)
+
+    print("\nCopy-paste function:")
+    print(function_text)
+    print("=" * 80)
+
+    return function_text
 
 
 def _rosenbrock_poly_metrics(model, poly, X_eval, y_eval):
@@ -588,7 +750,8 @@ def print_rosenbrock_dcl_report_rows(dcls, old_global_pred=None, new_global_pred
     print(
         "Iter & x0 & x1 & x2 & Obj & True g & Old Global ghat & New Global ghat & "
         "Local ghat & Err(Old Glob) & Err(New Glob) & Err(Local) & Slack & "
-        "Relaxed Residual & Data Size & Degree & Train MSE & Test MSE & Train RMSE & Test RMSE \\\\"
+        "Relaxed Residual & Data Size & Degree & Train MSE & Test MSE & "
+        "Train RMSE & Test RMSE & Train Rel RMSE & Test Rel RMSE \\\\"
     )
 
     for row in dcls.iteration_log:
@@ -607,7 +770,9 @@ def print_rosenbrock_dcl_report_rows(dcls, old_global_pred=None, new_global_pred
             f"{r['slack']:.6e} & {r['relaxed_residual']:.6e} & "
             f"{row.get('data_size')} & {row.get('degree')} & "
             f"{r['train_mse']:.6e} & {r['test_mse']:.6e} & "
-            f"{r['train_rmse']:.6e} & {r['test_rmse']:.6e} \\\\"
+            f"{r['train_rmse']:.6e} & {r['test_rmse']:.6e} & "
+            f"{_safe_float(row.get('train_rel_rmse')):.6e} & "
+            f"{_safe_float(row.get('test_rel_rmse')):.6e} \\\\"
         )
 
 
@@ -1310,7 +1475,7 @@ def main():
     )
 
     # Change this one line to run another case.
-    problem_name = "concrete"   # "wfp", "rosenbrock", or "concrete"
+    problem_name = "rosenbrock"   # "wfp", "rosenbrock", or "concrete"
 
     if problem_name == "wfp":
         adjustable_problem_parameters = 0.6
@@ -1368,13 +1533,13 @@ def main():
 
     elif problem_name == "rosenbrock":
         # Old local Rosenbrock options, with standard RMSE and slack retained.
-        options.max_iterations = 5
+        options.max_iterations = 1
         options.max_model_degree = 10
         # Old x_new local data schedule:
         # len(x_init)=3 -> learning_size=2*n=6 -> initial local size = 5*6 = 30.
         # dcl_core then tries 30, 42, 54, 66, ... because it adds 2*learning_size = 12.
-        options.init_ndata_model = 5 * (2 * len(x_init))
-        #options.init_ndata_model = 100
+        #options.init_ndata_model = 5 * (2 * len(x_init))
+        options.init_ndata_model = 100
         options.max_ndata = 100000
 
         options.train_data_ratio = 0.70
@@ -1404,7 +1569,7 @@ def main():
     elif problem_name == "concrete":
         options.max_iterations = CONCRETE_DCL_ITERATIONS
         options.delta_min = 0.0
-        options.init_ndata_model = 50
+        options.init_ndata_model = 1030
         options.train_data_ratio = 0.7
         options.rmse_thresh = np.inf
         options.rmse_target = 0.01 #rel for now
@@ -1437,7 +1602,7 @@ def main():
         
         elif learning_model_type == "rf":
             options.max_model_degree = 20
-            options.rf_n_estimators = 100
+            options.rf_n_estimators = 1
             options.rf_min_samples_leaf = 1
             options.tree_epsilon = 1e-4
 
@@ -1557,7 +1722,10 @@ def main():
             )
 
     dcl.dcl_print_iteration_log(dcls)
-
+    
+    if problem_name == "rosenbrock":
+        print_one_iteration_dcl_polynomial(dcls)
+    
     if problem_name == "concrete":
         print_concrete_dcl_report(dcls, strength_req=adjustable_problem_parameters)
         print_concrete_dcl_report_rows(dcls)
