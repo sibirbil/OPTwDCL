@@ -1,4 +1,3 @@
-# NLPwDCL
-Nonlinear Programming with Dynamic Constraint Learning
+# Optimization with Dynamic Constraint Learning
 
-Figen Öztoprak & İlker Birbil
+Ezgi Öztekin, Figen Öztoprak & İlker Birbil
